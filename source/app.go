@@ -312,6 +312,9 @@ func (a *App) About() {
 	fmt.Println("    Xor (xor.exe) .............. Luigi Auriemma  -  aluigi.org")
 	fmt.Println("    Libraries bundled in them .. Newtonsoft.Json (James Newton-King), Zydis (zyantific)")
 	fmt.Println("    Updater .................... ronata")
+	fmt.Println()
+	fmt.Println("  Unofficial fan project, not affiliated with the game's publishers. The game's terms restrict")
+	fmt.Println("  modifying game data: use at your own risk, your account could be suspended.")
 	prompt("\n Press Enter to go back... ")
 }
 
@@ -328,8 +331,8 @@ func shortKey(k string) string {
 
 // toolsHelp explains where the (not redistributed) tools come from.
 const toolsHelp = `
- The Tools folder is not included in the download because these programs belong to their authors.
- Put these into a folder named "Tools" next to the updater:
+ The Tools folder is missing. These programs belong to their authors, so they only come in the player zip
+ (not from online updates). Take the Tools folder from that zip, or put these into a folder named "Tools" next to the updater:
     Tools\SWAdmin\SWAdmin.Cli.exe, SWAdmin.Core.dll, Newtonsoft.Json.dll   - SWAdmin tools by rockon
     Tools\SW Res structs dumper.exe, .pdb and Zydis.dll                     - SW Res structs dumper by prozaks
     Tools\7z.exe and 7z.dll                                                - 7-Zip, from 7-zip.org

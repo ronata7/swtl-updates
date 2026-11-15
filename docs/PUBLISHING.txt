@@ -1,60 +1,51 @@
 SW TL Updater - publishing updates (for ronata)               tool: swtlpublish.exe
 ==============================================================================
 How online updates work
-  Players have SWTLUpdater.exe + a small SWTLUpdater.ini containing an update address and a public key.
-  When they start the program (or press 7) it downloads manifest.json + manifest.json.sig from your
-  update address, checks the signature with the public key, then downloads only the files that differ
-  (program, Tools, TL csv, README) and checks every file's size and SHA-256 against the signed list.
-  Nothing is installed unless everything checks out. Only these folders are ever touched:
-  SWTLUpdater.exe, README.txt, Tools\, TL csv\.   Settings, logs, backups and game files are never touched.
+  Players have SWTLUpdater.exe + a small SWTLUpdater.ini with an update address, a public key and (optional)
+  a separate translation address. When they start the program (or press 7) it downloads manifest.json +
+  manifest.json.sig from each address, checks the signature with the public key, then downloads only the files
+  that differ and checks every file's size and SHA-256 against the signed list. Nothing is installed unless
+  everything checks out. Only SWTLUpdater.exe, README.txt, Tools\ and TL csv\ are ever touched.
+  - PROGRAM repo (UpdateURL):   SWTLUpdater.exe + README.txt
+  - TRANSLATION repo (TranslationURL): TL csv\ only. The program refuses anything else from it.
+  Both repos are signed with the same key. Tools are NOT published anywhere.
 
-Why not serve it straight from a PRIVATE repo?
-  A private repo needs a token, and a token inside a program that many people download can be extracted by
-  anyone. So keep your private repo as your workspace and publish only the finished update files to a
-  PUBLIC place (a public GitHub repo, GitHub Pages, or any web host). The signature means that even if
-  that public place were hacked, players' programs would reject anything you did not sign.
+This project's values
+  Program repo      https://raw.githubusercontent.com/ronata7/swtl-updates/main/
+  Translation repo  (set in release_config.bat as TLURL)
+  Public key        8BfBdwP3MjwllLlApryPtTCQQ51jB0S00S7z1RILTco=
+
+Why PUBLIC repos?  A private repo needs a token, and a token inside a program that many people download can be
+  extracted. Keep your private work private and publish only the finished files. The signature means that even a
+  hacked host cannot push anything players' programs would accept.
 
 One-time setup
-  1. Make the signing key (once!):          swtlpublish keygen -out keys
-       - swtl_update_PRIVATE.key  -> keep secret + BACK IT UP. Never upload it. If you lose it you cannot
-         publish updates to existing players anymore; if it leaks, anyone can publish "updates".
-       - swtl_update_public.txt   -> the public key (safe to share).
-  2. Create a PUBLIC GitHub repo for the files, e.g. swtl-updates. Your update address will be
-       https://raw.githubusercontent.com/<your-github-name>/swtl-updates/main/
-     (GitHub Pages works too: https://<your-github-name>.github.io/swtl-updates/ ). Note: raw.githubusercontent.com
-     can take a few minutes to show a new commit. GitHub limit: 100 MB per file.
+  1. Key (once!):  swtlpublish keygen -out keys   -> keep keys\swtl_update_PRIVATE.key secret and BACKED UP.
+  2. Two public GitHub repos (program + translation), each cloned in GitHub Desktop.
+     Each needs a .gitattributes file with:   * -text   (otherwise git rewrites the CSV line endings and the
+     checksums stop matching).
+  3. release_config.bat: set TLURL to the translation repo's raw address (with trailing slash).
+  Limits: 100 MB per file on GitHub; use GitHub Desktop or git to push (the web uploader stops at 25 MB per file).
+  raw.githubusercontent.com can take a few minutes to show a new commit.
 
-Every release
-  1. Make a folder (say  release\src ) laid out like the program folder:
-         SWTLUpdater.exe        <- the newest exe
-         README.txt
-         (no Tools folder - the tools belong to their authors and are NOT published; see note below)
-         TL csv\...             <- the newest translated .csv files
-  2. swtlpublish publish -src release\src -out release\site -key keys\swtl_update_PRIVATE.key -version 2.6.1 -notes "What's new text"
-       - ALWAYS use a higher -version than last time (players refuse to go back to an older version).
-       - The exe only updates itself when -version is higher than the exe's own version.
-       - Files that were in the previous release but are missing now are deleted on the players' PCs.
-  3. swtlpublish verify -out release\site -pub <public key text>        (optional self-check)
-  4. Upload the CONTENTS of release\site (manifest.json, manifest.json.sig, files\) to the root of the public repo.
-     That's it - players get it next time they start the program.
-
-First download for new players
-  This project's values:  URL = https://raw.githubusercontent.com/ronata7/swtl-updates/main/
-                          public key = 8BfBdwP3MjwllLlApryPtTCQQ51jB0S00S7z1RILTco=
-  swtlpublish pack -src release\src -url https://raw.githubusercontent.com/<you>/swtl-updates/main/ -pub <public key text> -zip SWTLUpdater_player.zip
-  Give people that zip. (They can even download just SWTLUpdater.exe + the small SWTLUpdater.ini made by "pack":
-  on first start the program fetches Tools, TL csv, etc. by itself.)
+Every release (three scripts, run from the command prompt in the publishing folder)
+  1_release_program.bat 2.8.1 "notes"     new exe/readme -> program repo clone. Then commit + push.
+       - Use a HIGHER version every time, and give the exe the same version number (the exe only updates itself
+         when the release version is higher than its own).
+  2_release_translation.bat "notes"       CSVs -> translation repo clone. Then commit + push. Version is the date/time.
+  3_make_player_zip.bat                   the zip for players (exe, readme, CSVs, your Tools folder, settings file).
+  If nothing changed the publisher says UNCHANGED and GitHub Desktop shows nothing to push.
+  Files removed from a release are deleted on the players' PCs.
 
 Tools are not published (decided)
-  7z, xor, SWAdmin and the structs dumper belong to their authors, so they are left out of -src and out of the
-  public repo. Players put them in their own Tools folder; the program tells them exactly which files and where to
-  get them. The updater never touches files that are not in a release, so their Tools folder is safe.
+  7z, xor, SWAdmin and the structs dumper belong to their authors. They are never put in a repo. 3_make_player_zip
+  adds your Tools folder to the zip you hand out yourself - check each author's terms first. Players who get only
+  the exe are told which files to put in Tools. The updater never touches files that are not in a release.
 
 Translation files - read DISCLAIMER.md before publishing them
-  The csv files are translations of the game's text, i.e. derived from the owner's copyright. Publishing them is
-  the one part of this project where permission from the game's rights holders could matter. Safer practice: ask
-  for permission, keep the files English-only (no original text), non-commercial, no game files, and remove
-  promptly if asked. Consider keeping the csv files in a SEPARATE public repo so a takedown request cannot
-  affect the program.
+  The CSVs are translations of the game's text, i.e. derived from the owner's copyright, and the game's terms
+  restrict modifying game data. No permission has been obtained. Keep the files English-only (no original text),
+  non-commercial, no game files, and remove promptly if asked. The separate translation repo means a takedown
+  of it does not affect the program.
 
-Players can turn it off: Settings > Update address > "-"  (or UpdateAtStartup=no / empty UpdateURL in the .ini).
+Players can turn updates off: Settings > Update address > "-" (or UpdateAtStartup=no / empty UpdateURL in the .ini).
