@@ -24,6 +24,7 @@ type Config struct {
 	TranslationURL string // optional second source that only provides "TL csv/"
 	TranslationKey string // empty = same key as UpdateKey
 	UpdateAtStart  bool
+	Converter      string // advanced: swadmin (default) | builtin | check (run both, compare, use swadmin)
 }
 
 var envRe = regexp.MustCompile(`%([^%]+)%`)
@@ -73,6 +74,7 @@ func defaultConfig(appDir string) *Config {
 		ExcludeTables: []string{"tb_Loading_String", "tb_Option_String", "tb_Talk_String"},
 		AskAtStartup:  true,
 		UpdateAtStart: true,
+		Converter:     "swadmin",
 	}
 }
 
@@ -133,6 +135,10 @@ func LoadConfig(appDir string) (*Config, string) {
 	c.TranslationURL = strings.TrimSpace(kv["translationurl"])
 	c.TranslationKey = strings.TrimSpace(kv["translationkey"])
 	c.UpdateAtStart = parseYes(kv["updateatstartup"], true)
+	switch v := strings.ToLower(strings.TrimSpace(kv["converter"])); v {
+	case "builtin", "check", "swadmin":
+		c.Converter = v
+	}
 	if !filepath.IsAbs(c.TLPath) {
 		c.TLPath = filepath.Join(appDir, c.TLPath)
 	}
@@ -177,6 +183,9 @@ func (c *Config) Save(path string) error {
 	fmt.Fprintf(&b, "TranslationKey=%s\n\n", c.TranslationKey)
 	b.WriteString("; Look for updates when the program starts (yes / no)\n")
 	fmt.Fprintf(&b, "UpdateAtStartup=%s\n", yesNo(c.UpdateAtStart))
+	b.WriteString("; Advanced: how the CSVs are turned into game tables - swadmin (the SWAdmin tool), builtin (built in),\n")
+	b.WriteString("; or check (do both, compare them and report differences; the SWAdmin result is used).\n")
+	fmt.Fprintf(&b, "Converter=%s\n", c.Converter)
 	return os.WriteFile(path, []byte(b.String()), 0o644)
 }
 

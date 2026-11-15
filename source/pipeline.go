@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"os"
@@ -310,24 +311,64 @@ func (r *Run) stepExtract() error {
 
 func (r *Run) stepConvert() error {
 	r.log.Step(5, totalSteps, "Applying translations")
-	res, err := r.tool(r.toolPath("SWAdmin", "SWAdmin.Cli.exe"),
-		[]string{"-csv_to_res", "-schema_file", r.schema, "-di", r.cfg.TLPath, "-do", r.resDir}, r.work, nil)
-	if err != nil {
-		return err
+	mode := r.cfg.Converter
+	if mode == "" {
+		mode = "swadmin"
 	}
-	shown := 0
-	for _, ln := range strings.Split(res.Out, "\n") {
-		l := strings.ToLower(ln)
-		if strings.Contains(l, "error") || strings.Contains(l, "exception") || strings.Contains(l, "fail") {
-			if shown < 10 {
-				r.log.Warn("SWAdmin: %s", strings.TrimSpace(ln))
+	var out string
+	var code int
+	var shown int
+	warn := func(s string) {
+		if shown < 10 {
+			r.log.Warn("%s", s)
+		}
+		shown++
+	}
+	var names []string
+	for n := range r.before {
+		names = append(names, n)
+	}
+	sort.Strings(names)
+
+	if mode == "builtin" {
+		done, problems, err := convertCSVDir(r.schema, r.cfg.TLPath, r.resDir, names)
+		if err != nil {
+			return err
+		}
+		for _, pr := range problems {
+			if strings.Contains(pr, "error") {
+				warn("Converter: " + pr)
+				code = 1
 			}
-			shown++
+		}
+		out = fmt.Sprintf("converted %d file(s)", len(done))
+		if shown > 0 {
+			out += "\n" + strings.Join(problems, "\n")
+		}
+	} else {
+		res, err := r.tool(r.toolPath("SWAdmin", "SWAdmin.Cli.exe"),
+			[]string{"-csv_to_res", "-schema_file", r.schema, "-di", r.cfg.TLPath, "-do", r.resDir}, r.work, nil)
+		if err != nil {
+			return err
+		}
+		out, code = res.Out, res.Code
+		for _, ln := range strings.Split(res.Out, "\n") {
+			l := strings.ToLower(ln)
+			if strings.Contains(l, "error") || strings.Contains(l, "exception") || strings.Contains(l, "fail") {
+				warn("SWAdmin: " + strings.TrimSpace(ln))
+			}
+		}
+		if code != 0 {
+			r.log.Warn("SWAdmin exited with code %d", code)
+		}
+		if mode == "check" {
+			r.crossCheck(names)
 		}
 	}
-	if res.Code != 0 {
-		r.log.Warn("SWAdmin exited with code %d", res.Code)
-	}
+	res := struct {
+		Out  string
+		Code int
+	}{out, code}
 
 	r.changed = nil
 	for n, old := range r.before {
@@ -641,4 +682,37 @@ func (r *Run) stepPublish() error {
 		r.log.OK("Copied to patcher: %s", patcherFile)
 	}
 	return nil
+}
+
+// crossCheck (Converter=check) converts again with the built-in code and compares every table with
+// what SWAdmin just wrote. The SWAdmin result is what gets used.
+func (r *Run) crossCheck(names []string) {
+	alt := filepath.Join(r.work, "res_builtin")
+	done, problems, err := convertCSVDir(r.schema, r.cfg.TLPath, alt, names)
+	if err != nil {
+		r.log.Warn("Cross-check could not run: %v", err)
+		return
+	}
+	same, diff := 0, 0
+	for _, n := range done {
+		a, e1 := os.ReadFile(filepath.Join(r.resDir, n))
+		b, e2 := os.ReadFile(filepath.Join(alt, n))
+		if e1 != nil || e2 != nil || !bytes.Equal(a, b) {
+			diff++
+			r.log.Warn("Cross-check: %s DIFFERS between SWAdmin and the built-in converter (%d vs %d bytes) - please send this log to Discord: ronata", n, len(a), len(b))
+		} else {
+			same++
+		}
+	}
+	for _, pr := range problems {
+		if strings.Contains(pr, "error") {
+			r.log.Warn("Cross-check: built-in converter: %s", pr)
+			diff++
+		}
+	}
+	if diff == 0 {
+		r.log.OK("Cross-check: all %d table(s) are identical to SWAdmin's result", same)
+	} else {
+		r.log.Warn("Cross-check: %d table(s) identical, %d with differences", same, diff)
+	}
 }
