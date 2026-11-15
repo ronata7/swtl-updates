@@ -35,7 +35,7 @@ SWTLUpdater.exe and swtlpublish.exe are written in Go and contain parts of the G
 These belong to their authors and are not hosted or redistributed in this repository or by online updates. A player zip handed out separately may contain them, unmodified, under their own terms:
 - SWAdmin tools - rockon (bundles Newtonsoft.Json by James Newton-King, MIT)
 - SW Res structs dumper - prozaks (bundles Zydis by zyantific)
-- 7-Zip - Igor Pavlov, https://www.7-zip.org
+- 7-Zip (7z.exe, 7z.dll) - Igor Pavlov. Used unmodified. 7-Zip is licensed under the GNU LGPL; its source code is at https://www.7-zip.org
 
 ## Credit for a replaced tool
 The XOR step of the data file (data12.v) used to be done with Xor by Luigi Auriemma (https://aluigi.org). It is now built into the updater (`xor.go`, independent code), and xor.exe is no longer needed or used. Thanks to the author.
