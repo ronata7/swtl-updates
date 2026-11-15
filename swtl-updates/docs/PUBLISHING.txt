@@ -1,0 +1,58 @@
+SW TL Updater - publishing updates (for ronata)               tool: swtlpublish.exe
+==============================================================================
+How online updates work
+  Players have SWTLUpdater.exe + a small SWTLUpdater.ini containing an update address and a public key.
+  When they start the program (or press 7) it downloads manifest.json + manifest.json.sig from your
+  update address, checks the signature with the public key, then downloads only the files that differ
+  (program, Tools, TL csv, README) and checks every file's size and SHA-256 against the signed list.
+  Nothing is installed unless everything checks out. Only these folders are ever touched:
+  SWTLUpdater.exe, README.txt, Tools\, TL csv\.   Settings, logs, backups and game files are never touched.
+
+Why not serve it straight from a PRIVATE repo?
+  A private repo needs a token, and a token inside a program that many people download can be extracted by
+  anyone. So keep your private repo as your workspace and publish only the finished update files to a
+  PUBLIC place (a public GitHub repo, GitHub Pages, or any web host). The signature means that even if
+  that public place were hacked, players' programs would reject anything you did not sign.
+
+One-time setup
+  1. Make the signing key (once!):          swtlpublish keygen -out keys
+       - swtl_update_PRIVATE.key  -> keep secret + BACK IT UP. Never upload it. If you lose it you cannot
+         publish updates to existing players anymore; if it leaks, anyone can publish "updates".
+       - swtl_update_public.txt   -> the public key (safe to share).
+  2. Create a PUBLIC GitHub repo for the files, e.g. swtl-updates. Your update address will be
+       https://raw.githubusercontent.com/<your-github-name>/swtl-updates/main/
+     (GitHub Pages works too: https://<your-github-name>.github.io/swtl-updates/ ). Note: raw.githubusercontent.com
+     can take a few minutes to show a new commit. GitHub limit: 100 MB per file.
+
+Every release
+  1. Make a folder (say  release\src ) laid out like the program folder:
+         SWTLUpdater.exe        <- the newest exe
+         README.txt
+         (no Tools folder - the tools belong to their authors and are NOT published; see note below)
+         TL csv\...             <- the newest translated .csv files
+  2. swtlpublish publish -src release\src -out release\site -key keys\swtl_update_PRIVATE.key -version 2.6.1 -notes "What's new text"
+       - ALWAYS use a higher -version than last time (players refuse to go back to an older version).
+       - The exe only updates itself when -version is higher than the exe's own version.
+       - Files that were in the previous release but are missing now are deleted on the players' PCs.
+  3. swtlpublish verify -out release\site -pub <public key text>        (optional self-check)
+  4. Upload the CONTENTS of release\site (manifest.json, manifest.json.sig, files\) to the root of the public repo.
+     That's it - players get it next time they start the program.
+
+First download for new players
+  swtlpublish pack -src release\src -url https://raw.githubusercontent.com/<you>/swtl-updates/main/ -pub <public key text> -zip SWTLUpdater_player.zip
+  Give people that zip. (They can even download just SWTLUpdater.exe + the small SWTLUpdater.ini made by "pack":
+  on first start the program fetches Tools, TL csv, etc. by itself.)
+
+Tools are not published (decided)
+  7z, xor, SWAdmin and the structs dumper belong to their authors, so they are left out of -src and out of the
+  public repo. Players put them in their own Tools folder; the program tells them exactly which files and where to
+  get them. The updater never touches files that are not in a release, so their Tools folder is safe.
+
+Translation files - read DISCLAIMER.md before publishing them
+  The csv files are translations of the game's text, i.e. derived from the owner's copyright. Publishing them is
+  the one part of this project where permission from the game's rights holders could matter. Safer practice: ask
+  for permission, keep the files English-only (no original text), non-commercial, no game files, and remove
+  promptly if asked. Consider keeping the csv files in a SEPARATE public repo so a takedown request cannot
+  affect the program.
+
+Players can turn it off: Settings > Update address > "-"  (or UpdateAtStartup=no / empty UpdateURL in the .ini).
