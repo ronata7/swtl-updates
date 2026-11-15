@@ -309,7 +309,7 @@ func (a *App) About() {
 	fmt.Println("    SWAdmin tools .............. rockon")
 	fmt.Println("    SW Res structs dumper ...... prozaks")
 	fmt.Println("    7-Zip (7z.exe, 7z.dll) ..... Igor Pavlov  -  7-zip.org")
-	fmt.Println("    Xor (xor.exe) .............. Luigi Auriemma  -  aluigi.org")
+	fmt.Println("    Xor step (built in now) .... first done with Xor by Luigi Auriemma  -  aluigi.org")
 	fmt.Println("    Libraries bundled in them .. Newtonsoft.Json (James Newton-King), Zydis (zyantific)")
 	fmt.Println("    Updater .................... ronata")
 	fmt.Println()
@@ -336,5 +336,4 @@ const toolsHelp = `
     Tools\SWAdmin\SWAdmin.Cli.exe, SWAdmin.Core.dll, Newtonsoft.Json.dll   - SWAdmin tools by rockon
     Tools\SW Res structs dumper.exe, .pdb and Zydis.dll                     - SW Res structs dumper by prozaks
     Tools\7z.exe and 7z.dll                                                - 7-Zip, from 7-zip.org
-    Tools\xor.exe                                                         - Xor by Luigi Auriemma, from aluigi.org
  Questions? Discord: ronata`

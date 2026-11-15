@@ -36,4 +36,6 @@ These belong to their authors and are not hosted or redistributed in this reposi
 - SWAdmin tools - rockon (bundles Newtonsoft.Json by James Newton-King, MIT)
 - SW Res structs dumper - prozaks (bundles Zydis by zyantific)
 - 7-Zip - Igor Pavlov, https://www.7-zip.org
-- Xor - Luigi Auriemma, https://aluigi.org
+
+## Credit for a replaced tool
+The XOR step of the data file (data12.v) used to be done with Xor by Luigi Auriemma (https://aluigi.org). It is now built into the updater (`xor.go`, independent code), and xor.exe is no longer needed or used. Thanks to the author.

@@ -102,7 +102,7 @@ func (r *Run) preflight() error {
 	if err := r.cfg.Validate(); err != nil {
 		return err
 	}
-	need := []string{"7z.exe", "7z.dll", "xor.exe", "SW Res structs dumper.exe", "SW Res structs dumper.pdb", "Zydis.dll"}
+	need := []string{"7z.exe", "7z.dll", "SW Res structs dumper.exe", "SW Res structs dumper.pdb", "Zydis.dll"}
 	var missing []string
 	for _, n := range need {
 		if !exists(r.toolPath(n)) {

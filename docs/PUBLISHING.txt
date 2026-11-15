@@ -38,7 +38,7 @@ Every release (three scripts, run from the command prompt in the publishing fold
   Files removed from a release are deleted on the players' PCs.
 
 Tools are not published (decided)
-  7z, xor, SWAdmin and the structs dumper belong to their authors. They are never put in a repo. 3_make_player_zip
+  7z, SWAdmin and the structs dumper belong to their authors. They are never put in a repo. 3_make_player_zip
   adds your Tools folder to the zip you hand out yourself - check each author's terms first. Players who get only
   the exe are told which files to put in Tools. The updater never touches files that are not in a release.
 
