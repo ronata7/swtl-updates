@@ -39,6 +39,8 @@ Every release
      That's it - players get it next time they start the program.
 
 First download for new players
+  This project's values:  URL = https://raw.githubusercontent.com/ronata7/swtl-updates/main/
+                          public key = 8BfBdwP3MjwllLlApryPtTCQQ51jB0S00S7z1RILTco=
   swtlpublish pack -src release\src -url https://raw.githubusercontent.com/<you>/swtl-updates/main/ -pub <public key text> -zip SWTLUpdater_player.zip
   Give people that zip. (They can even download just SWTLUpdater.exe + the small SWTLUpdater.ini made by "pack":
   on first start the program fetches Tools, TL csv, etc. by itself.)
