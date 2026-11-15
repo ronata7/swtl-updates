@@ -1,7 +1,7 @@
 {
-  "version": "2.6.3",
-  "released": "2026-11-15T12:06:32Z",
-  "notes": "First release",
+  "version": "2.7.0",
+  "released": "2026-11-15T12:16:30Z",
+  "notes": "Test update",
   "files": [
     {
       "path": "README.txt",
@@ -12,7 +12,7 @@
     {
       "path": "SWTLUpdater.exe",
       "size": 6766592,
-      "sha256": "81459ef3be80d931c78a0a33b7808d8fc063535d3f68b9c11aab1bf3a1e584ba",
+      "sha256": "b9583e090562d69d0994799a8cddf576195e450032f17069ac9eade0a7ac4e40",
       "kind": "app"
     },
     {
