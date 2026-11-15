@@ -1,18 +1,18 @@
 {
   "version": "2.8.1",
-  "released": "2026-11-15T16:50:58Z",
+  "released": "2026-11-15T17:32:02Z",
   "notes": "notes",
   "files": [
     {
       "path": "README.txt",
-      "size": 6324,
-      "sha256": "8af0af465b852568c331e962b786b28d5279a2c5dc87ab35505944c5fb532ae8",
+      "size": 7917,
+      "sha256": "0377c6ceb7534d162c5e83a0496926c913fcd130c5f1f8a9b43647c66f610585",
       "kind": "docs"
     },
     {
       "path": "SWTLUpdater.exe",
-      "size": 6770688,
-      "sha256": "29676d7586ab69adbf2e9efc7ec9cf765ed1f3b7faecb66d0e2b73dc664394dc",
+      "size": 6771200,
+      "sha256": "15315b4d031e08e6ada6e56941332ae209d04749c7ef13df870937d77878498c",
       "kind": "app"
     }
   ],
