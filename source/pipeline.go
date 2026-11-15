@@ -110,9 +110,11 @@ func (r *Run) preflight() error {
 			missing = append(missing, n)
 		}
 	}
-	for _, n := range []string{"SWAdmin.Cli.exe", "SWAdmin.Core.dll", "Newtonsoft.Json.dll"} {
-		if !exists(r.toolPath("SWAdmin", n)) {
-			missing = append(missing, "SWAdmin\\"+n)
+	if r.cfg.Converter != "builtin" {
+		for _, n := range []string{"SWAdmin.Cli.exe", "SWAdmin.Core.dll", "Newtonsoft.Json.dll"} {
+			if !exists(r.toolPath("SWAdmin", n)) {
+				missing = append(missing, "SWAdmin\\"+n)
+			}
 		}
 	}
 	if len(missing) > 0 {
@@ -152,7 +154,17 @@ func (r *Run) stepSchema() error {
 	r.log.Step(2, totalSteps, "Preparing table schema")
 	dll := filepath.Join(r.cfg.SWPath, "SoulWorker64.dll")
 	h := ""
-	for _, p := range []string{dll, r.toolPath("SW Res structs dumper.exe"), r.toolPath("SWAdmin", "SWAdmin.Cli.exe"), r.toolPath("SWAdmin", "SWAdmin.Core.dll")} {
+	files := []string{dll, r.toolPath("SW Res structs dumper.exe")}
+	mode := r.cfg.Converter
+	if mode != "builtin" {
+		files = append(files, r.toolPath("SWAdmin", "SWAdmin.Cli.exe"), r.toolPath("SWAdmin", "SWAdmin.Core.dll"))
+	} else {
+		h = "builtin-schema-1"
+	}
+	if mode == "check" {
+		h += "check-1" // first run in check mode dumps once more so both schema builders can be compared
+	}
+	for _, p := range files {
 		x, err := hashFile(p)
 		if err != nil {
 			return err
@@ -186,6 +198,7 @@ func (r *Run) stepSchema() error {
 	}
 	ents, _ := os.ReadDir(dump)
 	n := 0
+	var dumpDirs []string
 	for _, e := range ents {
 		if !e.IsDir() {
 			continue
@@ -194,6 +207,11 @@ func (r *Run) stepSchema() error {
 		cs, _ := filepath.Glob(filepath.Join(d, "*.cs"))
 		if len(cs) == 0 {
 			return fmt.Errorf("dumper folder %s has no .cs files - game version may be unsupported by the dumper", e.Name())
+		}
+		dumpDirs = append(dumpDirs, d)
+		if mode == "builtin" {
+			n++
+			continue
 		}
 		// SWAdmin merges into the existing schema file, so every folder is applied in turn.
 		res, err := r.tool(r.toolPath("SWAdmin", "SWAdmin.Cli.exe"), []string{"-dumper_to_schema", "-di", d, "-fo", r.schema}, r.work, nil)
@@ -204,6 +222,30 @@ func (r *Run) stepSchema() error {
 			r.log.Warn("SWAdmin schema step exited with code %d for %s", res.Code, e.Name())
 		}
 		n++
+	}
+	if mode == "builtin" || mode == "check" {
+		es, err := dumperToSchema(dumpDirs...)
+		if err != nil {
+			if mode == "builtin" {
+				return fmt.Errorf("could not build the schema: %v", err)
+			}
+			r.log.Warn("Cross-check: built-in schema builder failed: %v", err)
+		} else {
+			target := r.schema
+			if mode == "check" {
+				target = filepath.Join(r.work, "schema_builtin.json")
+			}
+			if err := writeSchema(target, es); err != nil {
+				return err
+			}
+			if mode == "check" {
+				if ok, why := sameSchema(target, r.schema); ok {
+					r.log.OK("Cross-check: built-in schema is identical to SWAdmin's (%d tables)", len(es))
+				} else {
+					r.log.Warn("Cross-check: built-in schema DIFFERS from SWAdmin's: %s - please send this log to Discord: ronata", why)
+				}
+			}
+		}
 	}
 	if n == 0 {
 		return errors.New("the structs dumper produced no output - check that the game version is supported")

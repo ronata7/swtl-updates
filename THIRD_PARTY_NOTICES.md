@@ -40,4 +40,4 @@ These belong to their authors and are not hosted or redistributed in this reposi
 ## Credit for a replaced tool
 The XOR step of the data file (data12.v) used to be done with Xor by Luigi Auriemma (https://aluigi.org). It is now built into the updater (`xor.go`, independent code), and xor.exe is no longer needed or used. Thanks to the author.
 
-The CSV-to-table conversion (`resconv.go`) can also be done by the updater itself (setting `Converter`). It is independent code written from the table format as seen in sample files, and it is checked against SWAdmin's output byte for byte. SWAdmin is still credited and still used for the schema step.
+The schema step (`schemagen.go`) and the CSV-to-table conversion (`resconv.go`) can also be done by the updater itself (setting `Converter`). They are independent code written from the file formats as seen in sample files, and are checked against SWAdmin's output (the schema for all 356 tables; the tables byte for byte on test files). SWAdmin remains credited and is still the default until this has been confirmed on real data.
