@@ -74,6 +74,9 @@ func keygen(args []string) {
 	if err != nil {
 		die("%v", err)
 	}
+	if err := os.MkdirAll(*out, 0o755); err != nil {
+		die("%v", err)
+	}
 	privPath := filepath.Join(*out, "swtl_update_PRIVATE.key")
 	if _, err := os.Stat(privPath); err == nil {
 		die("%s already exists - refusing to overwrite your existing key", privPath)
@@ -218,6 +221,7 @@ func publish(args []string) {
 	}
 	mb, _ := json.MarshalIndent(m, "", "  ")
 	sig := ed25519.Sign(priv, mb)
+	_ = os.MkdirAll(*out, 0o755)
 	if err := os.WriteFile(filepath.Join(*out, "manifest.json"), mb, 0o644); err != nil {
 		die("%v", err)
 	}
