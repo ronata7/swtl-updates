@@ -1,0 +1,303 @@
+Unkown1	Unkown2	Unkown3	
+15	Stamina Recovery	Amount of stamina recovered per 1 second.	
+18	Movement Speed	Character's Movement Speed (Max 200%)<br>If Over 150%: Decrease Correction is applied to the Increase in Movement Speed.<br>Movement Speed Before Correction: {0}%	
+19	Attack Speed	Character's Attack Speed (Max 250%)	
+21	Attack Damage	The minimum and maximum damage you deal to enemies.	
+24	Defense	Reduces damage taken from enemy attacks according to the defense rate.<br>Defense rate: {0}% reduction at the same level<br>The defense rate differs depending on the level difference.	
+26	Accuracy	Reduces the chance of landing a miss hit.	
+28	Damage on Missed Attack	The damage ratio applied when an attack misses.	
+29	Critical Hit	The critical rate and the additional damage applied on a critical hit. (Based on max damage)	
+31	Critical Resistance	Reduces the chance of getting critical damage.	
+35	Critical Damage	The additional damage that you inflict damage with a critical hit.	
+38	Damage Reduction	Reduces the damage from enemy attacks.	
+43	Evasion	Increases the chance of evading enemy attacks.	
+47	Enemy Defense Penetration	Ignores the enemy's defense rate by the correspondent value.	
+49	Burn Resistance	Reduces the chance of being burnt.	
+50	Poison Resistance	Reduces the chance of being poisoned.	
+51	Electric Shock Resistance	Reduces the chance of being shocked	
+52	Bleeding Resistance	Reduces the chance of bleeding.	
+53	Stun Resistance	Reduces the chance of being stunned.	
+54	Paralysis Resistance	Reduces the chance of being paralyzed.	
+11000	Greet	Greets someone.	
+11001	Laugh	Laughs.	
+11002	Sad	Looks sad.	
+11003	Cheer	Cheers someone on.	
+11004	Sit	Sits down on the spot.	
+11005	Dance	Dances.	
+11006	Taunt	Taunts.	
+11007	Brag	Brags.	
+11008	Idol	Performs an idol dance.	
+11009	Maid	Practices serving.	
+11010	Butler	Practices serving.	
+11011	Swimsuit	Plays with a beach ball.	
+11012	Sun Lounger	Relaxes on a sun lounger.	
+11013	School Swimsuit	Strikes a gesture.	
+11014	Bunny	Strikes a pose.	
+11015	Christmas	Merry Christmas.	
+11016	Wa Spirit	Cheerfully expresses the Wa spirit.	
+11017	Hanbok	Strikes a pose.	
+11018	Chocolatia	Chocolate... here you go.	
+11019	Sexy Animal-Ear Maid 1	Strikes the first bewitching pose.	
+11020	Sexy Animal-Ear Maid 2	Strikes the second bewitching pose.	
+11021	White Day	Gives a return gift for the chocolate.	
+11022	Steampunk	Overtechnology!!	
+20000	Inventory	Displays the inventory window.<br>You can check and use the items you carry.	
+20001	Equipment	Displays the equipment window.<br>You can check and change your equipment.	
+20003	Skills	Displays the skill window.<br>You can register skills and gestures<br>in the quick slots.	
+20008	Quests	Displays the quest window.<br>You can check quests in progress and your conversation history.	
+20016	Status	Displays the status window.<br>You can check your character's stats<br>and set your title and profile.	
+20023	Community	Displays the community window.<br>You can check friends, Guild members, and block-list information.	
+20034	Memorial	Displays the memorial window.<br>You can check the memorial information you hold<br>and the memorial items you have collected.	
+20036	System	Displays the system menu.	
+20038	Progress Info	Displays the progress info window.<br>You can check records and occupancy rate info<br>and receive rewards.	
+20045	Search Party/Force	Displays the Party/Force search window.<br>You can search for party or force members.	
+20053	Supporters	Displays the Supporter window.<br>You can set up Supporter equipment and summon or release Supporters.	
+20055	Guild	Displays the Guild window.	
+20064	Market	Displays the Market window.	
+20065	Ranking	Displays the ranking window.	
+20080	Vehicles	Opens or closes the vehicle window.	
+20100	My Room	Moves to My Room.	
+21000	Experience Points (EXP)	You receive {0} EXP.	
+21001	Zenny	You receive {0} Zenny.	
+21002	Battle Points (BP)	You receive {0} BP.	
+21003	Ether	You receive {0} Ether.	
+21004	Title	You receive the title [{0}] [{1}].	
+30000	Registering and Using Potions	Some consumable items can be registered<br>in the dedicated quick slot and used.	
+30001	Use Mini-map/World Map	From the mini-map and world map,<br>you can check various information such as quests.	
+30002	Quest UI	You can check the details of quests in progress<br>from the Quest Journal.	
+30003	UI Mode	If you switch to Mode B with the [Alt] key,<br>you can check various information with the mouse.	
+30004	Gathering Ether	Ether obtained by defeating monsters<br>is an important resource for upgrades and evolution.	
+30005	Obtaining Soul Vapor	Soul Vapor obtained from monsters and objects<br>is used as a resource for Break Skills.<br>(Usable after completing a quest)	
+30006	Combos	Chaining combos earns additional bonuses and effects.	
+30007	Gathering Items	There are Normal Cubes and Rare-or-higher Cubes,<br>and you can obtain several items from a single Cube.	
+30008	Break Skill	Obtain Soul Vapor to fill the Break gauge,<br>and you can use Break Skills.	
+30009	Matching a Party/Party Play	Form a party and enter a Maze,<br>and extra bonuses let you progress through battles faster.	
+30010	Using Skill Points	Use SP to raise skill mastery<br>or learn traits.	
+30011	Shop	At shops, you can sell items<br>or buy the items on sale.	
+30012	Mail	You can send mail to friends<br>and attach items to it.	
+30013	Bank	By using the bank, you can store<br>items and Zenny from your inventory.	
+30014	Crafting	Gather blueprints and materials to produce items.	
+30015	Upgrade	Use upgrade materials and Ether<br>to upgrade your equipment.	
+30016	Dismantle	Materials can be obtained by dismantling unneeded items.	
+30017	Special Missions	Daily Missions, which occur once a day,<br>let you earn S Coins that can be used at the S Coin Shop.	
+30018	Hidden Event	Hidden Events occasionally occur in certain sections of a Maze. Meet the conditions to earn additional rewards.	
+30019	Records	Depending on the records you have achieved,<br>you can earn rewards from the Progress Info window.	
+30020	Memorial	Some Mazes contain Memorials that can be discovered by re-entering after clearing them. When you collect a Memorial theme, you can earn rewards from the Progress Info window.	
+30021	Occupancy Rate	Your occupancy rate rises every time you clear a Maze.<br>The occupancy rates of a town's Mazes<br>affect that town's occupancy rate.	
+30022	Title	Combine Titles to express your own individuality.	
+30023	Fatigue	Fatigue decreases depending on the Maze's difficulty and level,<br>and you cannot enter a Maze if you don't have enough Fatigue.	
+30024	Help	Click the help icon<br>to see help suited to your progress.	
+30025	Customer Grade	Functional NPCs assign you a customer grade based on how much you use them. The higher your customer grade, the more bonuses you receive.	
+30026	Supporters	Various companions join as the story progresses.<br>Companions join the battle and support the player.	
+30027	My Room	You are provided with a room just for SoulWorkers.<br>You can enjoy various communities in a separately provided space.	
+30028	Guild	Found a Guild and make use of even more community features.	
+30029	Durability	Items have durability, and when durability is low<br>they can no longer perform at full strength.	
+30030	Sub Weapon	Equipping a sub weapon increases your stats<br>and can add actions.	
+30031	Artifacts	Collect and equip various artifacts<br>to improve your character's abilities.	
+30032	Familiar	Some Soul Weapons rarely have sockets. Equipping a Familiar increases their effect.	
+30033	Akashic Item Crafting	You can combine A.R Cards with A.R Cards<br>to craft an A.R Card of the next grade.	
+30034	Obtaining Akashic	When you obtain an A.R Card by using it, it is registered.	
+30035	Registering and Using Akashic	Registered A.R Cards can be placed in quick slots<br>and used in battle<br>or to receive beneficial effects.	
+30036	Endgame Content	The final content	
+30037	Item Records	Item Record completion rate: {0}%	
+30038	Maze Records	Maze Record completion rate: {0}%	
+30039	Battle Records	Battle Record completion rate: {0}%	
+30040	Quest Records	Quest Record completion rate: {0}%	
+30041	Play Records	Play Record completion rate: {0}%	
+30042	Community Records	Community Record completion rate: {0}%	
+30043	Using Supporters	Supporters can be used by pressing the [F3] key in a Maze or by summoning them from the Supporter window with the [Y] key.	
+30044	Raid Records	Raid Record completion rate: {0}%	
+21005	Zenny	The currency used in in-game shops and the Market.<br> Earned from defeating monsters and various rewards.	
+21006	Ether	The currency used to upgrade and refine items.<br> Earned from defeating monsters and from dismantling.	
+21007	B.P	The currency used to buy items at the B.P Shop. Earned from defeating powerful monsters and various rewards.	
+21008	Y.P	The currency used to buy items at the Item Mall. Earned by charging Y.P.	
+11024	Reindeer Transformation	Transforms into a reindeer.	
+11025	Another Wa Spirit	Cheerfully expresses another Wa spirit.	
+11026	Hanbok	Strikes a pose.	
+11027	Skating	Shows off skating.	
+11028	Demon Exorcism	Chants a demon-exorcising spell.	
+11029	Spinning Gruton	Chants Spinning Gruton.	
+11030	Agent	Strikes an agent suit pose.	
+11031	Sea Breeze 1	Strikes the Sea Breeze 1 pose.	
+11032	Sea Breeze 2	Strikes the Sea Breeze 2 pose.	
+11033	Childlike Heart	Returns to childhood innocence.	
+11034	Hero	Strikes a hero pose.	
+11035	Military Band	Strikes a military band pose.	
+11036	Holy Judgment	Strikes a Holy Judgment pose.	
+11037	Blooming Dress	Strikes a Blooming Dress pose.	
+11038	Paladin	Strikes a paladin pose.	
+1000	Level EXP	{0} / {1} ({2}%)	
+1001	Grade EXP	{0}<br>{1} / {2} ({3}%)	
+1002	Grade	{0}	
+10	HP	Your Health Points (HP). You get incapacitated when your HP reaches 0.	
+14	Stamina	Consumed when you evade or use skills.	
+103	Extra Damage: Standard	An additional damage rate against standard type monsters.	
+104	Extra Damage: Boss/Named	An additional damage rate against Boss and Named type monsters.	
+100	Cooldown Reduction	The rate at which skill cooldowns are reduced after using a skill.	
+11039	Animal Pajamas	Imitates an animal.	
+11040	Servant in Café	Strikes a Servant in Café pose.	
+11041	Midsummer Sailor	Strikes a Midsummer Sailor pose.	
+11044	Enemy Avatar	Strikes an Enemy Avatar pose.	
+11045	Cat Costume	Imitates a cat.	
+11048	Nightmare	Strikes a Nightmare gesture.	
+21023	Mileage	A currency provided when transmitting A.R Cards. Items at the Mileage Shop can be purchased with it.	
+11042	Desire Worker	Strikes a Desire Worker pose.	
+11043	Desire Awakening	Strikes a Desire Awakening pose.	
+11050	White Sand	Strikes a White Sand beach pose.	
+11051	Romance and Blossom	Strikes a Romance and Blossom pose.	
+21030	Pass Point	Points required to receive Soul Pass rewards.	
+11053	Milk Cow	Strikes a Milk Cow pose.	
+30061	Auto Reload	If you lack the SG to use a Basic Attack, entering the Basic Attack input again automatically uses the [Reload] skill.	
+11052	Crimson Demons' Introduction	Strikes the Crimson Demon Clan introduction pose.	
+11054	Premium Idol	Strikes a Premium Idol pose.	
+11055	Demonic Frame	Strikes a Demonic Frame pose.	
+11056	Sunny Day Vacation	Strikes a Sunny Day Vacation pose.	
+30062	Expanded Field of View	Field of view expansion is available in some raids and world bosses. The adjusted field of view is saved per Maze. If "Do not use" is selected, the default field of view is set.	
+30063	Consecutive Skill Aid Function	If you keep clicking at a steady pace, consecutive attacks are applied at the maximum speed based on your Attack Speed.	
+72001	Haru Hello	/hello, /hi, /sup	
+72002	Haru Sorry	/sorry, /apologies, /mybad	
+72003	Haru Threat	/threat	
+72004	Erwin Bored	/bored, /imbored	
+72005	Erwin Great	/great, /thumbsup	
+72006	Erwin Sounds Good	/good	
+72007	Lily Thanks	/thanks, /thnx, /ty	
+72008	Lily Hmph	/hmph, /pissed	
+72009	Lily Yell	/what	
+72010	Jin Leave It to Me	/backmeup, /backup	
+72011	Jin Fall	/thud	
+72012	Jin Awoo!	/awoo	
+72013	Stella Skippy	/lala	
+72014	Stella Cry	/boohoo, /TT	
+72015	Stella Hungry	/hungry	
+72016	Iris Cheese~	/cheese, /smile	
+72017	Iris Come Here	/comehere	
+72018	Iris You Kidding?	/youkiddingme	
+72019	Gruton Heart	/grutonheart, /grutonlove	
+72020	Gruton Hi	/grutonhi, /grutonhello	
+72021	Gruton Cry	/grutonwah, /grutonbah	
+72022	Gruton Dunno	/grutonidk, /gruton?	
+72023	Gruton Haha	/grutonlaugh, /grutonhaha	
+72024	Gruton Byebye	/grutonbye, /grutonseeya	
+72025	Chii Ooh	/chiisparkle, /chiiooh	
+72026	Chii Mleh	/chiimleh, /chiilick	
+72027	Chii Sleepy	/chiisleepy, /chiizz	
+72028	Chii Scared	/chiishiver, /chiiscared	
+72029	Chii Excited	/chiibox, /chiiex	
+72030	Ephnel Bamboo Spear	/ephnelspear, /ephnelbamboo	
+72031	Ephnel Munch	/ephnelmunch	
+72032	Ephnel Angry	/ephnelangry, /ephnelgrr	
+72033	Ephnel Pfft	/ephnelsmirk, /ephnelpfft	
+72034	Ephnel Wink	/ephnelwink	
+72035	Nabi Silent	/nabiuhm, /nabiloading	
+72036	Nabi Shy	/nabishy	
+72037	Nabi Excited	/nabiex, /nabilaugh, /nabihaha	
+72038	Nabi Oh, Right	/nabiohright	
+72039	Nabi Cold	/nabibrr	
+72060	PLUS Exclusive 01	/SoulWorkerPLUS01, /PLUS01	
+72061	PLUS Exclusive 02	/SoulWorkerPLUS02, /PLUS02	
+72062	PLUS Exclusive 03	/SoulWorkerPLUS03, /PLUS03	
+72063	PLUS Exclusive 04	/SoulWorkerPLUS04, /PLUS04	
+72064	PLUS Exclusive 05	/SoulWorkerPLUS05, /PLUS05	
+72088	Chloe Emergency	/chloesos, /chloeohno	
+72089	Chloe Tired	/chloetired, /chloeburned	
+72090	Chloe Calm	/chloecalm, /chloecalmdown	
+72091	Dhana Yes	/dhanahappy, /dhanayes	
+72092	Dhana No	/dhanasad, /dhanano	
+72093	Dhana Smirk	/dhanasmirk, /dhanalol	
+72094	Dhana Cry	/dhanacry, /dhanaphooey	
+72095	Dhana Scissoring	/dhanascissors, /dhanacut	
+72096	Reive Heart	/reiveheart, /reiveily	
+72097	Reive Experiment	/reiveexperiment, /reivetest	
+72098	Reive Help	/reivehelp, /reiverun	
+72099	Yorhaka Lazing	/yorlaze, /yorlazing	
+72100	Yorhaka Rawr	/yorawr, /yorscary	
+72101	Yorhaka Huh?	/yorhuh, /yor?	
+72070	Lily Yell	/lilyyell	
+72071	Lily Elegant	/lilyelegant, /lilysoph	
+72072	Lovely Lily	/lilylovely, /lovelylily	
+72073	Rich Lily	/lilyrich	
+72074	Lily Shook	/lilyshook, /lilysweat	
+72075	Jin Cheer	/jincheer, /jinwoohoo	
+72076	Jin Help?	/jinhelp?, /jinhelp	
+72077	Jin Mistake	/jinmistake, /jinsorry	
+72078	Jin Me Me	/jinme, /jinhandup	
+72079	Jin??	/jin??, /jinidk	
+72080	Iris Cute	/iriscute, /irisgoogoo	
+72081	Iris Ticked	/irisphooey, /irishmph	
+72082	Iris Confident	/irisconfident, /irisahem	
+72083	Iris Sorry	/irissorry, /irismybad	
+72084	Iris Shake	/irisshake, /irisangry	
+72085	Rosca Nom Nom	/roscanomnom, /roscachompchomp	
+72086	Rosca Sleepy	/roscasleepy, /roscagoodnight	
+72087	Rosca Hug	/roscahug, /roscaspecial	
+72040	Haru Smile	/harusmile, /haruhehe	
+72041	Haru Hello There	/harugreet, /haruhello	
+72042	Haru Disappointed	/harudroop, /harudisappointed	
+72043	Haru Bashful	/harublush	
+72044	Haru Thanks	/haruthanks, /haruthankyou	
+72045	Erwin Wink	/erwinwink, /erwinahem	
+72046	Erwin Nice	/erwinnice, /erwinthumbsup	
+72047	Erwin Smile	/erwinsmile, /erwinhaha	
+72048	Erwin Popcorn	/erwinpopcorn, /erwinwatch	
+72049	Erwin Heart	/erwinheart, /erwinlove	
+72050	Stella Goodnight	/stellagoodnight	
+72051	Stella Waah	/stellacry, /stellawaah	
+72052	Stella Pout	/stellapout, /stellamm	
+72053	Stella Hug	/stellacuddle, /stellahug, /stellahugme	
+72054	Stella Yay	/stellayay	
+1004	Multiple-type	Soul Mate Type: [Multiple-type]	
+1005	Human-type	Soul Mate Type: [Human-type]	
+1006	Animal-type	Soul Mate Type: [Animal-type]	
+1007	Flying-type	Soul Mate Type: [Flying-type]	
+1008	Agile-type	Soul Mate Type: [Agile-type]	
+1009	Psychic-type	Soul Mate Type: [Psychic-type]	
+1010	Support-type	Soul Mate Type: [Support-type]	
+1011	Fusion-type	Soul Mate Type: [Fusion-type]	
+3000	Spirit EXP Up	Clearing this Maze raises the EXP of your equipped Spirit.<br>*If you have used all valid entries, no growth EXP is gained.	
+2000	Additional Rewards	Extra reward drops occur because your party has a New/Returning User.	
+2001	New User	Clear certain Mazes in a party with this user to earn extra rewards.	
+2002	Returning User	Clear certain Mazes in a party with this user to earn extra rewards.	
+2003	New/Returning Party	Because your party has a New/Returning User, you earn extra rewards when you clear certain Mazes.	
+11057	Enemy Quartet	Strikes the Foreigner Quartet pose.	
+11058	Lord of Frost	Strikes the Lord of Frost pose.	
+11059	Snowflake Fancy	Strikes the Snowflake Fancy pose.	
+21032	How to Participate in the Event	▶ Clear the Hero Maze to obtain event materials	
+21033	How to Participate in the Event	1. Clear Daily Missions to obtain event items<br>2. Use the event items to obtain event crafting materials	
+21034	How to Participate in the Event	1. Clear Daily Missions to obtain event materials<br>2. Click the [Event] icon in the bottom UI<br>3. Play the roulette game	
+21035	How to Participate in the Event	▶ Clear Daily Missions to obtain event materials	
+21036	How to Participate in the Event	1. Buy the '[EV] Soul Jumper Warp Orb Package' from the Gruton Shop<br>2. Use the selection box to choose the Warp Orb you want<br>3. Use the Warp Orb to move to the Maze<br>4. Clear the Maze to obtain event materials	
+21037	How to Participate in the Event	1. Buy a Warp Orb from the Gruton Shop\n2. Use the Warp Orb to move to the event Maze\n3. Clear the Maze to obtain event materials	
+21038	How to Participate in the Event	1. Buy a Warp Orb from the Gruton Shop\n2. Use the Warp Orb to move to the event Maze\n3. Clear the Maze to obtain event materials	
+21039	How to Participate in the Event	1. Buy a Warp Orb from the Gruton Shop\n2. Use the Warp Orb to move to the event Maze\n3. Clear the Maze to obtain event materials	
+21040	How to Participate in the Event	1. Buy a Warp Orb from the Gruton Shop\n2. Use the Warp Orb to move to the event Maze\n3. Clear the Maze to obtain event materials	
+21041	How to Participate in the Event	1. Buy a Warp Orb from the Gruton Shop\n2. Use the Warp Orb to move to the event Maze\n3. Clear the Maze to obtain event materials	
+4001	Hall of Flames	Name: No Witness Info<br><br>Unlock Condition<br>- Defeat Flemma<br>- Defeat Relfenne	
+4002	Desperate Yearning	Name: No Witness Info<br><br>Unlock Condition<br>- Defeat Flemma<br>- Defeat Relfenne	
+4003	Canine Preyground	Name: Gale<br><br>Unlock Condition<br>- Defeat Flemma<br>- Defeat Relfenne	
+4004	Hall of Flames	Name: Flemma<br>Danger: SS<br><br>Remarks<br>He has already died once but was revived by Vista. He appears to have lost most of his past power and is presumed to be making up for it with Soul Junk.	
+4005	Scarlet Madness	Name: Relfenne<br>Danger: S<br><br>Remarks<br>She appears to have gained an unknown power after being subjected to various experiments by Vista. She shows a fanatical obsession with a certain being.	
+4006	Howling Fang	Name: Gale<br>Danger: S<br><br>Remarks<br>Vista's test subjects. Presumed to number quite a few individuals.<br><br>Clear Effect<br>[All Set] Buff applied in the [Evolving Habitation] Maze	
+4007	Evolving Habitation	Name: Vista(?)<br>Danger: ???<br><br>Remarks<br>After injecting a potion she developed herself, she has become a giant tree. What she looks like inside has not been confirmed.	
+4008	Hall of Flames	Name: No Witness Info<br>Danger: ?<br><br>Remarks<br>An unknown energy wavelength has been detected. Further details needed.<br><br>Clear Effect<br>Removes the beneficial buffs of the [Evolving Habitation] Maze boss	
+4009	Scarlet Madness	Name: No Witness Info<br>Danger: ?<br><br>Remarks<br>An unknown energy wavelength has been detected. Further details needed.<br><br>Clear Effect<br>[Force Unleashed] Buff applied in the [Evolving Habitation] Maze	
+4010	Evolving Habitation	Name: Vista(?)<br>Danger: ???<br><br>Remarks<br>After injecting a potion she developed herself, she has become a giant tree. What she looks like inside has not been confirmed.	
+11066	Ghost Sanctuary	Strikes the Ghost Sanctuary gesture.	
+11063	Romance of the Sea	Strikes the Romance of the Sea gesture.	
+22	Party Member Effect Display	You can adjust the transparency of skill effects for party members excluding yourself.	
+23	Personal Effect Display	You can adjust the transparency of your own skill effects.	
+11069	Chuseok Hanbok	Strikes the Chuseok Hanbok pose.	
+11071	Advancing Helix	Advancing Helix Level Requirement: Lv. 79 or Higher.	
+11070	Early Morning Whisper	Strikes the Early Morning Whisper pose.	
+11067	School Band	Strikes a School Band gesture.	
+11068	Rock Band	Strikes a Rock Band gesture.	
+11080	Last Origin LRL	Strikes the Last Origin LRL pose.	
+11081	Last Origin Blind Princess	Strikes the Last Origin Blind Princess pose.	
+11082	Last Origin Black Lilith	Strikes the Last Origin Black Lilith pose.	
+11083	Last Origin: May of Doom	Strikes the Last Origin: May of Doom pose.	
+11084	Last Origin: Eternity	Strikes the Last Origin: Eternity pose.	
+11085	Last Origin: Rampalion	Strikes the Last Origin: Rampalion pose.	
+11086	Last Origin: Rampalion 2	Strikes the Last Origin: Rampalion 2 pose.	
+11087	Last Origin Vargr	Strikes the Last Origin Vargr pose.	
+11088	Last Origin Constanze S2	Strikes the Last Origin Constanze S2 pose.	
+11089	Last Origin Fenrir	Strikes the Last Origin Fenrir pose.	
+11090	Last Origin White Rabbit	Strikes the Last Origin White Rabbit pose.	

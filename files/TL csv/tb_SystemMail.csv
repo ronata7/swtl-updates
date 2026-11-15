@@ -1,0 +1,176 @@
+Unkown1	Unkown2	Unkown3	Unkown4	Unkown5	Unkown6	Unkown7	
+1	1	1002	Yomi	[Customer Grade Up] Yomi	Thank you for always visiting.<br>As your customer grade rises, you'll be able to buy higher-quality items, so please use my shop often.	Icon/Mail/SendImage_Systemmail01	
+2	1	1001	Zyte	[Customer Grade Up] Zyte	Thanks as always!<br>Since your customer grade went up, I put in a bit of extra effort<br>and stocked higher-quality items. Please keep coming back!	Icon/Mail/SendImage_Systemmail02	
+3	1	1004	Trisha	[Customer Grade Up] Trisha	You've been using us that much? I'm so happy.<br>Your customer grade went up too, so I'll give you all sorts of service!<br>Looking forward to working with you!	Icon/Mail/SendImage_Systemmail03	
+4	1	1003	Janice	[Customer Grade Up] Janice	Looks like your customer grade went up. Not bad.<br>I'll make better stuff than before. But you're supplying the materials, got it?<br>Heh... well, look forward to it.	Icon/Mail/SendImage_Systemmail04	
+5	2	1	Chloe	[Market] Purchase Complete Notice	A thank-you message for your purchase of {0} has arrived from the [Market]. The purchased item is being sent via HEMS, so please check the mail attachment.	Icon/Mail/SendImage_System	
+6	2	2	Chloe	[Market] Sale Complete Notice	It looks like the item you listed on the [Market] has been [Sold]. {0} x {1} sold, and {2} Zenny, after deducting the fee, is being sent to you.	Icon/Mail/SendImage_System	
+7	2	3	Chloe	[Market] Listing Cancellation Notice	Your [Item Listing Cancellation] on the [Market] is complete.<br>Your listed items are being sent, so please check the mail attachment.	Icon/Mail/SendImage_System	
+8	3	1	Chloe	[Item Mall] Purchase Complete Notice	Notice of a completed item purchase from the [Item Mall]. Because your inventory has too few empty slots, the purchase is being sent via HEMS. Please check the mail attachment.	Icon/Mail/SendImage_System	
+9	4	1	Chloe	[System] Item Supply Notice	Thank you for your efforts as a SoulWorker! We have prepared a special gift as a token of our gratitude,<br>so please check the attachment.	Icon/Mail/SendImage_System	
+10	4	2	Chloe	[System] Item Restoration Notice	We apologize. We will do our best to prevent this from happening again. The affected item is being sent to you, so please check the attachment.	Icon/Mail/SendImage_System	
+11	5	1	Chloe	[System] Maze Clear Reward	Due to [insufficient inventory space], we are holding your reward for your last completed mission. Please free up inventory space and receive the attachment.	Icon/Mail/SendImage_System	
+12	5	2	Chloe	Soul Express Mission Completion Reward	Your [Soul Express] completion reward has arrived.<br>Please free up inventory space before receiving the attached items.	Icon/Mail/SendImage_System	
+13	5	3	Chloe	[System] Hidden Event Completion Reward	Due to [insufficient inventory space], we are holding your [Hidden Event] completion reward. Please free up inventory space and receive the attachment.	Icon/Mail/SendImage_System	
+14	4	3	Chloe	[System] Item Restoration Notice	We apologize. We will do our best to prevent this from happening again. The affected item is being sent to you, so please check the attachment.	Icon/Mail/SendImage_System	
+15	1	1005	Ajin	[Customer Grade Up] Ajin	Thank you for always using Skycraft.<br>As your customer grade rises, we will strive to provide an even safer and more comfortable environment. We look forward to continuing to serve you.	Icon/Mail/SendImage_Systemmail05	
+16	2	4	Chloe	[Market] Listing Period Expired Notice	Notice from the [Market]: your [Listing Period] has expired.<br>The items whose listing period expired are being sent to you, so please check the attachment.	Icon/Mail/SendImage_System	
+17	3	2	Chloe	[Item Mall] Gift Notice	Notice from the [Item Mall]: a gift from {0} has arrived.<br>It is being sent via HEMS, so please check the mail attachment.	Icon/Mail/SendImage_System	
+18	2	5	Chloe	[Market] Sale Complete Notice	{0}x{1} you listed on the [Market] has been [Sold].<br>{2} Zenny, the amount from selling the item, is being sent to you.<br>No fee was charged because you used a fee-exemption ticket.	Icon/Mail/SendImage_System	
+19	3	3	Chloe	[Item] Time-Limited Item Expiration Notice	"{0}" has been deleted because its period of use has ended.	Icon/Mail/SendImage_System	
+20	3	4	Chloe	[Item] Time-Limited Item Return Notice	As requested, {0} has been returned. No compensation will be given for returned items.	Icon/Mail/SendImage_System	
+21	4	4	Chloe	[Item] Coupon Reward	We are sending the item you received with your registered coupon.<br>Please check the attachment.	Icon/Mail/SendImage_System	
+22	6	1	Chloe	[Item] New User Reward	Welcome to the world of SoulWorker! We have prepared a gift to welcome you!<br>Please check the attachment.	Icon/Mail/SendImage_System	
+23	6	2	Chloe	[Item] Returning User Reward	Welcome back! Thank you for coming back! We have prepared a gift to welcome you!<br>Please check the attachment.	Icon/Mail/SendImage_System	
+24	7	1	Chloe	[Item] Lv. 2 Achievement Reward	Congratulations on reaching Lv. 2!	Icon/Mail/SendImage_System	
+25	7	2	Chloe	[Item] Lv. 3 Achievement Reward	Congratulations on reaching Lv. 3!	Icon/Mail/SendImage_System	
+26	7	3	Chloe	[Item] Lv. 4 Achievement Reward	Congratulations on reaching Lv. 4!	Icon/Mail/SendImage_System	
+27	7	4	Chloe	[Item] Lv. 5 Achievement Reward	Congratulations on reaching Lv. 5!	Icon/Mail/SendImage_System	
+28	7	5	Chloe	[Item] Lv. 6 Achievement Reward	Congratulations on reaching Lv. 6!	Icon/Mail/SendImage_System	
+29	7	6	Chloe	[Item] Lv. 7 Achievement Reward	Congratulations on reaching Lv. 7!	Icon/Mail/SendImage_System	
+30	7	7	Chloe	[Item] Lv. 8 Achievement Reward	Congratulations on reaching Lv. 8!	Icon/Mail/SendImage_System	
+31	7	8	Chloe	[Item] Lv. 9 Achievement Reward	Congratulations on reaching Lv. 9!	Icon/Mail/SendImage_System	
+32	7	9	Chloe	[Item] Lv. 10 Achievement Reward	Congratulations on reaching Lv. 10!<br>We have prepared a small gift, so please check the attachment.	Icon/Mail/SendImage_System	
+33	7	10	Chloe	[Item] Lv. 11 Achievement Reward	Congratulations on reaching Lv. 11!<br>We have prepared a small gift, so please check the attachment.	Icon/Mail/SendImage_System	
+34	7	11	Chloe	[Item] Lv. 12 Achievement Reward	Congratulations on reaching Lv. 12!<br>We have prepared a small gift, so please check the attachment.	Icon/Mail/SendImage_System	
+35	7	12	Chloe	[Item] Lv. 13 Achievement Reward	Congratulations on reaching Lv. 13!<br>We have prepared a small gift, so please check the attachment.	Icon/Mail/SendImage_System	
+36	7	13	Chloe	[Item] Lv. 14 Achievement Reward	Congratulations on reaching Lv. 14!<br>We have prepared a small gift, so please check the attachment.	Icon/Mail/SendImage_System	
+37	7	14	Chloe	[Item] Lv. 15 Achievement Reward	Congratulations on reaching Lv. 15!<br>We have prepared a small gift, so please check the attachment.	Icon/Mail/SendImage_System	
+38	7	15	Chloe	[Item] Lv. 16 Achievement Reward	Congratulations on reaching Lv. 16!<br>We have prepared a small gift, so please check the attachment.	Icon/Mail/SendImage_System	
+39	7	16	Chloe	[Item] Lv. 17 Achievement Reward	Congratulations on reaching Lv. 17!<br>We have prepared a small gift, so please check the attachment.	Icon/Mail/SendImage_System	
+40	7	17	Chloe	[Item] Lv. 18 Achievement Reward	Congratulations on reaching Lv. 18!<br>We have prepared a small gift, so please check the attachment.	Icon/Mail/SendImage_System	
+41	7	18	Chloe	[Item] Lv. 19 Achievement Reward	Congratulations on reaching Lv. 19!<br>We have prepared a small gift, so please check the attachment.	Icon/Mail/SendImage_System	
+42	7	19	Chloe	[Item] Lv. 20 Achievement Reward	Congratulations on reaching Lv. 20!<br>We have prepared a small gift, so please check the attachment.	Icon/Mail/SendImage_System	
+43	7	20	Chloe	[Item] Lv. 21 Achievement Reward	Congratulations on reaching Lv. 21!<br>We have prepared a small gift, so please check the attachment.	Icon/Mail/SendImage_System	
+44	7	21	Chloe	[Item] Lv. 22 Achievement Reward	Congratulations on reaching Lv. 22!<br>We have prepared a small gift, so please check the attachment.	Icon/Mail/SendImage_System	
+45	7	22	Chloe	[Item] Lv. 23 Achievement Reward	Congratulations on reaching Lv. 23!<br>We have prepared a small gift, so please check the attachment.	Icon/Mail/SendImage_System	
+46	7	23	Chloe	[Item] Lv. 24 Achievement Reward	Congratulations on reaching Lv. 24!<br>We have prepared a small gift, so please check the attachment.	Icon/Mail/SendImage_System	
+47	7	24	Chloe	[Item] Lv. 25 Achievement Reward	Congratulations on reaching Lv. 25!<br>We have prepared a small gift, so please check the attachment.	Icon/Mail/SendImage_System	
+48	7	25	Chloe	[Item] Lv. 26 Achievement Reward	Congratulations on reaching Lv. 26!<br>We have prepared a small gift, so please check the attachment.	Icon/Mail/SendImage_System	
+49	7	26	Chloe	[Item] Lv. 27 Achievement Reward	Congratulations on reaching Lv. 27!<br>We have prepared a small gift, so please check the attachment.	Icon/Mail/SendImage_System	
+50	7	27	Chloe	[Item] Lv. 28 Achievement Reward	Congratulations on reaching Lv. 28!<br>We have prepared a small gift, so please check the attachment.	Icon/Mail/SendImage_System	
+51	7	28	Chloe	[Item] Lv. 29 Achievement Reward	Congratulations on reaching Lv. 29!<br>We have prepared a small gift, so please check the attachment.	Icon/Mail/SendImage_System	
+52	7	29	Chloe	[Item] Lv. 30 Achievement Reward	Congratulations on reaching Lv. 30!<br>We have prepared a small gift, so please check the attachment.	Icon/Mail/SendImage_System	
+53	7	30	Chloe	[Item] Lv. 31 Achievement Reward	Congratulations on reaching Lv. 31!<br>We have prepared a small gift, so please check the attachment.	Icon/Mail/SendImage_System	
+54	7	31	Chloe	[Item] Lv. 32 Achievement Reward	Congratulations on reaching Lv. 32!<br>We have prepared a small gift, so please check the attachment.	Icon/Mail/SendImage_System	
+55	7	32	Chloe	[Item] Lv. 33 Achievement Reward	Congratulations on reaching Lv. 33!<br>We have prepared a small gift, so please check the attachment.	Icon/Mail/SendImage_System	
+56	7	33	Chloe	[Item] Lv. 34 Achievement Reward	Congratulations on reaching Lv. 34!<br>We have prepared a small gift, so please check the attachment.	Icon/Mail/SendImage_System	
+57	7	34	Chloe	[Item] Lv. 35 Achievement Reward	Congratulations on reaching Lv. 35!<br>We have prepared a small gift, so please check the attachment.	Icon/Mail/SendImage_System	
+58	7	35	Chloe	[Item] Lv. 36 Achievement Reward	Congratulations on reaching Lv. 36!<br>We have prepared a small gift, so please check the attachment.	Icon/Mail/SendImage_System	
+59	7	36	Chloe	[Item] Lv. 37 Achievement Reward	Congratulations on reaching Lv. 37!<br>We have prepared a small gift, so please check the attachment.	Icon/Mail/SendImage_System	
+60	7	37	Chloe	[Item] Lv. 38 Achievement Reward	Congratulations on reaching Lv. 38!<br>We have prepared a small gift, so please check the attachment.	Icon/Mail/SendImage_System	
+61	7	38	Chloe	[Item] Lv. 39 Achievement Reward	Congratulations on reaching Lv. 39!<br>We have prepared a small gift, so please check the attachment.	Icon/Mail/SendImage_System	
+62	7	39	Chloe	[Item] Lv. 40 Achievement Reward	Congratulations on reaching Lv. 40!<br>We have prepared a small gift, so please check the attachment.	Icon/Mail/SendImage_System	
+63	7	40	Chloe	[Item] Lv. 41 Achievement Reward	Congratulations on reaching Lv. 41!<br>We have prepared a small gift, so please check the attachment.	Icon/Mail/SendImage_System	
+64	7	41	Chloe	[Item] Lv. 42 Achievement Reward	Congratulations on reaching Lv. 42!<br>We have prepared a small gift, so please check the attachment.	Icon/Mail/SendImage_System	
+65	7	42	Chloe	[Item] Lv. 43 Achievement Reward	Congratulations on reaching Lv. 43!<br>We have prepared a small gift, so please check the attachment.	Icon/Mail/SendImage_System	
+66	7	43	Chloe	[Item] Lv. 44 Achievement Reward	Congratulations on reaching Lv. 44!<br>We have prepared a small gift, so please check the attachment.	Icon/Mail/SendImage_System	
+67	7	44	Chloe	[Item] Lv. 45 Achievement Reward	Congratulations on reaching Lv. 45!<br>We have prepared a small gift, so please check the attachment.	Icon/Mail/SendImage_System	
+68	7	45	Chloe	[Item] Lv. 46 Achievement Reward	Congratulations on reaching Lv. 46!<br>We have prepared a small gift, so please check the attachment.	Icon/Mail/SendImage_System	
+69	7	46	Chloe	[Item] Lv. 47 Achievement Reward	Congratulations on reaching Lv. 47!<br>We have prepared a small gift, so please check the attachment.	Icon/Mail/SendImage_System	
+70	7	47	Chloe	[Item] Lv. 48 Achievement Reward	Congratulations on reaching Lv. 48!<br>We have prepared a small gift, so please check the attachment.	Icon/Mail/SendImage_System	
+71	7	48	Chloe	[Item] Lv. 49 Achievement Reward	Congratulations on reaching Lv. 49!<br>We have prepared a small gift, so please check the attachment.	Icon/Mail/SendImage_System	
+72	7	49	Chloe	[Item] Lv. 50 Achievement Reward	Congratulations on reaching Lv. 50!<br>We have prepared a small gift, so please check the attachment.	Icon/Mail/SendImage_System	
+73	7	50	Chloe	[Item] Lv. 51 Achievement Reward	Congratulations on reaching Lv. 51!<br>We have prepared a small gift, so please check the attachment.	Icon/Mail/SendImage_System	
+74	7	51	Chloe	[Item] Lv. 52 Achievement Reward	Congratulations on reaching Lv. 52!<br>We have prepared a small gift, so please check the attachment.	Icon/Mail/SendImage_System	
+75	7	52	Chloe	[Item] Lv. 53 Achievement Reward	Congratulations on reaching Lv. 53!<br>We have prepared a small gift, so please check the attachment.	Icon/Mail/SendImage_System	
+76	7	53	Chloe	[Item] Lv. 54 Achievement Reward	Congratulations on reaching Lv. 54!<br>We have prepared a small gift, so please check the attachment.	Icon/Mail/SendImage_System	
+77	7	54	Chloe	[Item] Lv. 55 Achievement Reward	Congratulations on reaching Lv. 55!<br>We have prepared a small gift, so please check the attachment.	Icon/Mail/SendImage_System	
+78	5	4	Chloe	[My Room] Ranking Reward	Regarding the My Room ranking...<br>Please check the attachment.	Icon/Mail/SendImage_System	
+100	5	4	Chloe	[Free Match] Participation Reward	You have completed 5 plays of the Daily Free Match!<br>We have prepared a small gift, so please check the attachment.	Icon/Mail/SendImage_System	
+149	4	5	Market Reward	-	-	Icon/Mail/SendImage_System	
+150	4	6	Setsuka	-	-	Icon/Mail/SendImage_Systemmail07	
+151	4	7	Ryoko	-	-	Icon/Mail/SendImage_Systemmail06	
+152	4	8	Setsuka	-	-	Icon/Mail/SendImage_Systemmail07	
+153	4	9	Ryoko	-	-	Icon/Mail/SendImage_Systemmail06	
+156	4	10	Noah	-	-	Icon/Mail/SendImage_Systemmail08	
+157	4	11	Raban	-	-	Icon/Mail/SendImage_Systemmail09	
+158	4	12	Rauper	-	-	Icon/Mail/SendImage_Systemmail10	
+159	4	13	Leona	-	-	Icon/Mail/SendImage_Systemmail11	
+160	4	14	Sean	-	-	Icon/Mail/SendImage_Systemmail12	
+161	4	15	Sion	-	-	Icon/Mail/SendImage_Systemmail13	
+162	4	16	Abel	-	-	Icon/Mail/SendImage_Systemmail14	
+163	4	17	Enoch	-	-	Icon/Mail/SendImage_Systemmail15	
+164	4	18	Henry	-	-	Icon/Mail/SendImage_Systemmail16	
+165	4	19	Hicks	-	-	Icon/Mail/SendImage_Systemmail17	
+166	4	20	Miriam	-	-	Icon/Mail/SendImage_Systemmail18	
+167	4	21	Noah	-	-	Icon/Mail/SendImage_Systemmail08	
+168	4	22	Raban	-	-	Icon/Mail/SendImage_Systemmail09	
+169	4	23	Rauper	-	-	Icon/Mail/SendImage_Systemmail10	
+170	4	24	Leona	-	-	Icon/Mail/SendImage_Systemmail11	
+171	4	25	Sean	-	-	Icon/Mail/SendImage_Systemmail12	
+172	4	26	Sion	-	-	Icon/Mail/SendImage_Systemmail13	
+173	4	27	Abel	-	-	Icon/Mail/SendImage_Systemmail14	
+174	4	28	Enoch	-	-	Icon/Mail/SendImage_Systemmail15	
+175	4	29	Henry	-	-	Icon/Mail/SendImage_Systemmail16	
+176	4	30	Hicks	-	-	Icon/Mail/SendImage_Systemmail17	
+177	4	31	Miriam	-	-	Icon/Mail/SendImage_Systemmail18	
+80	10	1	Chloe	[Item] Coupon Reward	Please check the attachment.	Icon/Mail/SendImage_System	
+90	0	1	Chloe	[Item] Restoration Notice	Please check the restored item.	Icon/Mail/SendImage_System	
+91	0	2	Chloe	[Item] Attendance Check Reward	The attendance check items have been restored. Please check them.	Icon/Mail/SendImage_System	
+154	11	0	Chloe	[Operation: Dimension Shutter] Reward	Your reward for [Operation: Dimension Shutter] has arrived.<br><br>Please check the attached items.	Icon/Mail/SendImage_System	
+155	11	1	Chloe	[Operation: Dimension Shutter] Ranking Reward	Your ranking reward for [Operation: Dimension Shutter] has arrived.<br><br>This is the reward for ranking {0}.<br>Please check the attached items.	Icon/Mail/SendImage_System	
+110	13	2	Chloe	[World Event] World Reward	The reward item for the [Event] World Event has arrived. Please check the attached item.	Icon/Mail/SendImage_System	
+112	12	1	Chloe	[Attendance] Connection Time Reward	You have met the condition for the Stage 1 connection time reward.<br>Please check the mail attachment.	Icon/Mail/SendImage_System	
+113	12	2	Chloe	[Attendance] Connection Time Reward	You have met the condition for the Stage 2 connection time reward.<br>Please check the mail attachment.	Icon/Mail/SendImage_System	
+114	12	3	Chloe	[Attendance] Connection Time Reward	You have met the condition for the Stage 3 connection time reward.<br>Please check the mail attachment.	Icon/Mail/SendImage_System	
+115	12	4	Chloe	[Attendance] Attendance Check Reward	You have met the condition for the attendance check reward.<br>Please check the mail attachment.	Icon/Mail/SendImage_System	
+116	13	0	Chloe	[Mission] Achievement Reward	You have met the reward condition for a mission.<br>Please check the mail attachment.<br>※ Missions: Quick Start, 7-Day Mission, Festival	Icon/Mail/SendImage_System	
+117	13	1	Chloe	[Mission] Completion Reward	You have completed all missions and met the reward condition.<br>Please check the mail attachment.<br>※ Missions: Quick Start, 7-Day Mission, Festival	Icon/Mail/SendImage_System	
+119	13	2	Chloe	[World Event] World Reward	The reward item for the [Event] World Event has arrived.<br>Please check the mail attachment.	Icon/Mail/SendImage_System	
+140	12	10	Chloe	[Attendance] Consecutive Attendance Reward	[Consecutive Attendance] You have met the reward condition for {0} consecutive days of attendance.<br>Please check the mail attachment.	Icon/Mail/SendImage_System	
+141	12	11	Chloe	[Attendance] Attendance Reward	[Attendance] You have achieved attendance for Day {0}.<br>The reward for that attendance day has been sent, so please check the mail attachment.<br><br>※ For Count Box items, the remaining time starts decreasing the moment it is received in your inventory.<br>※ If you own multiple identical Count Boxes, the reuse time is shared by all of them.	Icon/Mail/SendImage_System	
+142	12	12	Chloe	[Attendance] Connection Time Reward	[Stay Connected] You have stayed connected for {0} minutes and met the reward condition.<br>Please check the mail attachment.	Icon/Mail/SendImage_System	
+143	12	13	Chloe	[Attendance] Consecutive Attendance Reward	[Consecutive Attendance] You have met the reward condition for {0} consecutive days of attendance.<br>Please check the mail attachment.	Icon/Mail/SendImage_System	
+144	12	14	Chloe	[Attendance] Attendance Reward	[Attendance] You have achieved attendance for Day {0}.<br>The reward for that attendance day has been sent, so please check the mail attachment.<br><br>※ For Count Box items, the remaining time starts decreasing the moment it is received in your inventory.<br>※ If you own multiple identical Count Boxes, the reuse time is shared by all of them.	Icon/Mail/SendImage_System	
+145	12	15	Chloe	[Attendance] Connection Time Reward	[Stay Connected] You have stayed connected for {0} minutes and met the reward condition.<br>Please check the mail attachment.	Icon/Mail/SendImage_System	
+111	13	3	Chloe	Roulette items have arrived!	These are the prizes you won in the [Event] roulette.<br>Please check the mail attachment.	Icon/Mail/SendImage_System	
+136	5	6	Chloe	Quest Item Reissue	The quest you accepted via an item has been abandoned, and the item has been reissued.	Icon/Mail/SendImage_System	
+126	5	8	Chloe	Board Game Victory Reward	You won the card matching game! Congratulations!	Icon/Mail/SendImage_System	
+127	5	9	Chloe	Board Game Usage Reward	Your board game usage reward has arrived.	Icon/Mail/SendImage_System	
+190	5	5	Chloe	[System] Item Supply Notice	Your inventory is full!<br><br>Items you could not obtain will be sent by mail.	Icon/Mail/SendImage_System	
+128	15	0	Chloe	[System] Guild Raid Reward	A reward based on your Guild Raid clear points will be provided.	Icon/Mail/SendImage_System	
+129	15	1	Chloe	[System] Guild Raid Reward	A reward based on your Guild Raid clear points will be provided.	Icon/Mail/SendImage_System	
+191	15	2	Chloe	[System] Guild Attendance Reward	There is a Guild attendance reward.<br><br>Please check the attached items.	Icon/Mail/SendImage_System	
+192	15	3	Chloe	[System] Guild Shop Proxy Receipt	Due to [insufficient inventory space], we are holding your last purchase. Please free up inventory space before receiving it.	Icon/Mail/SendImage_System	
+210	16	1	Chloe	[System] Pass Free Reward	We are sending the free reward for the pass stage you reached.<br>Please check the attachment.	Icon/Mail/SendImage_System	
+211	16	2	Chloe	[System] Pass Free Reward	We are sending the lump-sum free reward for the pass stages you reached.<br>Please check the attachment.	Icon/Mail/SendImage_System	
+212	16	3	Chloe	[System] Pass Premium Reward	We are sending the premium reward for the pass stage you reached.<br>Please check the attachment.	Icon/Mail/SendImage_System	
+213	16	4	Chloe	[System] Pass Premium Reward	We are sending the lump-sum premium reward for the pass stages you reached.<br>Please check the attachment.	Icon/Mail/SendImage_System	
+214	16	5	Chloe	[System] Pass Free Reward	We are sending the free reward for the pass stage you reached.<br>Please check the attachment.	Icon/Mail/SendImage_System	
+215	16	6	Chloe	[System] Pass Free Reward	We are sending the lump-sum free reward for the pass stages you reached.<br>Please check the attachment.	Icon/Mail/SendImage_System	
+216	16	7	Chloe	[System] Pass Premium Reward	We are sending the premium reward for the pass stage you reached.<br>Please check the attachment.	Icon/Mail/SendImage_System	
+217	16	8	Chloe	[System] Pass Premium Reward	We are sending the lump-sum premium reward for the pass stages you reached.<br>Please check the attachment.	Icon/Mail/SendImage_System	
+218	5	10	Chloe	[System] Daily Mission Completion Reward	Your [Daily Mission] completion reward has arrived.<br>Please free up inventory space and receive the attachment.	Icon/Mail/SendImage_System	
+219	5	11	Chloe	[System] Pass Mission Completion Reward	Pass Points have arrived for completing a [Pass Mission].<br>Please check the Pass Points granted from the Soul Pass.	Icon/Mail/SendImage_System	
+220	5	12	Chloe	[System] Pass Mission Completion Reward	Pass Points have arrived for completing a [Pass Mission].<br>Please check the Pass Points granted from the Soul Pass.	Icon/Mail/SendImage_System	
+221	13	4	Chloe	[System] Sugoroku Event Reward	We are sending the reward you earned in the Sugoroku event.<br>Please check the attachment.	Icon/Mail/SendImage_System	
+222	13	5	Chloe	[System] Sugoroku Event Reward	We are sending the reward you earned in the Sugoroku event.<br>Please check the attachment.	Icon/Mail/SendImage_System	
+118	7	0	Chloe	[Item] Lv. 60 Achievement Reward	Congratulations on reaching Lv. 60!<br>We have prepared a small gift, so please check the attachment.	Icon/Mail/SendImage_System	
+120	7	0	Chloe	[Item] Lv. 65 Achievement Reward	Congratulations on reaching Lv. 65!<br>We have prepared a small gift, so please check the attachment.	Icon/Mail/SendImage_System	
+121	7	0	Chloe	[Item] Lv. 68 Achievement Reward	Congratulations on reaching Lv. 68!<br>We have prepared a small gift, so please check the attachment.	Icon/Mail/SendImage_System	
+131	14	0	Chloe	[PLUS] Daily Accumulated Connection	Stage {1} reward is given for reaching {0} minutes of PLUS daily connection time.	Icon/Mail/SendImage_System	
+132	14	1	Chloe	[PLUS] Weekly Accumulated Connection	Stage {1} reward is given for reaching {0} minutes of PLUS weekly connection time.	Icon/Mail/SendImage_System	
+133	14	2	Chloe	[PLUS] Monthly Accumulated Connection	Stage {1} reward is given for reaching {0} minutes of PLUS monthly connection time.	Icon/Mail/SendImage_System	
+224	12	20	Chloe	[Attendance] New User Attendance Reward	[New User Attendance] We are sending your Day {0} attendance reward.<br>A reward matching your attendance days is sent by mail. Be sure to check the attached items in the message.	Icon/Mail/SendImage_System	
+225	12	21	Chloe	[Attendance] New User Attendance Final Reward	[New User Attendance] You have achieved all attendance days.<br>An additional reward is being sent, so be sure to check the attached items in the message.	Icon/Mail/SendImage_System	
+226	12	22	Chloe	[Attendance] Returning User Attendance Reward	[Returning User Attendance] We are sending your Day {0} attendance reward.<br>A reward matching your attendance days is sent by mail. Be sure to check the attached items in the message.	Icon/Mail/SendImage_System	
+227	12	23	Chloe	[Attendance] Returning User Attendance Final Reward	[Returning User Attendance] You have achieved all attendance days.<br>An additional reward is being sent, so be sure to check the attached items in the message.	Icon/Mail/SendImage_System	
+228	12	24	Chloe	[Attendance] Event Attendance Reward	[Event Attendance] We are sending your Day {0} attendance reward.<br>A reward matching your attendance days is sent by mail. Be sure to check the attached items in the message.	Icon/Mail/SendImage_System	
+229	12	25	Chloe	[Attendance] Event Attendance Final Reward	[Event Attendance] You have achieved all attendance days.<br>An additional reward is being sent, so be sure to check the attached items in the message.	Icon/Mail/SendImage_System	
+230	12	26	Chloe	[Attendance] New Character Attendance Reward	[New Character Attendance] We are sending your Day {0} attendance reward.<br>A reward matching your attendance days is sent by mail. Be sure to check the attached items in the message.	Icon/Mail/SendImage_System	
+231	12	27	Chloe	[Attendance] New Character Attendance Final Reward	[New Character Attendance] You have achieved all attendance days.<br>An additional reward is being sent, so be sure to check the attached items in the message.	Icon/Mail/SendImage_System	
+232	12	28	Chloe	[Attendance] Returning Character Attendance Reward	[Returning Character Attendance] We are sending your Day {0} attendance reward.<br>A reward matching your attendance days is sent by mail. Be sure to check the attached items in the message.	Icon/Mail/SendImage_System	
+233	12	29	Chloe	[Attendance] Returning Character Attendance Final Reward	[Returning Character Attendance] You have achieved all attendance days.<br>An additional reward is being sent, so be sure to check the attached items in the message.	Icon/Mail/SendImage_System	
+234	12	30	Chloe	[Attendance] Event Attendance Reward	[Event Attendance] We are sending your Day {0} attendance reward.<br>A reward matching your attendance days is sent by mail. Be sure to check the attached items in the message.	Icon/Mail/SendImage_System	
+235	12	31	Chloe	[Attendance] Event Attendance Final Reward	[Event Attendance] You have achieved all attendance days.<br>An additional reward is being sent, so be sure to check the attached items in the message.	Icon/Mail/SendImage_System	
+236	13	6	Chloe	[System] Jumping Growth Support Item	Items to support Jumping growth have been provided.<br>Please free up inventory space before receiving the attached items.	Icon/Mail/SendImage_System	
+237	13	7	Chloe	[Advancing Helix] Stage {0} Clear Account Reward	We are sending the account reward for clearing Stage {0} of [Advancing Helix].<br>Please free up your inventory before receiving the attached items.	Icon/Mail/SendImage_System	
+238	13	8	Chloe	[Advancing Helix] Stage {0} Clear Character Reward	We are sending the character reward for clearing Stage {0} of [Advancing Helix].<br>Please free up your inventory before receiving the attached items.	Icon/Mail/SendImage_System	
+242	13	10	Chloe	Event items have arrived!	Please receive the items from the mini game event.	Icon/Mail/SendImage_System	
+239	13	9	Chloe	[Event] Event Mini Game Reward	We are sending the reward you earned in the event mini game. Please check the attached items.	Icon/Mail/SendImage_System	
+240	17	1	Rona	[Single Raid] {0} Clear Reward	We are sending the [Single Raid] {0} clear reward. Please check the attached items.	Icon/Mail/SendImage_Systemmail37	
+241	17	2	Rona	[Squad Raid] {0} Clear Reward	We are sending the [Squad Raid] {0} clear reward. Please check the attached items.	Icon/Mail/SendImage_Systemmail37	
+200	11	3	Chloe	[Battle Room] Participation Reward	Your participation reward for [Battle Room] has arrived.<br><br>The Starry Forest League is sending you a reward as a token of our gratitude.<br>Please check the attached items.	Icon/Mail/SendImage_System	
+245	18	14	Chloe	[Overclock] Failure Reward	You failed the Overclock, but here is a modest predetermined reward.	Icon/Mail/SendImage_System	
+246	19	15	Chloe	[Mini Game] Reward	You scored {0} points in the mini game, so we're giving you a reward.	Icon/Mail/SendImage_System	

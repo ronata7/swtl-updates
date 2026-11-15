@@ -1,0 +1,134 @@
+{
+  "version": "2.6.3",
+  "released": "2026-11-15T11:46:41Z",
+  "notes": "First release",
+  "files": [
+    {
+      "path": "README.txt",
+      "size": 6324,
+      "sha256": "8af0af465b852568c331e962b786b28d5279a2c5dc87ab35505944c5fb532ae8",
+      "kind": "docs"
+    },
+    {
+      "path": "SWTLUpdater.exe",
+      "size": 6766592,
+      "sha256": "81459ef3be80d931c78a0a33b7808d8fc063535d3f68b9c11aab1bf3a1e584ba",
+      "kind": "app"
+    },
+    {
+      "path": "TL csv/tb_Achievement_Script.csv",
+      "size": 34944,
+      "sha256": "c69fea1cf914fa96b426ad7468d89449dd9d06f6bd632a7b7d2758778af58c72",
+      "kind": "translation"
+    },
+    {
+      "path": "TL csv/tb_Booster_Script.csv",
+      "size": 43918,
+      "sha256": "c4319cb627dd524cee1495d9f1156b4dbb22f13c6038b4fdcac913ebee832ffd",
+      "kind": "translation"
+    },
+    {
+      "path": "TL csv/tb_Buff_Script.csv",
+      "size": 236780,
+      "sha256": "6c16cce7f394831da578130e26778935d3016e93c5268f52b0cf5cd5c6adc1ae",
+      "kind": "translation"
+    },
+    {
+      "path": "TL csv/tb_Cinema_String.csv",
+      "size": 1298908,
+      "sha256": "bdf027aea7fce5750a8ac6cd2b82940f56d212cbae0dd7d1c301d68078e939b9",
+      "kind": "translation"
+    },
+    {
+      "path": "TL csv/tb_Cutscene_String.csv",
+      "size": 3302,
+      "sha256": "13d862d387cf36ddec90e9b105e03fdac6709c9c68ddf7d4b1e9de5aa38ebbde",
+      "kind": "translation"
+    },
+    {
+      "path": "TL csv/tb_LeagueSkill_Script.csv",
+      "size": 5225,
+      "sha256": "9b06abdb4ae84beb93f54270ee1263c17f1b26a7f5b7418f9e9a2f3d50bcb91f",
+      "kind": "translation"
+    },
+    {
+      "path": "TL csv/tb_Mastery_Script.csv",
+      "size": 3385,
+      "sha256": "a63f964c53eb2334b0d6d60fa2034a3c0ec6ca1b396cd22d83ae499d2d0501d8",
+      "kind": "translation"
+    },
+    {
+      "path": "TL csv/tb_Monster_script.csv",
+      "size": 118543,
+      "sha256": "c95951ea44351a700f9666e25e6fe9d37c3772fa7e409b2da4077acd10e5daf0",
+      "kind": "translation"
+    },
+    {
+      "path": "TL csv/tb_NPC_Script.csv",
+      "size": 16669,
+      "sha256": "0237b026d59ae03f8ad34a5219fa628353ab8f1b9db768774d957b232c543cf6",
+      "kind": "translation"
+    },
+    {
+      "path": "TL csv/tb_Quest_Script.csv",
+      "size": 767505,
+      "sha256": "b4e7762fb4ba3aa372f2e033c65003137add3208d0320eac2cfb68e9e601c503",
+      "kind": "translation"
+    },
+    {
+      "path": "TL csv/tb_Shop_String.csv",
+      "size": 6951,
+      "sha256": "aa5624b8a545259357ee39597c4b62f277fa6d0916ce32ae1e126f51ee9ac689",
+      "kind": "translation"
+    },
+    {
+      "path": "TL csv/tb_Skill_Script.csv",
+      "size": 1145635,
+      "sha256": "c9c800d6a8ec68b6b9f21b1b87420948fed5b11e0667c18ed45d4422b32c2444",
+      "kind": "translation"
+    },
+    {
+      "path": "TL csv/tb_Speech_String.csv",
+      "size": 22597753,
+      "sha256": "3aaaadde29313e6a57b7d534e193c6487b8c0eb61ebe59833ccf3e91ef733abf",
+      "kind": "translation"
+    },
+    {
+      "path": "TL csv/tb_SystemMail.csv",
+      "size": 29422,
+      "sha256": "f6bbc9db7c5b573b7c59d58c5565a2f8c29c7c9d90b32b602c50a6deae9779e1",
+      "kind": "translation"
+    },
+    {
+      "path": "TL csv/tb_Title_String.csv",
+      "size": 120677,
+      "sha256": "305ce20eed34ff4ec52a773a80ab7bb63f5ba0cd016c46166f4b6f7c9d2658e4",
+      "kind": "translation"
+    },
+    {
+      "path": "TL csv/tb_Tooltip_String.csv",
+      "size": 21478,
+      "sha256": "03e7aa9b20aacdf435255dd3832ddcdf847a3ca60124514288da66f6c76ca46a",
+      "kind": "translation"
+    },
+    {
+      "path": "TL csv/tb_UI_String.csv",
+      "size": 736005,
+      "sha256": "01a80af07586a583c866d24b79d58df1488fc2e0c15753f29bc147d72933112f",
+      "kind": "translation"
+    },
+    {
+      "path": "TL csv/tb_item_script.csv",
+      "size": 11855448,
+      "sha256": "48976177238a77111763b220cba08e60cdcc1bcf9d435bc00177068413930f52",
+      "kind": "translation"
+    },
+    {
+      "path": "TL csv/tb_soul_metry_string.csv",
+      "size": 32889,
+      "sha256": "eae0c6f9116fe21ce7b651069efb99efe294fcd2fcd737d66ce46a9f7a4c904f",
+      "kind": "translation"
+    }
+  ],
+  "delete": []
+}

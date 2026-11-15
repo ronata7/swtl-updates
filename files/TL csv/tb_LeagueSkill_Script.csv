@@ -1,0 +1,27 @@
+Unkown1	Unkown2	Unkown3	Unkown4	Unkown5	Unkown6	
+1	Icon/League/Skill/Icon_League_Skill_MemberIncrease	Guild Member Expansion 1	League_Person_Extend_1	Increases the maximum number of Guild members.<br>Max members: 25	Members added: 5<br>Max members: 30	
+2	Icon/League/Skill/Icon_League_Skill_MemberIncrease	Guild Member Expansion 2	League_Person_Extend_2	Increases the maximum number of Guild members.<br>Max members: 30	Members added: 5<br>Max members: 35	
+3	Icon/League/Skill/Icon_League_Skill_MemberIncrease	Guild Member Expansion 3	League_Person_Extend_3	Increases the maximum number of Guild members.<br>Max members: 35	Members added: 5<br>Max members: 40	
+4	Icon/League/Skill/Icon_League_Skill_MemberIncrease	Guild Member Expansion 4	League_Person_Extend_4	Increases the maximum number of Guild members.<br>Max members: 40	Members added: 5<br>Max members: 45	
+5	Icon/League/Skill/Icon_League_Skill_MemberIncrease	Guild Member Expansion 5	League_Person_Extend_5	Increases the maximum number of Guild members.<br>Max members: 45	Members added: 5<br>Max members: 50	
+6	Icon/League/Skill/Icon_League_Skill_MemberIncrease	Guild Member Expansion 6	League_Person_Extend_6	Increases the maximum number of Guild members.<br>Max members: 50	Members added: 5<br>Max members: 55	
+7	Icon/League/Skill/Icon_League_Skill_MemberIncrease	Guild Member Expansion 7	League_Person_Extend_7	Increases the maximum number of Guild members.<br>Max members: 55	Members added: 5<br>Max members: 60	
+8	Icon/League/Skill/Icon_League_Skill_MemberIncrease	Guild Member Expansion 8	League_Person_Extend_8	Increases the maximum number of Guild members.<br>Max members: 60	Lv.Max	
+9	Icon/League/Skill/Icon_League_Skill_StorageOpen	Guild Store 1	League_Storage_1	Allows use of the Guild Store.<br>Available Storage Slots: 48	Storage Slots: +48<br>Available Storage Slots: 96	
+10	Icon/League/Skill/Icon_League_Skill_StorageOpen	Guild Store 2	League_Storage_2	Allows use of the Guild Store.<br>Available Storage Slots: 96	Storage Slots: +48<br>Available Storage Slots: 144	
+11	Icon/League/Skill/Icon_League_Skill_StorageOpen	Guild Store 3	League_Storage_3	Allows use of the Guild Store.<br>Available Storage Slots: 144	Storage Slots: +48<br>Available Storage Slots: 192	
+12	Icon/League/Skill/Icon_League_Skill_CreationEmblem	Guild Emblem	League_Mark	Allows setting a Guild emblem.	Lv.Max	
+13	Icon/League/Skill/Icon_League_Skill_SafeHouseOpen	Guild Hideout	League_Agit	Allows building a Guild hideout.	Lv.Max	
+14	Icon/League/Skill/Icon_League_Skill_LeagueExpUp	EXP Up 1	Exp_Up_1	Increases EXP gained.<br>EXP: +5%<br>Learning Cost: 350,000	EXP: +5%<br>Total EXP increase: +10%<br><br>Learning Cost: 2,700,000	
+15	Icon/League/Skill/Icon_League_Skill_LeagueExpUp	EXP Up 2	Exp_Up_2	Increases EXP gained.<br>EXP: +10%	EXP: +5%<br>Total EXP increase: +15%<br><br>Learning Cost: 7,500,000	
+16	Icon/League/Skill/Icon_League_Skill_LeagueExpUp	EXP Up 3	Exp_Up_3	Increases EXP gained.<br>EXP: +15%	Lv.Max	
+17	Icon/League/Skill/Icon_League_Skill_CredibilityUp	Affinity Up 1	CraditRating_Grow_1	Increases Affinity gained.<br>Daily Max Affinity Gain: +3<br><br>Learning Cost: 550,000	Daily Max Affinity Gain: +3<br>Total Daily Max Affinity Gain: +6<br><br>Learning Cost: 3,000,000	
+18	Icon/League/Skill/Icon_League_Skill_CredibilityUp	Affinity Up 2	CraditRating_Grow_2	Increases Affinity gained.<br>Daily Max Affinity Gain: +6	Daily Max Affinity Gain: +4<br>Total Daily Max Affinity Gain: +10<br><br>Learning Cost: 10,500,000	
+19	Icon/League/Skill/Icon_League_Skill_CredibilityUp	Affinity Up 3	CraditRating_Grow_3	Increases Affinity gained.<br>Daily Max Affinity Gain: +10	Lv.Max	
+20	Icon/League/Skill/Icon_League_Skill_RepairDiscount	Repair Discount 1	Repair_Cost_Discount_1	Reduces repair costs.<br>Repair Discount: 3%<br><br>Learning Cost: 1,950,000	Repair discount: +3%<br>Total repair discount: +6%<br><br>Learning Cost: 6,500,000	
+21	Icon/League/Skill/Icon_League_Skill_RepairDiscount	Repair Discount 2	Repair_Cost_Discount_2	Reduces repair costs.<br>Repair Discount: 6%	Repair discount: +4%<br>Total repair discount: +10%<br><br>Learning Cost: 18,000,000	
+22	Icon/League/Skill/Icon_League_Skill_RepairDiscount	Repair Discount 3	Repair_Cost_Discount_3	Reduces repair costs.<br>Total repair discount: 10%	Lv.Max	
+23	Icon/League/Skill/Icon_League_Skill_CommissionDiscount	Market Sales Fee Discount 1	CommissionDiscount_1	Reduces sales fees on the Market.<br>Market sales fee discount: +1%<br><br>Learning Cost: 1,950,000	Market sales fee discount: +1%<br>Total market sales fee discount: +2%<br><br>Learning Cost: 9,000,000	
+24	Icon/League/Skill/Icon_League_Skill_CommissionDiscount	Market Sales Fee Discount 2	CommissionDiscount_2	Reduces sales fees on the Market.<br>Market sales fee discount: +2%	Market sales fee discount: +1%<br>Total market sales fee discount: +3%<br><br>Learning Cost: 20,000,000	
+25	Icon/League/Skill/Icon_League_Skill_CommissionDiscount	Market Sales Fee Discount 3	CommissionDiscount_3	Reduces sales fees on the Market.<br>Market sales fee discount: +3%	Lv.Max	
+38	Icon/League/Skill/Icon_League_Skill_StorageOpen	Guild Store 4	League_Storage_4	Allows use of the Guild Store.<br>Available Storage Slots: 192	Lv.Max	
