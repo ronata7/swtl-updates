@@ -1,0 +1,14 @@
+# never commit secrets
+*.key
+swtl_update_PRIVATE.key
+keys/
+# local build output / work files
+*.exe
+!files/**/*.exe
+work/
+logs/
+backup/
+cache/
+update_tmp/
+SWTLUpdater.ini
+data12.v
