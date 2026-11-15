@@ -11,17 +11,19 @@ import (
 )
 
 type Config struct {
-	SWPath        string
-	TLPath        string
-	PatcherPath   string
-	DataSource    string
-	DataOutput    string
-	BackupKeep    int
-	ExcludeTables []string
-	AskAtStartup  bool
-	UpdateURL     string
-	UpdateKey     string
-	UpdateAtStart bool
+	SWPath         string
+	TLPath         string
+	PatcherPath    string
+	DataSource     string
+	DataOutput     string
+	BackupKeep     int
+	ExcludeTables  []string
+	AskAtStartup   bool
+	UpdateURL      string
+	UpdateKey      string
+	TranslationURL string // optional second source that only provides "TL csv/"
+	TranslationKey string // empty = same key as UpdateKey
+	UpdateAtStart  bool
 }
 
 var envRe = regexp.MustCompile(`%([^%]+)%`)
@@ -128,6 +130,8 @@ func LoadConfig(appDir string) (*Config, string) {
 	c.AskAtStartup = parseYes(kv["askatstartup"], true)
 	c.UpdateURL = strings.TrimSpace(kv["updateurl"])
 	c.UpdateKey = strings.TrimSpace(kv["updatekey"])
+	c.TranslationURL = strings.TrimSpace(kv["translationurl"])
+	c.TranslationKey = strings.TrimSpace(kv["translationkey"])
 	c.UpdateAtStart = parseYes(kv["updateatstartup"], true)
 	if !filepath.IsAbs(c.TLPath) {
 		c.TLPath = filepath.Join(appDir, c.TLPath)
@@ -167,7 +171,10 @@ func (c *Config) Save(path string) error {
 	b.WriteString("; Online updates: web address of the update server (must start with https://) and its public key.\n")
 	b.WriteString("; Both come with your download. Leave them empty to turn online updates off.\n")
 	fmt.Fprintf(&b, "UpdateURL=%s\n", c.UpdateURL)
-	fmt.Fprintf(&b, "UpdateKey=%s\n\n", c.UpdateKey)
+	fmt.Fprintf(&b, "UpdateKey=%s\n", c.UpdateKey)
+	b.WriteString("; Optional: the translation files come from a separate address (same key unless TranslationKey is set).\n")
+	fmt.Fprintf(&b, "TranslationURL=%s\n", c.TranslationURL)
+	fmt.Fprintf(&b, "TranslationKey=%s\n\n", c.TranslationKey)
 	b.WriteString("; Look for updates when the program starts (yes / no)\n")
 	fmt.Fprintf(&b, "UpdateAtStartup=%s\n", yesNo(c.UpdateAtStart))
 	return os.WriteFile(path, []byte(b.String()), 0o644)

@@ -171,6 +171,9 @@ func (a *App) printSettings() {
 		fmt.Println("  Online updates       : off (no update address set)")
 	} else {
 		fmt.Printf("  Online updates       : %s   (check at startup: %s)\n", c.UpdateURL, yesNo(c.UpdateAtStart))
+		if strings.TrimSpace(c.TranslationURL) != "" {
+			fmt.Printf("  Translation updates  : %s\n", c.TranslationURL)
+		}
 	}
 }
 
@@ -252,7 +255,7 @@ func (a *App) Settings() {
 			}
 		case "9":
 			if v := prompt("  Update address, https://... (Enter = keep, - = turn updates off): "); v == "-" {
-				c.UpdateURL = ""
+				c.UpdateURL, c.TranslationURL = "", ""
 			} else if v != "" {
 				c.UpdateURL = v
 			}
@@ -264,9 +267,9 @@ func (a *App) Settings() {
 			c.UpdateAtStart = !c.UpdateAtStart
 		case "12":
 			if confirm("  Reset all settings to the default values? (the update address and key are kept)") {
-				ask, u, k := c.AskAtStartup, c.UpdateURL, c.UpdateKey
+				ask, u, k, tu, tk := c.AskAtStartup, c.UpdateURL, c.UpdateKey, c.TranslationURL, c.TranslationKey
 				*c = *defaultConfig(a.dir)
-				c.AskAtStartup, c.UpdateURL, c.UpdateKey = ask, u, k
+				c.AskAtStartup, c.UpdateURL, c.UpdateKey, c.TranslationURL, c.TranslationKey = ask, u, k, tu, tk
 			}
 		case "0", "":
 			_ = c.Save(a.cfgPath)

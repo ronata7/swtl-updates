@@ -1,7 +1,7 @@
 // swtlpublish - publisher tool for SW TL Updater online updates. Runs on the publisher's PC.
 //
 //	swtlpublish keygen  [-out DIR]
-//	swtlpublish publish -src DIR -out DIR -key FILE -version X.Y.Z [-notes "text"]
+//	swtlpublish publish -src DIR -out DIR -key FILE -version X.Y.Z [-notes "text"] [-part all|main|translation]
 //	swtlpublish pack    -src DIR -url https://.../ -pub PUBLICKEY -zip FILE
 //	swtlpublish verify  -out DIR -pub PUBLICKEY
 //
@@ -179,12 +179,26 @@ func publish(args []string) {
 	keyF := fs.String("key", "", "private key file made by 'keygen'")
 	ver := fs.String("version", "", "version number to publish, e.g. 2.6.0 (must be higher than the last one for the exe to update)")
 	notes := fs.String("notes", "", "short 'what's new' text shown to players")
+	part := fs.String("part", "all", "all = everything; main = program, readme, Tools (no translation); translation = only 'TL csv' (for a separate translation repo)")
 	fs.Parse(args)
 	if *src == "" || *out == "" || *keyF == "" || *ver == "" {
 		die("need -src, -out, -key and -version")
 	}
+	if *part != "all" && *part != "main" && *part != "translation" {
+		die("-part must be all, main or translation")
+	}
 	priv := loadPriv(*keyF)
 	files, abs := scan(*src)
+	if *part != "all" {
+		var keep []ManFile
+		for _, f := range files {
+			isTL := strings.HasPrefix(f.Path, "TL csv/")
+			if (*part == "translation") == isTL {
+				keep = append(keep, f)
+			}
+		}
+		files = keep
+	}
 	if len(files) == 0 {
 		die("no publishable files found in %s", *src)
 	}
@@ -208,6 +222,9 @@ func publish(args []string) {
 				now[f.Path] = true
 			}
 			for _, f := range prev.Files {
+				if *part == "main" && strings.HasPrefix(f.Path, "TL csv/") {
+					continue // translation files moved to the other source: never tell old players to delete them
+				}
 				if !now[f.Path] && f.Path != "SWTLUpdater.exe" {
 					m.Delete = append(m.Delete, f.Path)
 				}
@@ -238,6 +255,7 @@ func pack(args []string) {
 	url := fs.String("url", "", "update server address players will use, https://.../")
 	pub := fs.String("pub", "", "public key text from 'keygen'")
 	zf := fs.String("zip", "SWTLUpdater_player.zip", "zip file to create")
+	turl := fs.String("turl", "", "optional: separate address of the translation repo (https://.../)")
 	fs.Parse(args)
 	if *src == "" || *url == "" || *pub == "" {
 		die("need -src, -url and -pub")
@@ -261,7 +279,11 @@ func pack(args []string) {
 		in.Close()
 	}
 	w, _ := zw.Create("SWTLUpdater.ini")
-	fmt.Fprintf(w, "; SW TL Updater settings (the program asks for the rest on first start)\nUpdateURL=%s\nUpdateKey=%s\nUpdateAtStartup=yes\n", *url, *pub)
+	fmt.Fprintf(w, "; SW TL Updater settings (the program asks for the rest on first start)\nUpdateURL=%s\nUpdateKey=%s\n", *url, *pub)
+	if *turl != "" {
+		fmt.Fprintf(w, "TranslationURL=%s\n", *turl)
+	}
+	fmt.Fprintf(w, "UpdateAtStartup=yes\n")
 	zw.Close()
 	z.Close()
 	fmt.Println("Player zip written:", *zf, "-", len(files), "file(s) + a settings file with the update address and key.")

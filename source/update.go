@@ -45,8 +45,20 @@ type Manifest struct {
 	Delete   []string  `json:"delete"`
 }
 
+// updSource is one place updates come from. The main source carries the program, the readme and
+// Tools (and the translation too, unless a separate translation source is configured); the
+// translation source may only ever touch "TL csv/".
+type updSource struct {
+	label string
+	url   string
+	key   string
+	seen  string
+	tl    bool
+}
+
 type UpdatePlan struct {
 	M          *Manifest
+	Seen       string
 	Download   []ManFile
 	Delete     []string
 	SelfUpdate bool
@@ -152,17 +164,24 @@ func cmpVersion(a, b string) int {
 	return 0
 }
 
-func (a *App) seenFile() string { return filepath.Join(a.dir, "cache", "update_seen.txt") }
+func (a *App) seenPath(name string) string { return filepath.Join(a.dir, "cache", name) }
 
-func (a *App) planUpdate(m *Manifest, self string) (*UpdatePlan, error) {
-	if seen, err := os.ReadFile(a.seenFile()); err == nil && cmpVersion(m.Version, strings.TrimSpace(string(seen))) < 0 {
+func isTLPath(p string) bool { return strings.HasPrefix(p, "TL csv/") }
+
+func (a *App) planUpdate(m *Manifest, self string, src updSource) (*UpdatePlan, error) {
+	seenPath := a.seenPath(src.seen)
+	if seen, err := os.ReadFile(seenPath); err == nil && cmpVersion(m.Version, strings.TrimSpace(string(seen))) < 0 {
 		return nil, fmt.Errorf("the server offers version %s, which is older than %s that was already seen - refusing to go back", m.Version, strings.TrimSpace(string(seen)))
 	}
-	plan := &UpdatePlan{M: m}
+	plan := &UpdatePlan{M: m, Seen: seenPath}
+	splitTL := !src.tl && strings.TrimSpace(a.cfg.TranslationURL) != "" // translation comes from its own source
 	for _, f := range m.Files {
 		rel, ok := safeRel(f.Path)
-		if !ok {
+		if !ok || (src.tl && !isTLPath(f.Path)) {
 			return nil, fmt.Errorf("update list contains a path that is not allowed: %q", f.Path)
+		}
+		if splitTL && isTLPath(f.Path) {
+			continue
 		}
 		if len(f.SHA256) != 64 || f.Size < 0 || f.Size > maxFileBytes {
 			return nil, fmt.Errorf("update list entry for %s is invalid", f.Path)
@@ -185,8 +204,11 @@ func (a *App) planUpdate(m *Manifest, self string) (*UpdatePlan, error) {
 	}
 	for _, d := range m.Delete {
 		rel, ok := safeRel(d)
-		if !ok || d == "SWTLUpdater.exe" {
+		if !ok || d == "SWTLUpdater.exe" || (src.tl && !isTLPath(d)) {
 			return nil, fmt.Errorf("update list asks to delete a path that is not allowed: %q", d)
+		}
+		if splitTL && isTLPath(d) {
+			continue
 		}
 		if exists(filepath.Join(a.dir, rel)) {
 			plan.Delete = append(plan.Delete, d)
@@ -288,8 +310,8 @@ func (a *App) applyUpdate(c *http.Client, base string, plan *UpdatePlan, self st
 	if selfPart != "" {
 		a.selfDone = true
 	}
-	_ = os.MkdirAll(filepath.Dir(a.seenFile()), 0o755)
-	_ = os.WriteFile(a.seenFile(), []byte(plan.M.Version), 0o644)
+	_ = os.MkdirAll(filepath.Dir(plan.Seen), 0o755)
+	_ = os.WriteFile(plan.Seen, []byte(plan.M.Version), 0o644)
 	return nil
 }
 
@@ -314,9 +336,10 @@ func countKinds(fs []ManFile) string {
 	return strings.Join(parts, ", ")
 }
 
-// Update checks the update server and installs what is new. It returns true if the program
+// Update checks the update server(s) and installs what is new. It returns true if the program
 // replaced itself and started the new copy - the caller must then exit immediately.
 // startup=true: quiet on "nothing to do" and on network trouble.
+// The translation source (if configured) is handled first, so a program restart happens last.
 func (a *App) Update(interactive, startup bool, args []string, relaunch bool) (restarted bool, err error) {
 	log := &Logger{}
 	c := a.cfg
@@ -326,7 +349,32 @@ func (a *App) Update(interactive, startup bool, args []string, relaunch bool) (r
 		}
 		return false, nil
 	}
-	base, err := checkURL(c.UpdateURL)
+	if !startup {
+		fmt.Println("\n Checking for updates...")
+	}
+	var firstErr error
+	if strings.TrimSpace(c.TranslationURL) != "" {
+		key := strings.TrimSpace(c.TranslationKey)
+		if key == "" {
+			key = c.UpdateKey
+		}
+		_, e := a.updateOne(updSource{label: "Translation", url: c.TranslationURL, key: key, seen: "update_seen_translation.txt", tl: true}, interactive, startup, args, false, log)
+		if e != nil {
+			firstErr = fmt.Errorf("translation source: %v", e)
+		}
+	}
+	restarted, e := a.updateOne(updSource{label: "Program", url: c.UpdateURL, key: c.UpdateKey, seen: "update_seen.txt"}, interactive, startup, args, relaunch, log)
+	if e != nil {
+		if firstErr != nil {
+			return restarted, fmt.Errorf("%v; program source: %v", firstErr, e)
+		}
+		return restarted, e
+	}
+	return restarted, firstErr
+}
+
+func (a *App) updateOne(src updSource, interactive, startup bool, args []string, relaunch bool, log *Logger) (restarted bool, err error) {
+	base, err := checkURL(src.url)
 	if err != nil {
 		return false, err
 	}
@@ -336,10 +384,7 @@ func (a *App) Update(interactive, startup bool, args []string, relaunch bool) (r
 	}
 	cl := &http.Client{Timeout: timeout}
 	self := a.self
-	if !startup {
-		fmt.Println("\n Checking for updates...")
-	}
-	m, err := fetchManifest(cl, base, c.UpdateKey)
+	m, err := fetchManifest(cl, base, src.key)
 	if err != nil {
 		if startup && !strings.Contains(err.Error(), "signature") {
 			fmt.Println(" (Could not check for updates - offline? Continuing.)")
@@ -347,19 +392,19 @@ func (a *App) Update(interactive, startup bool, args []string, relaunch bool) (r
 		}
 		return false, err
 	}
-	plan, err := a.planUpdate(m, self)
+	plan, err := a.planUpdate(m, self, src)
 	if err != nil {
 		return false, err
 	}
 	if len(plan.Download) == 0 && len(plan.Delete) == 0 {
-		_ = os.MkdirAll(filepath.Dir(a.seenFile()), 0o755)
-		_ = os.WriteFile(a.seenFile(), []byte(m.Version), 0o644)
+		_ = os.MkdirAll(filepath.Dir(plan.Seen), 0o755)
+		_ = os.WriteFile(plan.Seen, []byte(m.Version), 0o644)
 		if !startup {
-			log.OK("Everything is up to date (published version %s).", m.Version)
+			log.OK("%s: everything is up to date (published version %s).", src.label, m.Version)
 		}
 		return false, nil
 	}
-	fmt.Printf("\n Update available (version %s): %s\n", m.Version, countKinds(plan.Download))
+	fmt.Printf("\n %s update available (version %s): %s\n", src.label, m.Version, countKinds(plan.Download))
 	if len(plan.Delete) > 0 {
 		fmt.Printf(" %d outdated file(s) will be removed.\n", len(plan.Delete))
 	}
