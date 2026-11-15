@@ -211,6 +211,27 @@ func publish(args []string) {
 	if !hasApp {
 		fmt.Println("note: no SWTLUpdater.exe in -src, so this release updates only tools/translations.")
 	}
+	// same files as the release already in -out? then leave it alone (nothing to push for this part)
+	if pb, err := os.ReadFile(filepath.Join(*out, "manifest.json")); err == nil {
+		var prev Manifest
+		if _, serr := os.Stat(filepath.Join(*out, "manifest.json.sig")); serr == nil && json.Unmarshal(pb, &prev) == nil && len(prev.Files) == len(files) {
+			now := map[string]ManFile{}
+			for _, f := range files {
+				now[f.Path] = f
+			}
+			same := true
+			for _, f := range prev.Files {
+				if n, ok := now[f.Path]; !ok || n.SHA256 != f.SHA256 || n.Size != f.Size {
+					same = false
+					break
+				}
+			}
+			if same {
+				fmt.Printf("UNCHANGED (%s): the files are identical to the release already in %s (version %s). Left as it is - nothing to push for this part.\n", *part, *out, prev.Version)
+				return
+			}
+		}
+	}
 	m := Manifest{Version: *ver, Released: time.Now().UTC().Format(time.RFC3339), Notes: *notes, Files: files, Delete: []string{}}
 
 	// files that were in the previous release but are gone now get deleted on the players' PCs
@@ -255,6 +276,7 @@ func pack(args []string) {
 	url := fs.String("url", "", "update server address players will use, https://.../")
 	pub := fs.String("pub", "", "public key text from 'keygen'")
 	zf := fs.String("zip", "SWTLUpdater_player.zip", "zip file to create")
+	toolsDir := fs.String("tools", "", "optional: your Tools folder; its files are added to the player zip as Tools\\... (they are NOT published online)")
 	turl := fs.String("turl", "", "optional: separate address of the translation repo (https://.../)")
 	fs.Parse(args)
 	if *src == "" || *url == "" || *pub == "" {
@@ -266,7 +288,9 @@ func pack(args []string) {
 		die("%v", err)
 	}
 	zw := zip.NewWriter(z)
+	added := map[string]bool{}
 	for _, f := range files {
+		added[f.Path] = true
 		w, err := zw.Create(f.Path)
 		if err != nil {
 			die("%v", err)
@@ -278,6 +302,34 @@ func pack(args []string) {
 		io.Copy(w, in)
 		in.Close()
 	}
+	nTools := 0
+	if *toolsDir != "" {
+		err := filepath.Walk(*toolsDir, func(p string, d os.FileInfo, err error) error {
+			if err != nil || d.IsDir() {
+				return err
+			}
+			rel, _ := filepath.Rel(*toolsDir, p)
+			name := "Tools/" + filepath.ToSlash(rel)
+			if added[name] {
+				return nil
+			}
+			w, err := zw.Create(name)
+			if err != nil {
+				return err
+			}
+			in, err := os.Open(p)
+			if err != nil {
+				return err
+			}
+			defer in.Close()
+			_, err = io.Copy(w, in)
+			nTools++
+			return err
+		})
+		if err != nil {
+			die("%v", err)
+		}
+	}
 	w, _ := zw.Create("SWTLUpdater.ini")
 	fmt.Fprintf(w, "; SW TL Updater settings (the program asks for the rest on first start)\nUpdateURL=%s\nUpdateKey=%s\n", *url, *pub)
 	if *turl != "" {
@@ -286,7 +338,7 @@ func pack(args []string) {
 	fmt.Fprintf(w, "UpdateAtStartup=yes\n")
 	zw.Close()
 	z.Close()
-	fmt.Println("Player zip written:", *zf, "-", len(files), "file(s) + a settings file with the update address and key.")
+	fmt.Println("Player zip written:", *zf, "-", len(files), "file(s) +", nTools, "tool file(s) + a settings file with the update address and key.")
 }
 
 func verify(args []string) {
