@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"swtlupdater/internal/resfmt"
 	"testing"
 )
 
@@ -123,5 +124,35 @@ func TestCsvToResRealShopTable(t *testing.T) {
 	}
 	if !bytes.Equal(got, want) {
 		t.Fatalf("differs from SWAdmin's table (%d vs %d bytes)", len(got), len(want))
+	}
+}
+
+// The standalone checker (internal/resfmt) must accept and reject exactly what the converter does.
+func TestResfmtAgreesWithConverter(t *testing.T) {
+	fields := []resField{{"a", "uint32"}, {"b", "string"}, {"c", "uint16"}, {"d", "byte"}, {"e", "int16"}, {"f", "bool"}}
+	rf := make([]resfmt.Field, len(fields))
+	for i, f := range fields {
+		rf[i] = resfmt.Field{Name: f.Name, Type: f.Type}
+	}
+	cases := []string{
+		"h\r\n1\ttext\t2\t3\t-4\t1\r\n",
+		"h\r\n1\ttext\t2\t3\t-4\r\n",           // missing column
+		"h\r\n1\ttext\t2\t3\t-4\t1\textra\r\n", // extra column
+		"h\r\n-1\ttext\t2\t3\t-4\t1\r\n",       // negative uint
+		"h\r\n1\ttext\t70000\t3\t-4\t1\r\n",    // uint16 overflow
+		"h\r\n1\ttext\t2\t300\t-4\t1\r\n",      // byte overflow
+		"h\r\n1\ttext\t2\t3\t40000\t1\r\n",     // int16 overflow
+		"h\r\n1\ttext\t2\t3\t-4\tyes\r\n",      // bad bool
+		"h\r\n1\ttext\t\t3\t-4\t1\r\n",         // empty number
+		"h\r\n1\ttext\t2\t3\t-4\t1\t\r\n",      // trailing empty cell is fine
+		"h\r\n",                                // no rows
+		"\xff\xfe",                             // not UTF-8
+	}
+	for _, c := range cases {
+		_, err := csvToRes(fields, []byte(c))
+		probs := resfmt.ValidateCSV(rf, []byte(c), 0)
+		if (err == nil) != (len(probs) == 0) {
+			t.Errorf("disagree on %q: converter err=%v, checker=%v", c, err, probs)
+		}
 	}
 }

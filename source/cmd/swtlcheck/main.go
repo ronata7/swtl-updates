@@ -13,6 +13,8 @@ import (
 	"sort"
 	"strings"
 	"unicode"
+
+	"swtlupdater/internal/resfmt"
 )
 
 type table struct {
@@ -22,7 +24,7 @@ type table struct {
 	badCol []string // IDs whose column count differs from the header
 }
 
-var tokRe = regexp.MustCompile(`(?i)</?[a-z][^>]{0,60}>|\{[0-9]{1,2}\}|%[0-9.]*[a-z]`)
+var tokRe = regexp.MustCompile(`(?i)</?[a-z][^>]{0,200}>|\{[0-9]{1,2}\}|%[0-9.]*[a-z]`)
 
 func readTable(path string, t *table) error {
 	f, err := os.Open(path)
@@ -131,7 +133,7 @@ func filterTok(m map[string]int, placeholders bool) map[string]int {
 	return r
 }
 
-var goodTag = regexp.MustCompile(`(?i)^</?[a-z][^<>]{0,60}>`)
+var goodTag = regexp.MustCompile(`(?i)^</?[a-z][^<>]{0,200}>`)
 
 // brokenTag finds a '<' that does not start a complete tag (like "</font<br>") or a stray '>' after text.
 func brokenTag(s string) string {
@@ -158,13 +160,27 @@ func clip(s string) string {
 }
 
 func main() {
-	origDir := flag.String("orig", "original csv", "folder with the original (untranslated) game CSVs")
+	schemaPath := flag.String("schema", "", "schema.json of the game build: checks the FORMAT of every translated CSV against it (what the updater needs)")
+	content := flag.Bool("content", false, "also compare the TEXT with the original CSVs (needs -orig; many findings are harmless)")
+	origDir := flag.String("orig", "original csv", "folder with the original (untranslated) game CSVs (only used with -content)")
 	tlDir := flag.String("tl", "TL csv", "folder with the translated CSVs")
 	out := flag.String("out", "check_report.txt", "report file")
 	maxShow := flag.Int("max", 40, "most examples shown per problem type and table in the report (the .tsv has all)")
 	ratio := flag.Float64("maxratio", 0, "also flag cells where the translation is longer than this many times the original (0 = off)")
 	flag.BoolVar(&checkBr, "br", false, "also compare the number of <br> line breaks")
 	flag.Parse()
+
+	if *schemaPath != "" {
+		code := formatCheck(*schemaPath, *tlDir, *out, *maxShow)
+		if !*content {
+			os.Exit(code)
+		}
+		fmt.Println()
+		*out = strings.TrimSuffix(*out, filepath.Ext(*out)) + "_content" + filepath.Ext(*out)
+	} else if !*content {
+		fmt.Println("error: give -schema <schema.json> (format check) and/or -content -orig <folder> (text comparison)")
+		os.Exit(1)
+	}
 
 	ents, err := os.ReadDir(*origDir)
 	if err != nil {
@@ -408,4 +424,95 @@ func main() {
 	}
 	fmt.Println("Report:", *out)
 	fmt.Println("Full list (open in Excel):", tsv)
+}
+
+// formatCheck validates every CSV in tlDir against the schema. Returns 2 if any format problem was found.
+func formatCheck(schemaPath, tlDir, out string, maxShow int) int {
+	sch, err := resfmt.LoadSchema(schemaPath)
+	if err != nil {
+		fmt.Println("error: cannot read the schema:", err)
+		return 1
+	}
+	ents, err := os.ReadDir(tlDir)
+	if err != nil {
+		fmt.Println("error: cannot read the translation folder:", err)
+		return 1
+	}
+	var rep strings.Builder
+	fmt.Fprintf(&rep, "Format check (against the game's table layout)\r\nTranslations: %s\r\nSchema: %s\r\n\r\n", tlDir, schemaPath)
+	var tsv strings.Builder
+	tsv.WriteString("\xEF\xBB\xBFfile\tline\tproblem\tdetail\r\n")
+	bad, okFiles, skipped := 0, 0, 0
+	for _, e := range ents {
+		if e.IsDir() || !strings.EqualFold(filepath.Ext(e.Name()), ".csv") {
+			continue
+		}
+		base := strings.TrimSuffix(strings.TrimSuffix(e.Name(), filepath.Ext(e.Name())), "_ENG")
+		fields, ok := sch[strings.ToLower(base)+".res"]
+		if !ok {
+			skipped++
+			fmt.Fprintf(&rep, "== %s\r\n   not a table in this game build's schema - the updater will not use it\r\n\r\n", e.Name())
+			continue
+		}
+		data, err := os.ReadFile(filepath.Join(tlDir, e.Name()))
+		if err != nil {
+			fmt.Fprintf(&rep, "== %s\r\n   cannot read: %v\r\n\r\n", e.Name(), err)
+			bad++
+			continue
+		}
+		probs := resfmt.ValidateCSV(fields, data, 0)
+		var warns []string
+		for i, ln := range strings.Split(strings.TrimPrefix(string(data), "\xEF\xBB\xBF"), "\n") {
+			if i == 0 {
+				continue
+			}
+			cells := strings.Split(strings.TrimSuffix(ln, "\r"), "\t")
+			for j, f := range fields {
+				if j < len(cells) && strings.EqualFold(f.Type, "string") {
+					if b := brokenTag(cells[j]); b != "" {
+						warns = append(warns, fmt.Sprintf("line %d, column %d (%s): %s", i+1, j+1, f.Name, b))
+					}
+				}
+			}
+		}
+		fmt.Fprintf(&rep, "== %s  (%d columns in the table)\r\n", e.Name(), len(fields))
+		if len(probs) == 0 && len(warns) == 0 {
+			okFiles++
+			fmt.Fprintf(&rep, "   format OK\r\n\r\n")
+			continue
+		}
+		show := func(kind string, list []string, note string) {
+			if len(list) == 0 {
+				return
+			}
+			fmt.Fprintf(&rep, "   %s: %d  %s\r\n", kind, len(list), note)
+			for i, p := range list {
+				if i < maxShow {
+					fmt.Fprintf(&rep, "      %s\r\n", p)
+				}
+				fmt.Fprintf(&tsv, "%s\t\t%s\t%s\r\n", e.Name(), kind, strings.ReplaceAll(p, "\t", " "))
+			}
+			if len(list) > maxShow {
+				fmt.Fprintf(&rep, "      ... and %d more (see the .tsv file)\r\n", len(list)-maxShow)
+			}
+		}
+		show("FORMAT", probs, "- the updater cannot build this table until fixed")
+		show("BROKEN", warns, "- a cut-off tag such as </font<br>; the table builds, but the text may show wrongly in game")
+		fmt.Fprintf(&rep, "\r\n")
+		if len(probs) > 0 {
+			bad++
+		} else {
+			okFiles++
+		}
+	}
+	_ = os.WriteFile(out, []byte(rep.String()), 0o644)
+	tsvPath := strings.TrimSuffix(out, filepath.Ext(out)) + ".tsv"
+	_ = os.WriteFile(tsvPath, []byte(tsv.String()), 0o644)
+	fmt.Printf("Format check: %d file(s) OK, %d with FORMAT problems, %d not in the schema.\n", okFiles, bad, skipped)
+	fmt.Println("Report:", out)
+	fmt.Println("Full list (open in Excel):", tsvPath)
+	if bad > 0 {
+		return 2
+	}
+	return 0
 }
