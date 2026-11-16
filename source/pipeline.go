@@ -747,7 +747,9 @@ func (r *Run) crossCheck(names []string) {
 			r.log.Warn("Cross-check: %s DIFFERS between SWAdmin and the built-in converter (%d vs %d bytes) - please send this log to Discord: ronata", n, len(a), len(b))
 			if e1 == nil && e2 == nil && explained < 3 {
 				explained++
+				orig, _ := os.ReadFile(filepath.Join(r.exDir, "bin", "Table", n))
 				r.log.Info("    %s", describeResDiff(a, b))
+				r.log.Info("    %s", describeOriginal(orig, a))
 			}
 		} else {
 			same++
@@ -817,4 +819,35 @@ func describeResDiff(a, b []byte) string {
 		}
 	}
 	return sb.String()
+}
+
+// footerNumber finds the number whose MD5 text is the footer of a table (diagnostics, small tables only).
+func footerNumber(footer string) string {
+	for n := uint64(0); n < 40000000; n++ {
+		h := md5.Sum([]byte(strconv.FormatUint(n, 10)))
+		if hex.EncodeToString(h[:]) == footer {
+			return strconv.FormatUint(n, 10)
+		}
+	}
+	return "not found"
+}
+
+// describeOriginal reports the table as it was in the game before patching, for the cross-check.
+func describeOriginal(orig, swadmin []byte) string {
+	if len(orig) < 38 {
+		return "original table in the game: not available"
+	}
+	var rowsSum uint64
+	for _, c := range orig[4 : len(orig)-34] {
+		rowsSum += uint64(c)
+	}
+	f := string(orig[len(orig)-32:])
+	s := fmt.Sprintf("original table in the game: %d bytes, %d rows, footer %s, byte sum of its rows %d", len(orig), int(orig[0])|int(orig[1])<<8|int(orig[2])<<16|int(orig[3])<<24, f, rowsSum)
+	if len(orig) < 4<<20 {
+		s += ", footer is for the number " + footerNumber(f)
+		if len(swadmin) > 34 {
+			s += ", SWAdmin footer is for the number " + footerNumber(string(swadmin[len(swadmin)-32:]))
+		}
+	}
+	return s
 }
