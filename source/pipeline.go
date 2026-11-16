@@ -355,7 +355,7 @@ func (r *Run) stepConvert() error {
 	r.log.Step(5, totalSteps, "Applying translations")
 	mode := r.cfg.Converter
 	if mode == "" {
-		mode = "swadmin"
+		mode = "builtin"
 	}
 	var out string
 	var code int

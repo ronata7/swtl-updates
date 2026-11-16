@@ -306,7 +306,7 @@ func (a *App) About() {
 	fmt.Println("  Questions or problems?  Discord: ronata   (please attach the newest file from the logs folder)")
 	fmt.Println()
 	fmt.Println("  Credits - the tools in the Tools folder are used unmodified:")
-	fmt.Println("    SWAdmin tools .............. rockon")
+	fmt.Println("    SWAdmin tools (schema+table steps now built in, first done with them) .. rockon")
 	fmt.Println("    SW Res structs dumper ...... Asaduji  -  github.com/Asaduji/SW-Res-structs-dumper")
 	fmt.Println("    7-Zip (7z.exe, 7z.dll) ..... Igor Pavlov  -  7-zip.org")
 	fmt.Println("    Xor step (built in now) .... first done with Xor by Luigi Auriemma  -  aluigi.org")
@@ -333,7 +333,8 @@ func shortKey(k string) string {
 const toolsHelp = `
  The Tools folder is missing. These programs belong to their authors, so they only come in the player zip
  (not from online updates). Take the Tools folder from that zip, or put these into a folder named "Tools" next to the updater:
-    Tools\SWAdmin\SWAdmin.Cli.exe, SWAdmin.Core.dll, Newtonsoft.Json.dll   - SWAdmin tools by rockon
     Tools\SW Res structs dumper.exe, .pdb and Zydis.dll                     - SW Res structs dumper by Asaduji
     Tools\7z.exe and 7z.dll                                                - 7-Zip, from 7-zip.org
+ (The xor, schema and table steps are built in. Only if you set Converter=swadmin in the .ini do you also need
+  Tools\SWAdmin\SWAdmin.Cli.exe, SWAdmin.Core.dll and Newtonsoft.Json.dll - SWAdmin tools by rockon.)
  Questions? Discord: ronata`
