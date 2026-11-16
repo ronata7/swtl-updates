@@ -136,7 +136,44 @@ func filterTok(m map[string]int, placeholders bool) map[string]int {
 var goodTag = regexp.MustCompile(`(?i)^</?[a-z][^<>]{0,200}>`)
 
 // brokenTag finds a '<' that does not start a complete tag (like "</font<br>") or a stray '>' after text.
+var spaceClose = regexp.MustCompile(`(?i)<\s+/?\s*font|</\s+font`)
+
+// badFont lists <font> tags whose attributes are not the usual color='#RRGGBB' or size="N" form
+// (wrong number of digits, doubled or curly quotes, attributes on a closing tag).
+var fontTag = regexp.MustCompile(`(?i)</?font\b[^<>]*>`)
+var fontOK = regexp.MustCompile(`(?i)^(<font(\s+(color=('#[0-9a-f]{6}'|"#[0-9a-f]{6}")|size=('\d+'|"\d+")))+>|</font>)$`)
+
+func badFont(s string) string {
+	for _, t := range fontTag.FindAllString(s, -1) {
+		if !fontOK.MatchString(t) {
+			return "unusual font tag: " + t
+		}
+	}
+	return ""
+}
+
+func snippet(s string, key string) string {
+	i := strings.Index(strings.ToLower(s), strings.ToLower(key))
+	if i < 0 {
+		i = 0
+	}
+	r := []rune(s[:i])
+	st := len(r) - 25
+	if st < 0 {
+		st = 0
+	}
+	rest := []rune(s[i:])
+	en := 45
+	if en > len(rest) {
+		en = len(rest)
+	}
+	return string(r[st:]) + string(rest[:en])
+}
+
 func brokenTag(s string) string {
+	if m := spaceClose.FindString(s); m != "" {
+		return "broken tag near: " + m
+	}
 	for i := 0; i < len(s); i++ {
 		if s[i] == '<' && i+1 < len(s) && (s[i+1] == '/' || s[i+1]|0x20 >= 'a' && s[i+1]|0x20 <= 'z') && !goodTag.MatchString(s[i:]) {
 			e := i + 14
@@ -441,7 +478,7 @@ func formatCheck(schemaPath, tlDir, out string, maxShow int) int {
 	var rep strings.Builder
 	fmt.Fprintf(&rep, "Format check (against the game's table layout)\r\nTranslations: %s\r\nSchema: %s\r\n\r\n", tlDir, schemaPath)
 	var tsv strings.Builder
-	tsv.WriteString("\xEF\xBB\xBFfile\tline\tproblem\tdetail\r\n")
+	tsv.WriteString("\xEF\xBB\xBFfile\tproblem\tdetail\r\n")
 	bad, okFiles, skipped := 0, 0, 0
 	for _, e := range ents {
 		if e.IsDir() || !strings.EqualFold(filepath.Ext(e.Name()), ".csv") {
@@ -461,22 +498,27 @@ func formatCheck(schemaPath, tlDir, out string, maxShow int) int {
 			continue
 		}
 		probs := resfmt.ValidateCSV(fields, data, 0)
-		var warns []string
+		var warns, colors []string
 		for i, ln := range strings.Split(strings.ReplaceAll(strings.ReplaceAll(strings.TrimPrefix(string(data), "\xEF\xBB\xBF"), "\r\n", "\n"), "\r", "\n"), "\n") {
 			if i == 0 {
 				continue
 			}
-			cells := strings.Split(strings.TrimSuffix(ln, "\r"), "\t")
+			cells := strings.Split(ln, "\t")
 			for j, f := range fields {
 				if j < len(cells) && strings.EqualFold(f.Type, "string") {
+					where := fmt.Sprintf("line %d, ID %s, column %d (%s)", i+1, cells[0], j+1, f.Name)
 					if b := brokenTag(cells[j]); b != "" {
-						warns = append(warns, fmt.Sprintf("line %d, column %d (%s): %s", i+1, j+1, f.Name, b))
+						key := strings.TrimPrefix(b, "broken tag near: ")
+						warns = append(warns, fmt.Sprintf("%s: ...%s...", where, strings.ReplaceAll(snippet(cells[j], key), "<br>", " / ")))
+					} else if b := badFont(cells[j]); b != "" {
+						key := strings.TrimPrefix(b, "unusual font tag: ")
+						colors = append(colors, fmt.Sprintf("%s: ...%s...", where, strings.ReplaceAll(snippet(cells[j], key), "<br>", " / ")))
 					}
 				}
 			}
 		}
 		fmt.Fprintf(&rep, "== %s  (%d columns in the table)\r\n", e.Name(), len(fields))
-		if len(probs) == 0 && len(warns) == 0 {
+		if len(probs) == 0 && len(warns) == 0 && len(colors) == 0 {
 			okFiles++
 			fmt.Fprintf(&rep, "   format OK\r\n\r\n")
 			continue
@@ -490,14 +532,15 @@ func formatCheck(schemaPath, tlDir, out string, maxShow int) int {
 				if i < maxShow {
 					fmt.Fprintf(&rep, "      %s\r\n", p)
 				}
-				fmt.Fprintf(&tsv, "%s\t\t%s\t%s\r\n", e.Name(), kind, strings.ReplaceAll(p, "\t", " "))
+				fmt.Fprintf(&tsv, "%s\t%s\t%s\r\n", e.Name(), kind, strings.ReplaceAll(p, "\t", " "))
 			}
 			if len(list) > maxShow {
 				fmt.Fprintf(&rep, "      ... and %d more (see the .tsv file)\r\n", len(list)-maxShow)
 			}
 		}
 		show("FORMAT", probs, "- the updater cannot build this table until fixed")
-		show("BROKEN", warns, "- a cut-off tag such as </font<br>; the table builds, but the text may show wrongly in game")
+		show("BROKEN", warns, "- a cut-off tag such as </font<br> or </ font>; the table builds, but the text may show wrongly in game")
+		show("COLOR", colors, "- a <font> tag that is not color='#RRGGBB' (6 digits, straight quotes); the game's own text has a few of these too")
 		fmt.Fprintf(&rep, "\r\n")
 		if len(probs) > 0 {
 			bad++
