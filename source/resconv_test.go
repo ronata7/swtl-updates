@@ -29,7 +29,7 @@ func TestCsvToResKnownChecksums(t *testing.T) {
 		if want == "735b90b45681 25ed6c3f678819b6e058" {
 			want = "735b90b4568125ed6c3f678819b6e058"
 		}
-		out, err := csvToRes(shopFields, []byte("Unkown1\tUnkown2\t\r\n"+c.rows), nil)
+		out, err := csvToRes(shopFields, []byte("Unkown1\tUnkown2\t\r\n"+c.rows))
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -44,7 +44,7 @@ func TestCsvToResKnownChecksums(t *testing.T) {
 }
 
 func TestCsvToResExactBytes(t *testing.T) {
-	out, err := csvToRes(shopFields, []byte("Unkown1\tUnkown2\t\r\n1\tA\t\r\n"), nil)
+	out, err := csvToRes(shopFields, []byte("Unkown1\tUnkown2\t\r\n1\tA\t\r\n"))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -57,7 +57,7 @@ func TestCsvToResExactBytes(t *testing.T) {
 }
 
 func TestCsvToResLineBreakAndErrors(t *testing.T) {
-	out, err := csvToRes(shopFields, []byte("h\r\n1\ta<br>b\t\r\n"), nil)
+	out, err := csvToRes(shopFields, []byte("h\r\n1\ta<br>b\t\r\n"))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -65,7 +65,7 @@ func TestCsvToResLineBreakAndErrors(t *testing.T) {
 		t.Fatalf("line break not converted: % x", out)
 	}
 	for _, bad := range []string{"", "h\r\n", "h\r\nx\tA\t\r\n", "h\r\n1\r\n", "h\r\n1\tA\tZ\r\n", "h\r\n-1\tA\t\r\n"} {
-		if _, err := csvToRes(shopFields, []byte(bad), nil); err == nil {
+		if _, err := csvToRes(shopFields, []byte(bad)); err == nil {
 			t.Errorf("expected an error for %q", bad)
 		}
 	}
@@ -83,7 +83,7 @@ func TestCsvToResMatchesSWAdmin(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		got, err := csvToRes(shopFields, csv, nil)
+		got, err := csvToRes(shopFields, csv)
 		if err != nil {
 			t.Fatalf("%s: %v", f, err)
 		}
@@ -93,17 +93,35 @@ func TestCsvToResMatchesSWAdmin(t *testing.T) {
 	}
 }
 
-func TestKeepsExistingChecksum(t *testing.T) {
-	old, _ := csvToRes(shopFields, []byte("h\r\n1\tOLD\t\r\n"), nil)
-	copy(old[len(old)-32:], "0123456789abcdef0123456789abcdef")
-	out, err := csvToRes(shopFields, []byte("h\r\n1\tNEW TEXT\t\r\n"), old)
+func TestChecksumUsesFieldValues(t *testing.T) {
+	// number fields add their value (not their bytes); a string adds its length plus the sum of its UTF-16 bytes
+	f := []resField{{"a", "uint32"}, {"b", "string"}, {"c", "uint16"}, {"d", "byte"}}
+	out, err := csvToRes(f, []byte("h\r\n100001\tAB\t300\t7\t\r\n"))
 	if err != nil {
 		t.Fatal(err)
 	}
-	if string(out[len(out)-32:]) != "0123456789abcdef0123456789abcdef" {
-		t.Fatalf("existing checksum was not kept: %s", out[len(out)-32:])
+	sum := 100001 + (2 + 65 + 66) + 300 + 7
+	h := md5.Sum([]byte(strconv.Itoa(sum)))
+	if got := string(out[len(out)-32:]); got != hex.EncodeToString(h[:]) {
+		t.Fatalf("checksum %s, want md5 of %d", got, sum)
 	}
-	if _, ok := existingFooter([]byte("short")); ok {
-		t.Fatal("short data has no footer")
+	if _, err := csvToRes([]resField{{"a", "single"}}, []byte("h\r\n1.5\r\n")); err == nil {
+		t.Fatal("float fields must be refused, not guessed")
+	}
+}
+
+// A real table: the game's tb_Shop_String as written by SWAdmin, and the CSV it was made from.
+func TestCsvToResRealShopTable(t *testing.T) {
+	csv, err := os.ReadFile("testdata/real/tb_Shop_String.csv")
+	if err != nil {
+		t.Fatal(err)
+	}
+	want, _ := os.ReadFile("testdata/real/tb_Shop_String.res")
+	got, err := csvToRes(shopFields, csv)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(got, want) {
+		t.Fatalf("differs from SWAdmin's table (%d vs %d bytes)", len(got), len(want))
 	}
 }

@@ -7,7 +7,6 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"math"
 	"os"
 	"path/filepath"
 	"sort"
@@ -21,10 +20,11 @@ import (
 //
 // Table (.res) layout, worked out from sample tables:
 //   uint32  number of rows
-//   rows    each field in schema order: byte/uint16/uint32/int16/int32 little endian, single = 4 byte float,
+//   rows    each field in schema order: byte/uint16/uint32/int16/int32 little endian,
 //           string = uint16 length in UTF-16 units + UTF-16LE characters
-//   footer  uint16 32 + 32 ASCII hex characters = MD5 of the decimal text of the sum of all bytes of the rows
-//           (for a table made from scratch; when a table already exists, SWAdmin keeps its footer unchanged)
+//   footer  uint16 32 + 32 ASCII hex characters = MD5 of the decimal text of a checksum number, where the
+//           number is the sum over all fields: a number field adds its value, a string field adds its length
+//           plus the sum of the bytes of its UTF-16LE text.
 // In the CSV a line break inside a text is written as "<br>".
 
 type resField struct {
@@ -57,25 +57,8 @@ func loadResSchema(path string) (map[string][]resField, error) {
 	return m, nil
 }
 
-// existingFooter returns the 32 character checksum at the end of an existing table, if it has one.
-// SWAdmin keeps the checksum of the table that is already there (the game's own); only a table made
-// from scratch gets a freshly calculated one.
-func existingFooter(b []byte) (string, bool) {
-	if len(b) < 38 || b[len(b)-34] != 32 || b[len(b)-33] != 0 {
-		return "", false
-	}
-	f := string(b[len(b)-32:])
-	for _, c := range f {
-		if !(c >= '0' && c <= '9' || c >= 'a' && c <= 'f') {
-			return "", false
-		}
-	}
-	return f, true
-}
-
-// csvToRes converts the text of one translation CSV into the binary table. If `existing` (the table
-// currently in the game) has a checksum, that checksum is kept.
-func csvToRes(fields []resField, csv []byte, existing []byte) ([]byte, error) {
+// csvToRes converts the text of one translation CSV into the binary table.
+func csvToRes(fields []resField, csv []byte) ([]byte, error) {
 	csv = bytes.TrimPrefix(csv, []byte{0xEF, 0xBB, 0xBF})
 	if len(bytes.TrimSpace(csv)) == 0 {
 		return nil, fmt.Errorf("CSV file is empty")
@@ -85,6 +68,7 @@ func csvToRes(fields []resField, csv []byte, existing []byte) ([]byte, error) {
 	}
 	lines := strings.Split(string(csv), "\n")
 	var body bytes.Buffer
+	var sum int64
 	rows := 0
 	for i, ln := range lines {
 		ln = strings.TrimSuffix(ln, "\r")
@@ -107,9 +91,11 @@ func csvToRes(fields []resField, csv []byte, existing []byte) ([]byte, error) {
 			return nil, fmt.Errorf("line %d: missing value for column %d (%s)", i+1, len(cells)+1, fields[len(cells)].Name)
 		}
 		for j, f := range fields {
-			if err := putField(&body, f.Type, cells[j]); err != nil {
+			v, err := putField(&body, f.Type, cells[j])
+			if err != nil {
 				return nil, fmt.Errorf("line %d, column %d (%s): %v", i+1, j+1, f.Name, err)
 			}
+			sum += v
 		}
 		rows++
 	}
@@ -119,98 +105,80 @@ func csvToRes(fields []resField, csv []byte, existing []byte) ([]byte, error) {
 	var out bytes.Buffer
 	binary.Write(&out, binary.LittleEndian, uint32(rows))
 	out.Write(body.Bytes())
-	var sum uint64
-	for _, c := range body.Bytes() {
-		sum += uint64(c)
-	}
-	h := md5.Sum([]byte(strconv.FormatUint(sum, 10)))
+	h := md5.Sum([]byte(strconv.FormatInt(sum, 10)))
 	hx := hex.EncodeToString(h[:])
-	if keep, ok := existingFooter(existing); ok {
-		hx = keep
-	}
 	binary.Write(&out, binary.LittleEndian, uint16(len(hx)))
 	out.WriteString(hx)
 	return out.Bytes(), nil
 }
 
-func putField(w *bytes.Buffer, typ, s string) error {
+// putField writes one field and returns what it adds to the table's checksum number.
+func putField(w *bytes.Buffer, typ, s string) (int64, error) {
 	le := binary.LittleEndian
 	switch strings.ToLower(typ) {
 	case "string":
 		s = strings.ReplaceAll(s, "<br>", "\n")
 		u := utf16.Encode([]rune(s))
 		if len(u) > 0xFFFF {
-			return fmt.Errorf("text is too long (%d characters)", len(u))
+			return 0, fmt.Errorf("text is too long (%d characters)", len(u))
 		}
 		binary.Write(w, le, uint16(len(u)))
 		binary.Write(w, le, u)
+		add := int64(len(u))
+		for _, c := range u {
+			add += int64(c&0xFF) + int64(c>>8)
+		}
+		return add, nil
 	case "byte":
 		v, err := strconv.ParseUint(s, 10, 8)
 		if err != nil {
-			return numErr(s, "byte", err)
+			return 0, numErr(s, "byte", err)
 		}
 		w.WriteByte(byte(v))
+		return int64(v), nil
 	case "bool", "boolean":
 		switch strings.ToLower(s) {
 		case "0", "false":
 			w.WriteByte(0)
+			return 0, nil
 		case "1", "true":
 			w.WriteByte(1)
-		default:
-			return fmt.Errorf("%q is not a yes/no value", s)
+			return 1, nil
 		}
+		return 0, fmt.Errorf("%q is not a yes/no value", s)
 	case "uint16":
 		v, err := strconv.ParseUint(s, 10, 16)
 		if err != nil {
-			return numErr(s, "uint16", err)
+			return 0, numErr(s, "uint16", err)
 		}
 		binary.Write(w, le, uint16(v))
+		return int64(v), nil
 	case "int16":
 		v, err := strconv.ParseInt(s, 10, 16)
 		if err != nil {
-			return numErr(s, "int16", err)
+			return 0, numErr(s, "int16", err)
 		}
 		binary.Write(w, le, int16(v))
+		return v, nil
 	case "uint32":
 		v, err := strconv.ParseUint(s, 10, 32)
 		if err != nil {
-			return numErr(s, "uint32", err)
+			return 0, numErr(s, "uint32", err)
 		}
 		binary.Write(w, le, uint32(v))
+		return int64(v), nil
 	case "int32":
 		v, err := strconv.ParseInt(s, 10, 32)
 		if err != nil {
-			return numErr(s, "int32", err)
+			return 0, numErr(s, "int32", err)
 		}
 		binary.Write(w, le, int32(v))
-	case "uint64":
-		v, err := strconv.ParseUint(s, 10, 64)
-		if err != nil {
-			return numErr(s, "uint64", err)
-		}
-		binary.Write(w, le, v)
-	case "int64":
-		v, err := strconv.ParseInt(s, 10, 64)
-		if err != nil {
-			return numErr(s, "int64", err)
-		}
-		binary.Write(w, le, v)
-	case "single", "float":
-		v, err := strconv.ParseFloat(s, 32)
-		if err != nil {
-			return numErr(s, "single", err)
-		}
-		binary.Write(w, le, math.Float32bits(float32(v)))
-	case "double":
-		v, err := strconv.ParseFloat(s, 64)
-		if err != nil {
-			return numErr(s, "double", err)
-		}
-		binary.Write(w, le, math.Float64bits(v))
+		return v, nil
 	default:
-		return fmt.Errorf("unsupported schema field type: %s", typ)
+		// single/double/64-bit fields do not occur in the string/script tables, and how SWAdmin adds them
+		// to the checksum has not been verified - do not guess.
+		return 0, fmt.Errorf("field type %q is not supported by the built-in converter (use Converter=swadmin)", typ)
 	}
-	return nil
 }
 
 func numErr(s, typ string, err error) error {
@@ -221,10 +189,9 @@ func numErr(s, typ string, err error) error {
 }
 
 // convertCSVDir converts every CSV in csvDir whose table exists in `existing` (table file names as they
-// are in the game) and writes the result to outDir under the game's own file name. currentDir holds the
-// tables as they are now (their checksums are kept); it may be empty.
+// are in the game) and writes the result to outDir under the game's own file name.
 // It returns the names written, plus one message per problem or skipped file.
-func convertCSVDir(schemaPath, csvDir, outDir, currentDir string, existing []string) (done []string, problems []string, err error) {
+func convertCSVDir(schemaPath, csvDir, outDir string, existing []string) (done []string, problems []string, err error) {
 	sch, err := loadResSchema(schemaPath)
 	if err != nil {
 		return nil, nil, err
@@ -261,11 +228,7 @@ func convertCSVDir(schemaPath, csvDir, outDir, currentDir string, existing []str
 			problems = append(problems, fmt.Sprintf("%s: error - %v", cn, err))
 			continue
 		}
-		var cur []byte
-		if currentDir != "" {
-			cur, _ = os.ReadFile(filepath.Join(currentDir, game))
-		}
-		out, err := csvToRes(fields, b, cur)
+		out, err := csvToRes(fields, b)
 		if err != nil {
 			problems = append(problems, fmt.Sprintf("%s: error - %v", cn, err))
 			continue
