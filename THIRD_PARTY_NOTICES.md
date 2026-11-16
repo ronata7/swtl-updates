@@ -33,8 +33,8 @@ SWTLUpdater.exe and swtlpublish.exe are written in Go and contain parts of the G
 
 ## NOT in this repository - used from the Tools folder
 These belong to their authors and are not hosted or redistributed in this repository or by online updates. A player zip handed out separately may contain them, unmodified, under their own terms:
-- SWAdmin tools - rockon (bundles Newtonsoft.Json by James Newton-King, MIT). Only needed if `Converter=swadmin`; not used by default anymore.
-- SW Res structs dumper - Asaduji, https://github.com/Asaduji/SW-Res-structs-dumper (MIT per its README; bundles Zydis by zyantific)
+- SWAdmin tools - credited to rockon (a copy of its source is also hosted at https://github.com/GreenDamTan/swadmin; the original author has not been independently verified; bundles Newtonsoft.Json by James Newton-King, MIT). Only needed if `Converter=swadmin`; not used by default.
+- SW Res structs dumper - Asaduji, https://github.com/Asaduji/SW-Res-structs-dumper (shown as MIT-licensed on its GitHub page; if you bundle it, keep its LICENSE.txt next to it; bundles Zydis by zyantific)
 - 7-Zip (7z.exe, 7z.dll) - Igor Pavlov. Used unmodified. 7-Zip is licensed under the GNU LGPL; its source code is at https://www.7-zip.org
 
 ## Credit for a replaced tool

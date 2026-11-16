@@ -30,6 +30,7 @@ type Run struct {
 	resDir  string
 	before  map[string]string
 	changed []string
+	failed  []string // tables whose CSV could not be converted (left as the game has them)
 	newV    string
 	exDir   string
 }
@@ -85,6 +86,9 @@ func (a *App) RunPatch(opt RunOpts) (code int) {
 		log.OK("DRY RUN finished in %s - %d table(s) would change, nothing was written.", time.Since(start).Round(time.Second), len(r.changed))
 	} else {
 		log.OK("Patching complete in %s - %d table(s) updated.", time.Since(start).Round(time.Second), len(r.changed))
+		if len(r.failed) > 0 {
+			log.Warn("%d table(s) were NOT translated and stay as the game has them: %s", len(r.failed), strings.Join(r.failed, ", "))
+		}
 	}
 	if n := len(log.Warns); n > 0 {
 		fmt.Printf("\n  Warnings (%d):\n", n)
@@ -381,7 +385,11 @@ func (r *Run) stepConvert() error {
 			if strings.Contains(pr, "error") {
 				warn("Converter: " + pr)
 				code = 1
+				r.failed = append(r.failed, strings.SplitN(pr, ":", 2)[0])
 			}
+		}
+		if n := len(r.failed); n > 0 && n*2 > len(r.before) {
+			return fmt.Errorf("%d of %d tables could not be converted - the game was probably updated and the table layout changed. Nothing was saved. Wait for a translation update, or send this log to Discord: ronata", n, len(r.before))
 		}
 		out = fmt.Sprintf("converted %d file(s)", len(done))
 		if shown > 0 {
@@ -425,7 +433,7 @@ func (r *Run) stepConvert() error {
 	sort.Strings(r.changed)
 	if len(r.changed) == 0 {
 		if res.Code != 0 || shown > 0 {
-			return errors.New("SWAdmin reported problems and no table changed:\n" + tailLines(res.Out, 8))
+			return errors.New("The converter reported problems and no table changed:\n" + tailLines(res.Out, 8))
 		}
 		return errNothing
 	}

@@ -336,5 +336,5 @@ const toolsHelp = `
     Tools\SW Res structs dumper.exe, .pdb and Zydis.dll                     - SW Res structs dumper by Asaduji
     Tools\7z.exe and 7z.dll                                                - 7-Zip, from 7-zip.org
  (The xor, schema and table steps are built in. Only if you set Converter=swadmin in the .ini do you also need
-  Tools\SWAdmin\SWAdmin.Cli.exe, SWAdmin.Core.dll and Newtonsoft.Json.dll - SWAdmin tools by rockon.)
+  Tools\SWAdmin\SWAdmin.Cli.exe, SWAdmin.Core.dll and Newtonsoft.Json.dll - SWAdmin tools, credited to rockon.)
  Questions? Discord: ronata`
