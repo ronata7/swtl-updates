@@ -29,7 +29,7 @@ func TestCsvToResKnownChecksums(t *testing.T) {
 		if want == "735b90b45681 25ed6c3f678819b6e058" {
 			want = "735b90b4568125ed6c3f678819b6e058"
 		}
-		out, err := csvToRes(shopFields, []byte("Unkown1\tUnkown2\t\r\n"+c.rows))
+		out, err := csvToRes(shopFields, []byte("Unkown1\tUnkown2\t\r\n"+c.rows), nil)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -44,7 +44,7 @@ func TestCsvToResKnownChecksums(t *testing.T) {
 }
 
 func TestCsvToResExactBytes(t *testing.T) {
-	out, err := csvToRes(shopFields, []byte("Unkown1\tUnkown2\t\r\n1\tA\t\r\n"))
+	out, err := csvToRes(shopFields, []byte("Unkown1\tUnkown2\t\r\n1\tA\t\r\n"), nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -57,7 +57,7 @@ func TestCsvToResExactBytes(t *testing.T) {
 }
 
 func TestCsvToResLineBreakAndErrors(t *testing.T) {
-	out, err := csvToRes(shopFields, []byte("h\r\n1\ta<br>b\t\r\n"))
+	out, err := csvToRes(shopFields, []byte("h\r\n1\ta<br>b\t\r\n"), nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -65,7 +65,7 @@ func TestCsvToResLineBreakAndErrors(t *testing.T) {
 		t.Fatalf("line break not converted: % x", out)
 	}
 	for _, bad := range []string{"", "h\r\n", "h\r\nx\tA\t\r\n", "h\r\n1\r\n", "h\r\n1\tA\tZ\r\n", "h\r\n-1\tA\t\r\n"} {
-		if _, err := csvToRes(shopFields, []byte(bad)); err == nil {
+		if _, err := csvToRes(shopFields, []byte(bad), nil); err == nil {
 			t.Errorf("expected an error for %q", bad)
 		}
 	}
@@ -83,12 +83,27 @@ func TestCsvToResMatchesSWAdmin(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		got, err := csvToRes(shopFields, csv)
+		got, err := csvToRes(shopFields, csv, nil)
 		if err != nil {
 			t.Fatalf("%s: %v", f, err)
 		}
 		if !bytes.Equal(got, want) {
 			t.Errorf("%s differs from SWAdmin's file", filepath.Base(f))
 		}
+	}
+}
+
+func TestKeepsExistingChecksum(t *testing.T) {
+	old, _ := csvToRes(shopFields, []byte("h\r\n1\tOLD\t\r\n"), nil)
+	copy(old[len(old)-32:], "0123456789abcdef0123456789abcdef")
+	out, err := csvToRes(shopFields, []byte("h\r\n1\tNEW TEXT\t\r\n"), old)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if string(out[len(out)-32:]) != "0123456789abcdef0123456789abcdef" {
+		t.Fatalf("existing checksum was not kept: %s", out[len(out)-32:])
+	}
+	if _, ok := existingFooter([]byte("short")); ok {
+		t.Fatal("short data has no footer")
 	}
 }

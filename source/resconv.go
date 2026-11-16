@@ -24,6 +24,7 @@ import (
 //   rows    each field in schema order: byte/uint16/uint32/int16/int32 little endian, single = 4 byte float,
 //           string = uint16 length in UTF-16 units + UTF-16LE characters
 //   footer  uint16 32 + 32 ASCII hex characters = MD5 of the decimal text of the sum of all bytes of the rows
+//           (for a table made from scratch; when a table already exists, SWAdmin keeps its footer unchanged)
 // In the CSV a line break inside a text is written as "<br>".
 
 type resField struct {
@@ -56,8 +57,25 @@ func loadResSchema(path string) (map[string][]resField, error) {
 	return m, nil
 }
 
-// csvToRes converts the text of one translation CSV into the binary table.
-func csvToRes(fields []resField, csv []byte) ([]byte, error) {
+// existingFooter returns the 32 character checksum at the end of an existing table, if it has one.
+// SWAdmin keeps the checksum of the table that is already there (the game's own); only a table made
+// from scratch gets a freshly calculated one.
+func existingFooter(b []byte) (string, bool) {
+	if len(b) < 38 || b[len(b)-34] != 32 || b[len(b)-33] != 0 {
+		return "", false
+	}
+	f := string(b[len(b)-32:])
+	for _, c := range f {
+		if !(c >= '0' && c <= '9' || c >= 'a' && c <= 'f') {
+			return "", false
+		}
+	}
+	return f, true
+}
+
+// csvToRes converts the text of one translation CSV into the binary table. If `existing` (the table
+// currently in the game) has a checksum, that checksum is kept.
+func csvToRes(fields []resField, csv []byte, existing []byte) ([]byte, error) {
 	csv = bytes.TrimPrefix(csv, []byte{0xEF, 0xBB, 0xBF})
 	if len(bytes.TrimSpace(csv)) == 0 {
 		return nil, fmt.Errorf("CSV file is empty")
@@ -107,6 +125,9 @@ func csvToRes(fields []resField, csv []byte) ([]byte, error) {
 	}
 	h := md5.Sum([]byte(strconv.FormatUint(sum, 10)))
 	hx := hex.EncodeToString(h[:])
+	if keep, ok := existingFooter(existing); ok {
+		hx = keep
+	}
 	binary.Write(&out, binary.LittleEndian, uint16(len(hx)))
 	out.WriteString(hx)
 	return out.Bytes(), nil
@@ -200,9 +221,10 @@ func numErr(s, typ string, err error) error {
 }
 
 // convertCSVDir converts every CSV in csvDir whose table exists in `existing` (table file names as they
-// are in the game) and writes the result to outDir under the game's own file name.
+// are in the game) and writes the result to outDir under the game's own file name. currentDir holds the
+// tables as they are now (their checksums are kept); it may be empty.
 // It returns the names written, plus one message per problem or skipped file.
-func convertCSVDir(schemaPath, csvDir, outDir string, existing []string) (done []string, problems []string, err error) {
+func convertCSVDir(schemaPath, csvDir, outDir, currentDir string, existing []string) (done []string, problems []string, err error) {
 	sch, err := loadResSchema(schemaPath)
 	if err != nil {
 		return nil, nil, err
@@ -239,7 +261,11 @@ func convertCSVDir(schemaPath, csvDir, outDir string, existing []string) (done [
 			problems = append(problems, fmt.Sprintf("%s: error - %v", cn, err))
 			continue
 		}
-		out, err := csvToRes(fields, b)
+		var cur []byte
+		if currentDir != "" {
+			cur, _ = os.ReadFile(filepath.Join(currentDir, game))
+		}
+		out, err := csvToRes(fields, b, cur)
 		if err != nil {
 			problems = append(problems, fmt.Sprintf("%s: error - %v", cn, err))
 			continue

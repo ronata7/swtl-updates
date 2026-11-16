@@ -2,11 +2,14 @@ package main
 
 import (
 	"bytes"
+	"crypto/md5"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -373,7 +376,7 @@ func (r *Run) stepConvert() error {
 	sort.Strings(names)
 
 	if mode == "builtin" {
-		done, problems, err := convertCSVDir(r.schema, r.cfg.TLPath, r.resDir, names)
+		done, problems, err := convertCSVDir(r.schema, r.cfg.TLPath, r.resDir, r.resDir, names)
 		if err != nil {
 			return err
 		}
@@ -730,18 +733,22 @@ func (r *Run) stepPublish() error {
 // what SWAdmin just wrote. The SWAdmin result is what gets used.
 func (r *Run) crossCheck(names []string) {
 	alt := filepath.Join(r.work, "res_builtin")
-	done, problems, err := convertCSVDir(r.schema, r.cfg.TLPath, alt, names)
+	done, problems, err := convertCSVDir(r.schema, r.cfg.TLPath, alt, filepath.Join(r.exDir, "bin", "Table"), names)
 	if err != nil {
 		r.log.Warn("Cross-check could not run: %v", err)
 		return
 	}
-	same, diff := 0, 0
+	same, diff, explained := 0, 0, 0
 	for _, n := range done {
 		a, e1 := os.ReadFile(filepath.Join(r.resDir, n))
 		b, e2 := os.ReadFile(filepath.Join(alt, n))
 		if e1 != nil || e2 != nil || !bytes.Equal(a, b) {
 			diff++
 			r.log.Warn("Cross-check: %s DIFFERS between SWAdmin and the built-in converter (%d vs %d bytes) - please send this log to Discord: ronata", n, len(a), len(b))
+			if e1 == nil && e2 == nil && explained < 3 {
+				explained++
+				r.log.Info("    %s", describeResDiff(a, b))
+			}
 		} else {
 			same++
 		}
@@ -757,4 +764,57 @@ func (r *Run) crossCheck(names []string) {
 	} else {
 		r.log.Warn("Cross-check: %d table(s) identical, %d with differences", same, diff)
 	}
+}
+
+// describeResDiff says where two versions of a table differ (diagnostics for the cross-check).
+func describeResDiff(a, b []byte) string {
+	first, count := -1, 0
+	for i := 0; i < len(a) && i < len(b); i++ {
+		if a[i] != b[i] {
+			if first < 0 {
+				first = i
+			}
+			count++
+		}
+	}
+	var sb strings.Builder
+	fmt.Fprintf(&sb, "first difference at byte %d, %d differing byte(s); ", first, count)
+	rowsEnd := len(a) - 34
+	if first >= rowsEnd && len(a) == len(b) {
+		sb.WriteString("row data identical, only the checksum differs. ")
+	} else {
+		sb.WriteString("the row data differs. ")
+		if first >= 0 {
+			lo := first - 6
+			if lo < 0 {
+				lo = 0
+			}
+			hi := first + 10
+			if hi > len(a) {
+				hi = len(a)
+			}
+			if hi > len(b) {
+				hi = len(b)
+			}
+			fmt.Fprintf(&sb, "SWAdmin bytes % x vs built-in % x. ", a[lo:hi], b[lo:hi])
+		}
+	}
+	if len(a) > 34 && len(b) > 34 {
+		fa, fb := string(a[len(a)-32:]), string(b[len(b)-32:])
+		var sum uint64
+		for _, c := range b[4 : len(b)-34] {
+			sum += uint64(c)
+		}
+		fmt.Fprintf(&sb, "checksums SWAdmin=%s built-in=%s (our byte sum %d)", fa, fb, sum)
+		if len(a) < 4<<20 {
+			for n := uint64(0); n < 40000000; n++ {
+				h := md5.Sum([]byte(strconv.FormatUint(n, 10)))
+				if hex.EncodeToString(h[:]) == fa {
+					fmt.Fprintf(&sb, "; SWAdmin's checksum is for the number %d (difference %d)", n, int64(n)-int64(sum))
+					break
+				}
+			}
+		}
+	}
+	return sb.String()
 }
