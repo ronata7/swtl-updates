@@ -1,18 +1,18 @@
 {
-  "version": "2.8.1",
-  "released": "2026-11-15T17:32:02Z",
-  "notes": "notes",
+  "version": "2.13.0",
+  "released": "2026-11-16T04:52:02Z",
+  "notes": "built-in xor, schema and tables",
   "files": [
     {
       "path": "README.txt",
-      "size": 7917,
-      "sha256": "0377c6ceb7534d162c5e83a0496926c913fcd130c5f1f8a9b43647c66f610585",
+      "size": 8535,
+      "sha256": "5bcdb04cba413e63a1e71c2959d6717074cc2d2a4008389cc7010936651bbec5",
       "kind": "docs"
     },
     {
       "path": "SWTLUpdater.exe",
-      "size": 6771200,
-      "sha256": "15315b4d031e08e6ada6e56941332ae209d04749c7ef13df870937d77878498c",
+      "size": 6845440,
+      "sha256": "f4a61e961bd3f6f64328e0a4712f60154df6053aaa29a3787c2b300d07781215",
       "kind": "app"
     }
   ],

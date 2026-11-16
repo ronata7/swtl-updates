@@ -1,4 +1,4 @@
-SW TL Updater 2.8.0  (by ronata)
+SW TL Updater 2.13.0  (by ronata)
 ==============================================================================
 Patches SoulWorker's data12.v with your translated .csv files.
 Uses the same tools as before (the Tools folder) - nothing there is replaced.
@@ -12,7 +12,7 @@ IMPORTANT - please read
 Folder layout (everything next to SWTLUpdater.exe)
 ------------------------------------------------------------------------------
   SWTLUpdater.exe
-  Tools\            7z, xor, SWAdmin, SW Res structs dumper (see "Credits"). They come in the player zip;
+  Tools\            7z and the SW Res structs dumper (see "Credits"). They come in the player zip;
                     if yours has no Tools folder, the program tells you which files it needs and where to get them
   TL csv\           Your translated .csv files
 
@@ -64,6 +64,9 @@ Change them in the menu (3) Settings or by editing SWTLUpdater.ini with Notepad.
                                                     when they are kept in a separate place. Comes with your download)
   Translation key             TranslationKey       (optional; empty = same key as UpdateKey)
   Check for updates at start  UpdateAtStartup      yes               (yes / no)
+  Table maker (advanced)      Converter            builtin           (builtin = built into the updater, the default;
+                                                    swadmin = use the older SWAdmin tool instead, needs Tools\SWAdmin;
+                                                    check = do both, compare, report, and use SWAdmin's result)
 
   - "Reset everything to the default values" in the Settings menu restores the table above
     (your update address, translation address and keys are kept).
@@ -118,12 +121,12 @@ Help / contact
 ------------------------------------------------------------------------------
   Any question or issue at Discord: ronata   (attach the newest file from the logs folder)
 
-Credits (the tools in the Tools folder are used unmodified)
+Credits (the tools in the Tools folder are used unmodified; the xor step is now built into the updater)
 ------------------------------------------------------------------------------
-  SWAdmin tools ............ rockon
-  SW Res structs dumper .... prozaks
-  Xor (xor.exe) ............ Luigi Auriemma - aluigi.org
-  7-Zip (7z.exe, 7z.dll) ... Igor Pavlov - 7-zip.org
+  SWAdmin tools ............ rockon  (the schema and table steps are built in now; first done with SWAdmin)
+  SW Res structs dumper .... Asaduji - github.com/Asaduji/SW-Res-structs-dumper
+  Xor step (built in now) .. first done with Xor by Luigi Auriemma - aluigi.org (xor.exe is no longer needed)
+  7-Zip (7z.exe, 7z.dll) ... Igor Pavlov - 7-zip.org  (licensed under the GNU LGPL; source code at www.7-zip.org)
   Libraries bundled in them  Newtonsoft.Json (James Newton-King), Zydis (zyantific)
   Updater .................. ronata
 ==============================================================================
