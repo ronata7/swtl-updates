@@ -462,7 +462,7 @@ func formatCheck(schemaPath, tlDir, out string, maxShow int) int {
 		}
 		probs := resfmt.ValidateCSV(fields, data, 0)
 		var warns []string
-		for i, ln := range strings.Split(strings.TrimPrefix(string(data), "\xEF\xBB\xBF"), "\n") {
+		for i, ln := range strings.Split(strings.ReplaceAll(strings.ReplaceAll(strings.TrimPrefix(string(data), "\xEF\xBB\xBF"), "\r\n", "\n"), "\r", "\n"), "\n") {
 			if i == 0 {
 				continue
 			}

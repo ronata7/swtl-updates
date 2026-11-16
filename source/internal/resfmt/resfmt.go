@@ -56,7 +56,7 @@ func ValidateCSV(fields []Field, csv []byte, max int) []string {
 		return []string{"file is not valid UTF-8 (save it as UTF-8)"}
 	}
 	rows := 0
-	for i, ln := range strings.Split(string(csv), "\n") {
+	for i, ln := range strings.Split(strings.ReplaceAll(strings.ReplaceAll(string(csv), "\r\n", "\n"), "\r", "\n"), "\n") {
 		ln = strings.TrimSuffix(ln, "\r")
 		if i == 0 || ln == "" {
 			continue
@@ -136,17 +136,13 @@ func checkCell(typ, s string) string {
 		return num(32, false)
 	case "int32":
 		return num(32, true)
-	case "int64":
-		return num(64, true)
-	case "uint64":
-		return num(64, false)
-	case "single", "float", "double":
-		if _, err := strconv.ParseFloat(s, 64); err != nil {
+	case "single", "float":
+		if _, err := strconv.ParseFloat(s, 32); err != nil {
 			return fmt.Sprintf("%q is not a valid decimal number", clip(s))
 		}
 		return ""
 	}
-	return fmt.Sprintf("unknown column type %q", typ)
+	return fmt.Sprintf("column type %q is not supported (the updater and SWAdmin cannot write it)", typ)
 }
 
 func clip(s string) string {

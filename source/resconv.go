@@ -7,6 +7,8 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"math"
+	"math/big"
 	"os"
 	"path/filepath"
 	"sort"
@@ -66,7 +68,8 @@ func csvToRes(fields []resField, csv []byte) ([]byte, error) {
 	if !utf8.Valid(csv) {
 		return nil, fmt.Errorf("CSV is not valid UTF-8")
 	}
-	lines := strings.Split(string(csv), "\n")
+	// like SWAdmin (File.ReadAllLines): a line ends at CRLF, LF or a lone CR
+	lines := strings.Split(strings.ReplaceAll(strings.ReplaceAll(string(csv), "\r\n", "\n"), "\r", "\n"), "\n")
 	var body bytes.Buffer
 	var sum int64
 	rows := 0
@@ -174,11 +177,34 @@ func putField(w *bytes.Buffer, typ, s string) (int64, error) {
 		}
 		binary.Write(w, le, int32(v))
 		return v, nil
+	case "single", "float":
+		f, err := strconv.ParseFloat(s, 32)
+		if err != nil {
+			if s == "" {
+				return 0, fmt.Errorf("missing value (single expected)")
+			}
+			return 0, fmt.Errorf("%q is not a valid single", s)
+		}
+		if math.IsInf(f, 0) || math.Abs(f) >= 7.9e28 {
+			return 0, fmt.Errorf("%q is out of range", s)
+		}
+		binary.Write(w, le, math.Float32bits(float32(f)))
+		return floorSingle(float32(f)), nil
 	default:
-		// single/double/64-bit fields do not occur in the string/script tables, and how SWAdmin adds them
+		// double/64-bit fields do not occur in the string/script tables, and how SWAdmin adds them
 		// to the checksum has not been verified - do not guess.
 		return 0, fmt.Errorf("field type %q is not supported by the built-in converter (use Converter=swadmin)", typ)
 	}
+}
+
+// floorSingle adds a float to the checksum the way SWAdmin does: Math.Floor(Convert.ToDecimal(float)).
+// Converting a float to decimal rounds it to 7 significant digits first.
+func floorSingle(f float32) int64 {
+	r, ok := new(big.Rat).SetString(strconv.FormatFloat(float64(f), 'g', 7, 32))
+	if !ok {
+		return 0
+	}
+	return new(big.Int).Div(r.Num(), r.Denom()).Int64()
 }
 
 func numErr(s, typ string, err error) error {

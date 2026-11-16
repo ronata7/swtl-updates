@@ -106,8 +106,8 @@ func TestChecksumUsesFieldValues(t *testing.T) {
 	if got := string(out[len(out)-32:]); got != hex.EncodeToString(h[:]) {
 		t.Fatalf("checksum %s, want md5 of %d", got, sum)
 	}
-	if _, err := csvToRes([]resField{{"a", "single"}}, []byte("h\r\n1.5\r\n")); err == nil {
-		t.Fatal("float fields must be refused, not guessed")
+	if _, err := csvToRes([]resField{{"a", "double"}}, []byte("h\r\n1.5\r\n")); err == nil {
+		t.Fatal("double fields must be refused, not guessed")
 	}
 }
 
@@ -154,5 +154,29 @@ func TestResfmtAgreesWithConverter(t *testing.T) {
 		if (err == nil) != (len(probs) == 0) {
 			t.Errorf("disagree on %q: converter err=%v, checker=%v", c, err, probs)
 		}
+	}
+}
+
+func TestSingleAndLoneCR(t *testing.T) {
+	f := []resField{{"a", "uint32"}, {"b", "single"}}
+	out, err := csvToRes(f, []byte("h\r\n1\t1.5\r\n2\t-1.5\r\n"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	// 2 rows; row1: 01000000 0000C03F ; row2: 02000000 000 0C0BF
+	want := []byte{2, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0xC0, 0x3F, 2, 0, 0, 0, 0, 0, 0xC0, 0xBF}
+	if !bytes.HasPrefix(out, want) {
+		t.Fatalf("bytes % x", out[:20])
+	}
+	// checksum number = 1+floor(1.5) + 2+floor(-1.5) = 1+1+2-2 = 2
+	h := md5.Sum([]byte("2"))
+	if string(out[len(out)-32:]) != hex.EncodeToString(h[:]) {
+		t.Fatalf("checksum wrong: %s", out[len(out)-32:])
+	}
+	// a lone CR ends a line, like SWAdmin
+	o1, e1 := csvToRes(shopFields, []byte("h\r\n1\ta\r2\tb\r\n"))
+	o2, e2 := csvToRes(shopFields, []byte("h\r\n1\ta\r\n2\tb\r\n"))
+	if e1 != nil || e2 != nil || !bytes.Equal(o1, o2) {
+		t.Fatalf("lone CR not handled: %v %v", e1, e2)
 	}
 }
