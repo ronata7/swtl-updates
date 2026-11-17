@@ -141,7 +141,31 @@ var spaceClose = regexp.MustCompile(`(?i)<\s+/?\s*font|</\s+font`)
 // badFont lists <font> tags whose attributes are not the usual color='#RRGGBB' or size="N" form
 // (wrong number of digits, doubled or curly quotes, attributes on a closing tag).
 var fontTag = regexp.MustCompile(`(?i)</?font\b[^<>]*>`)
-var fontOK = regexp.MustCompile(`(?i)^(<font(\s+(color=('#[0-9a-f]{6}'|"#[0-9a-f]{6}")|size=('\d+'|"\d+")))+>|</font>)$`)
+var fontOK = regexp.MustCompile(`(?i)^(<font(\s+(color=('#[0-9a-f]{6}'|"#[0-9a-f]{6}")|size=('\d+'|"\d+")|face=("[^"<>]*"|'[^'<>]*')))+>|</font>)$`)
+
+// fullwidth finds East Asian punctuation and full-width letters/digits (U+3000-303F, U+FF00-FFEF) in a text.
+func fullwidth(s string) string {
+	var seen []rune
+	n := 0
+	for _, r := range s {
+		if (r >= 0x3000 && r <= 0x303F) || (r >= 0xFF00 && r <= 0xFFEF) {
+			n++
+			dup := false
+			for _, x := range seen {
+				if x == r {
+					dup = true
+				}
+			}
+			if !dup && len(seen) < 6 {
+				seen = append(seen, r)
+			}
+		}
+	}
+	if n == 0 {
+		return ""
+	}
+	return fmt.Sprintf("%d full-width character(s): %s", n, string(seen))
+}
 
 func badFont(s string) string {
 	for _, t := range fontTag.FindAllString(s, -1) {
@@ -498,7 +522,7 @@ func formatCheck(schemaPath, tlDir, out string, maxShow int) int {
 			continue
 		}
 		probs := resfmt.ValidateCSV(fields, data, 0)
-		var warns, colors []string
+		var warns, colors, wides []string
 		for i, ln := range strings.Split(strings.ReplaceAll(strings.ReplaceAll(strings.TrimPrefix(string(data), "\xEF\xBB\xBF"), "\r\n", "\n"), "\r", "\n"), "\n") {
 			if i == 0 {
 				continue
@@ -507,6 +531,9 @@ func formatCheck(schemaPath, tlDir, out string, maxShow int) int {
 			for j, f := range fields {
 				if j < len(cells) && strings.EqualFold(f.Type, "string") {
 					where := fmt.Sprintf("line %d, ID %s, column %d (%s)", i+1, cells[0], j+1, f.Name)
+					if w := fullwidth(plain(cells[j])); w != "" {
+						wides = append(wides, fmt.Sprintf("%s: %s in: %s", where, w, clip(plain(cells[j]))))
+					}
 					if b := brokenTag(cells[j]); b != "" {
 						key := strings.TrimPrefix(b, "broken tag near: ")
 						warns = append(warns, fmt.Sprintf("%s: ...%s...", where, strings.ReplaceAll(snippet(cells[j], key), "<br>", " / ")))
@@ -518,7 +545,7 @@ func formatCheck(schemaPath, tlDir, out string, maxShow int) int {
 			}
 		}
 		fmt.Fprintf(&rep, "== %s  (%d columns in the table)\r\n", e.Name(), len(fields))
-		if len(probs) == 0 && len(warns) == 0 && len(colors) == 0 {
+		if len(probs) == 0 && len(warns) == 0 && len(colors) == 0 && len(wides) == 0 {
 			okFiles++
 			fmt.Fprintf(&rep, "   format OK\r\n\r\n")
 			continue
@@ -541,6 +568,7 @@ func formatCheck(schemaPath, tlDir, out string, maxShow int) int {
 		show("FORMAT", probs, "- the updater cannot build this table until fixed")
 		show("BROKEN", warns, "- a cut-off tag such as </font<br> or </ font>; the table builds, but the text may show wrongly in game")
 		show("COLOR", colors, "- a <font> tag that is not color='#RRGGBB' (6 digits, straight quotes); the game's own text has a few of these too")
+		show("FULLWIDTH", wides, "- East Asian punctuation or full-width letters inside the text (。 ！ ？ ： ％ and so on); the table builds, they may look wrong or use a different font")
 		fmt.Fprintf(&rep, "\r\n")
 		if len(probs) > 0 {
 			bad++
