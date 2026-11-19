@@ -377,9 +377,12 @@ func (r *Run) stepConvert() error {
 	sort.Strings(names)
 
 	if mode == "builtin" {
-		done, problems, err := convertCSVDir(r.schema, r.cfg.TLPath, r.resDir, names)
+		done, problems, notes, err := convertCSVDirMerge(r.schema, r.cfg.TLPath, r.resDir, names, true)
 		if err != nil {
 			return err
+		}
+		for _, nt := range notes {
+			r.log.Warn("%s", nt)
 		}
 		for _, pr := range problems {
 			if strings.Contains(pr, "error") {
