@@ -16,6 +16,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"swtlupdater/internal/rowpatch"
 	"time"
 )
 
@@ -35,6 +36,16 @@ type ManFile struct {
 	Size   int64  `json:"size"`
 	SHA256 string `json:"sha256"`
 	Kind   string `json:"kind"`
+	// Patches: small downloads that turn an older copy of this file into this one (see rowpatch).
+	Patches []ManPatch `json:"patches,omitempty"`
+}
+
+// ManPatch turns the local file whose SHA-256 is From into the file of the entry it belongs to.
+type ManPatch struct {
+	From   string `json:"from"`
+	Path   string `json:"path"` // below patches/ on the update server
+	Size   int64  `json:"size"`
+	SHA256 string `json:"sha256"`
 }
 
 type Manifest struct {
@@ -261,6 +272,69 @@ func downloadVerified(c *http.Client, u, dst string, f ManFile) error {
 	return nil
 }
 
+// safePatchPath allows only plain paths below patches/ (no .., no drive letters, no backslashes).
+func safePatchPath(p string) bool {
+	if !strings.HasPrefix(p, "patches/") || strings.ContainsAny(p, "\\:") || strings.Contains(p, "..") || strings.Contains(p, "//") {
+		return false
+	}
+	return strings.HasSuffix(p, ".rp") && len(p) < 300
+}
+
+const maxPatchBytes = 64 << 20
+
+// tryPatch rebuilds f from the local copy at target plus a small downloaded patch. Any problem returns
+// an error and the caller downloads the whole file instead - nothing is trusted until the result
+// matches the signed SHA-256 and size.
+func tryPatch(c *http.Client, base, target, dst string, f ManFile, log *Logger) error {
+	if len(f.Patches) == 0 {
+		return errors.New("no patch offered")
+	}
+	local, err := os.ReadFile(target)
+	if err != nil {
+		return errors.New("no patch: the file is not on this PC yet")
+	}
+	sum := sha256.Sum256(local)
+	have := hex.EncodeToString(sum[:])
+	var pt *ManPatch
+	for i := range f.Patches {
+		if strings.EqualFold(f.Patches[i].From, have) {
+			pt = &f.Patches[i]
+			break
+		}
+	}
+	if pt == nil {
+		return errors.New("no patch for the version on this PC")
+	}
+	if !safePatchPath(pt.Path) || pt.Size <= 0 || pt.Size > maxPatchBytes || len(pt.SHA256) != 64 {
+		return errors.New("patch entry is not valid")
+	}
+	z, err := httpGet(c, base+escapePath(pt.Path), pt.Size)
+	if err != nil {
+		return err
+	}
+	zs := sha256.Sum256(z)
+	if int64(len(z)) != pt.Size || !strings.EqualFold(hex.EncodeToString(zs[:]), pt.SHA256) {
+		return errors.New("patch does not match the signed update list")
+	}
+	text, err := rowpatch.Gunzip(z, 2*f.Size+(1<<20))
+	if err != nil {
+		return err
+	}
+	out, err := rowpatch.Apply(local, text)
+	if err != nil {
+		return err
+	}
+	rs := sha256.Sum256(out)
+	if int64(len(out)) != f.Size || !strings.EqualFold(hex.EncodeToString(rs[:]), f.SHA256) {
+		return errors.New("patched file does not match the signed update list")
+	}
+	if err := os.WriteFile(dst, out, 0o644); err != nil {
+		return err
+	}
+	log.Info("   patch: downloaded %d KB (the whole file is %d KB)", (pt.Size+1023)/1024, (f.Size+1023)/1024)
+	return nil
+}
+
 // applyUpdate downloads and checks everything first; files are only replaced when all of it is good.
 func (a *App) applyUpdate(c *http.Client, base string, plan *UpdatePlan, self string, log *Logger) error {
 	tmp := filepath.Join(a.dir, "update_tmp")
@@ -273,6 +347,13 @@ func (a *App) applyUpdate(c *http.Client, base string, plan *UpdatePlan, self st
 	for i, f := range plan.Download {
 		log.Info("Downloading %s  (%d/%d)", f.Path, i+1, len(plan.Download))
 		parts[i] = filepath.Join(tmp, fmt.Sprintf("%04d.part", i))
+		if rel, ok := safeRel(f.Path); ok && len(f.Patches) > 0 && f.Path != "SWTLUpdater.exe" {
+			if err := tryPatch(c, base, filepath.Join(a.dir, rel), parts[i], f, log); err == nil {
+				continue
+			} else if !strings.HasPrefix(err.Error(), "no patch") {
+				log.Warn("   patch not used (%v) - downloading the whole file", err)
+			}
+		}
 		if err := downloadVerified(c, base+"files/"+escapePath(f.Path), parts[i], f); err != nil {
 			return err
 		}

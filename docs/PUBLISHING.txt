@@ -49,3 +49,10 @@ Translation files - read DISCLAIMER.md before publishing them
   of it does not affect the program.
 
 Players can turn updates off: Settings > Update address > "-" (or UpdateAtStartup=no / empty UpdateURL in the .ini).
+
+Patches for big tables
+  The release step also writes small patches for big translation files into a "patches" folder, next to "files".
+  A player who has one of the last 10 versions of a file downloads one patch (rows are matched by their ID, so a few
+  changed rows are a few KB) instead of the whole file. Everything else falls back to the whole file. The rebuilt file
+  must match the signed SHA-256, so a patch cannot install a wrong file. Older program versions ignore patches.
+  Old versions used for patches are kept in release\swtl_history on the publisher PC (never uploaded).
