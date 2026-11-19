@@ -1,7 +1,7 @@
 {
-  "version": "2.13.0",
-  "released": "2026-11-19T05:46:37Z",
-  "notes": "add patch function to TL tables",
+  "version": "2.16.1",
+  "released": "2026-11-19T05:53:40Z",
+  "notes": "Fix some updater text info",
   "files": [
     {
       "path": "README.txt",
@@ -11,8 +11,8 @@
     },
     {
       "path": "SWTLUpdater.exe",
-      "size": 6865408,
-      "sha256": "79de2bd0564a3887d5f8a7c50c15ac306ea2aab592c4cb6e4cc43a4c4b46aa90",
+      "size": 6866432,
+      "sha256": "0da716a4b3e8a54ae2deb48b4103953e9bd87e779cf9fe69ba65d4e832de8a55",
       "kind": "app"
     }
   ],
