@@ -1,4 +1,4 @@
-SW TL Updater 2.17.3  (by ronata)
+SW TL Updater 2.19.0  (by ronata)
 ==============================================================================
 Patches SoulWorker's data12.v with your translated .csv files.
 Uses the same tools as before (the Tools folder) - nothing there is replaced.
@@ -105,6 +105,8 @@ After a game update
    - Rows are matched by the ID in the first column, never by position. Before a table is written the
      updater checks that every ID of the game's table is still there, in the game's order, and that
      every number is the game's. If that check fails, the table is left as the game has it.
+   - Self-test: for every table the updater first writes the game's own rows back and checks that the
+     result is byte for byte the game's table. If not, that table is left as the game has it.
    - Rows the game removed are left out of the table.
    - Number columns always come from the game itself (only the text comes from the translation), so a game
      update that changes values is never overwritten by older numbers.
@@ -116,6 +118,13 @@ After a game update
    - If more than half of the tables cannot be used, nothing is saved at all.
   Nothing else is needed from you: run the updater again after a new translation is published.
   If you have any suggestion or problem, ask ronata on Discord and send the newest file from the logs folder.
+
+Game updates and repairs
+------------------------------------------------------------------------------
+  After every patch the updater remembers which game files it saw (a fingerprint, nothing is uploaded).
+  At the next start, if the game's data file or SoulWorker64.dll is different, it tells you the game was
+  updated (or the file was replaced) and that you should choose 1) Patch now again. 4) Restore a backup
+  is there if something looks wrong afterwards. No message means nothing changed.
 
 Troubleshooting
 ------------------------------------------------------------------------------

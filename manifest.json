@@ -1,18 +1,18 @@
 {
-  "version": "2.17.3",
-  "released": "2026-11-19T10:50:23Z",
-  "notes": "add restore, better checker",
+  "version": "2.19.0",
+  "released": "2026-11-19T13:32:37Z",
+  "notes": "add more feature",
   "files": [
     {
       "path": "README.txt",
-      "size": 10422,
-      "sha256": "009e24ff10a84e448ab55948d5e3d2fcf80f4175b79f6f62d2a07aefd5c92106",
+      "size": 11118,
+      "sha256": "830a765268c02ca4ef66d544f1c07975b1a7c87ae0597ef788cbd6e653600da8",
       "kind": "docs"
     },
     {
       "path": "SWTLUpdater.exe",
-      "size": 6899200,
-      "sha256": "304551e444b3b10b496dc97175937ce6038b13001c86b430282c42d96b84cc9f",
+      "size": 6912000,
+      "sha256": "9a51d4ca5d86f2d42ad13e7e91a53cf740ac4873091a5939e43c69445401a1e8",
       "kind": "app"
     }
   ],
