@@ -1,4 +1,4 @@
-SW TL Updater 2.19.0  (by ronata)
+SW TL Updater 2.19.1  (by ronata)
 ==============================================================================
 Patches SoulWorker's data12.v with your translated .csv files.
 Uses the same tools as before (the Tools folder) - nothing there is replaced.
@@ -105,6 +105,8 @@ After a game update
    - Rows are matched by the ID in the first column, never by position. Before a table is written the
      updater checks that every ID of the game's table is still there, in the game's order, and that
      every number is the game's. If that check fails, the table is left as the game has it.
+   - The rows the game has and the translation does not are also saved as CSV in logs\new_rows\<table>.csv
+     (same format as the translation files), so they can be translated and added.
    - Self-test: for every table the updater first writes the game's own rows back and checks that the
      result is byte for byte the game's table. If not, that table is left as the game has it.
    - Rows the game removed are left out of the table.
