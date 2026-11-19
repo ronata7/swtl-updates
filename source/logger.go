@@ -22,6 +22,8 @@ type Logger struct {
 	mu    sync.Mutex
 	f     *os.File
 	Warns []string
+	// Downloaded counts the bytes fetched by an online update (patches and whole files).
+	Downloaded int64
 }
 
 func (l *Logger) file(s string) {

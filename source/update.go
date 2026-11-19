@@ -291,6 +291,7 @@ func tryPatch(c *http.Client, base, target, dst string, f ManFile, log *Logger) 
 	}
 	local, err := os.ReadFile(target)
 	if err != nil {
+		log.Raw("   " + f.Path + " is not on this PC yet - the whole file is needed")
 		return errors.New("no patch: the file is not on this PC yet")
 	}
 	sum := sha256.Sum256(local)
@@ -303,6 +304,7 @@ func tryPatch(c *http.Client, base, target, dst string, f ManFile, log *Logger) 
 		}
 	}
 	if pt == nil {
+		log.Raw(fmt.Sprintf("   no patch fits the copy on this PC (its fingerprint %s..., %d patch(es) offered) - the whole file is needed", have[:12], len(f.Patches)))
 		return errors.New("no patch for the version on this PC")
 	}
 	if !safePatchPath(pt.Path) || pt.Size <= 0 || pt.Size > maxPatchBytes || len(pt.SHA256) != 64 {
@@ -331,6 +333,7 @@ func tryPatch(c *http.Client, base, target, dst string, f ManFile, log *Logger) 
 	if err := os.WriteFile(dst, out, 0o644); err != nil {
 		return err
 	}
+	log.Downloaded += pt.Size
 	log.Info("   patch: downloaded %d KB (the whole file is %d KB)", (pt.Size+1023)/1024, (f.Size+1023)/1024)
 	return nil
 }
@@ -355,9 +358,13 @@ func (a *App) applyUpdate(c *http.Client, base string, plan *UpdatePlan, self st
 			}
 		}
 		if err := downloadVerified(c, base+"files/"+escapePath(f.Path), parts[i], f); err != nil {
+			log.Raw("   download failed: " + err.Error())
 			return err
 		}
+		log.Downloaded += f.Size
+		log.Info("   whole file: downloaded %d KB", (f.Size+1023)/1024)
 	}
+	log.Info("Downloaded %s in total for %d file(s).", humanBytes(log.Downloaded), len(plan.Download))
 	selfPart := ""
 	for i, f := range plan.Download {
 		if f.Path == "SWTLUpdater.exe" {
@@ -396,6 +403,13 @@ func (a *App) applyUpdate(c *http.Client, base string, plan *UpdatePlan, self st
 	return nil
 }
 
+func humanBytes(n int64) string {
+	if n >= 10<<20 {
+		return fmt.Sprintf("%.1f MB", float64(n)/(1<<20))
+	}
+	return fmt.Sprintf("%d KB", (n+1023)/1024)
+}
+
 func countKinds(fs []ManFile) string {
 	n := map[string]int{}
 	for _, f := range fs {
@@ -423,6 +437,18 @@ func countKinds(fs []ManFile) string {
 // The translation source (if configured) is handled first, so a program restart happens last.
 func (a *App) Update(interactive, startup bool, args []string, relaunch bool) (restarted bool, err error) {
 	log := &Logger{}
+	if lf := a.openUpdateLog(); lf != nil {
+		defer lf.Close()
+		log.f = lf
+		log.Raw(fmt.Sprintf("==== %s  SW TL Updater %s  online update check (startup=%v, asked=%v) ====", time.Now().Format("2006-01-02"), version, startup, interactive))
+		defer func() {
+			if err != nil {
+				log.Raw("RESULT: error: " + err.Error())
+			} else if restarted {
+				log.Raw("RESULT: program updated, restarted")
+			}
+		}()
+	}
 	c := a.cfg
 	if strings.TrimSpace(c.UpdateURL) == "" || strings.TrimSpace(c.UpdateKey) == "" {
 		if !startup {
@@ -454,6 +480,25 @@ func (a *App) Update(interactive, startup bool, args []string, relaunch bool) (r
 	return restarted, firstErr
 }
 
+// openUpdateLog opens logs\online_update.log for appending (older lines are cut when it gets big).
+func (a *App) openUpdateLog() *os.File {
+	dir := a.logsDir()
+	if os.MkdirAll(dir, 0o755) != nil {
+		return nil
+	}
+	path := filepath.Join(dir, "online_update.log")
+	if fi, err := os.Stat(path); err == nil && fi.Size() > 400<<10 {
+		if b, err := os.ReadFile(path); err == nil {
+			_ = os.WriteFile(path, b[len(b)/2:], 0o644)
+		}
+	}
+	f, err := os.OpenFile(path, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0o644)
+	if err != nil {
+		return nil
+	}
+	return f
+}
+
 func (a *App) updateOne(src updSource, interactive, startup bool, args []string, relaunch bool, log *Logger) (restarted bool, err error) {
 	base, err := checkURL(src.url)
 	if err != nil {
@@ -465,19 +510,34 @@ func (a *App) updateOne(src updSource, interactive, startup bool, args []string,
 	}
 	cl := &http.Client{Timeout: timeout}
 	self := a.self
+	log.Raw(fmt.Sprintf("%s source: %s", src.label, base))
 	m, err := fetchManifest(cl, base, src.key)
 	if err != nil {
+		log.Raw(fmt.Sprintf("%s source: could not check: %v", src.label, err))
 		if startup && !strings.Contains(err.Error(), "signature") {
 			fmt.Println(" (Could not check for updates - offline? Continuing.)")
 			return false, nil
 		}
 		return false, err
 	}
+	log.Raw(fmt.Sprintf("%s source: published version %s (%s), %d file(s) in the list", src.label, m.Version, m.Released, len(m.Files)))
 	plan, err := a.planUpdate(m, self, src)
 	if err != nil {
+		log.Raw(fmt.Sprintf("%s source: refused: %v", src.label, err))
 		return false, err
 	}
+	for _, f := range plan.Download {
+		extra := ""
+		if len(f.Patches) > 0 {
+			extra = fmt.Sprintf(", %d patch(es) offered", len(f.Patches))
+		}
+		log.Raw(fmt.Sprintf("   changed: %s (%s, %s%s)", f.Path, f.Kind, humanBytes(f.Size), extra))
+	}
+	for _, d := range plan.Delete {
+		log.Raw("   to remove: " + d)
+	}
 	if len(plan.Download) == 0 && len(plan.Delete) == 0 {
+		log.Raw(fmt.Sprintf("%s source: everything is up to date (version %s)", src.label, m.Version))
 		_ = os.MkdirAll(filepath.Dir(plan.Seen), 0o755)
 		_ = os.WriteFile(plan.Seen, []byte(m.Version), 0o644)
 		if !startup {
@@ -500,6 +560,7 @@ func (a *App) updateOne(src updSource, interactive, startup bool, args []string,
 	if interactive {
 		ans := strings.ToLower(prompt(" Install now? [Y/n] "))
 		if ans != "" && ans != "y" && ans != "yes" {
+			log.Raw("   you chose not to install now")
 			fmt.Println(" Skipped.")
 			return false, nil
 		}
@@ -507,7 +568,7 @@ func (a *App) updateOne(src updSource, interactive, startup bool, args []string,
 	if err := a.applyUpdate(cl, base, plan, self, log); err != nil {
 		return false, err
 	}
-	log.OK("Update installed.")
+	log.OK("Update installed (%s).", src.label)
 	if plan.SelfUpdate && !relaunch {
 		fmt.Println(" The new version of the program will be used the next time you start it.")
 	}
