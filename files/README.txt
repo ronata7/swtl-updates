@@ -1,4 +1,4 @@
-SW TL Updater 2.13.0  (by ronata)
+SW TL Updater 2.16.0  (by ronata)
 ==============================================================================
 Patches SoulWorker's data12.v with your translated .csv files.
 Uses the same tools as before (the Tools folder) - nothing there is replaced.
@@ -60,6 +60,7 @@ Change them in the menu (3) Settings or by editing SWTLUpdater.ini with Notepad.
   Ask settings at start       AskAtStartup         yes               (yes / no)
   Update address              UpdateURL            (empty = online updates off; comes with your download)
   Update key                  UpdateKey            (empty; comes with your download - don't change it)
+  (Big translation tables update with small patches when possible: only the changed rows are downloaded.)
   Translation address         TranslationURL       (optional; only in the .ini. Where the translation files come from,
                                                     when they are kept in a separate place. Comes with your download)
   Translation key             TranslationKey       (optional; empty = same key as UpdateKey)
@@ -123,7 +124,7 @@ Help / contact
 
 Credits (the tools in the Tools folder are used unmodified; the xor step is now built into the updater)
 ------------------------------------------------------------------------------
-  SWAdmin tools ............ rockon  (the schema and table steps are built in now; first done with SWAdmin)
+  SWAdmin tools ............ GreenDamTan (command-line version credited to rockon)  (the schema and table steps are built in now; first done with SWAdmin)
   SW Res structs dumper .... Asaduji - github.com/Asaduji/SW-Res-structs-dumper
   Xor step (built in now) .. first done with Xor by Luigi Auriemma - aluigi.org (xor.exe is no longer needed)
   7-Zip (7z.exe, 7z.dll) ... Igor Pavlov - 7-zip.org  (licensed under the GNU LGPL; source code at www.7-zip.org)

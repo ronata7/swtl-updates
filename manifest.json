@@ -1,18 +1,18 @@
 {
   "version": "2.13.0",
-  "released": "2026-11-16T04:52:02Z",
-  "notes": "built-in xor, schema and tables",
+  "released": "2026-11-19T05:46:37Z",
+  "notes": "add patch function to TL tables",
   "files": [
     {
       "path": "README.txt",
-      "size": 8535,
-      "sha256": "5bcdb04cba413e63a1e71c2959d6717074cc2d2a4008389cc7010936651bbec5",
+      "size": 8689,
+      "sha256": "fe081d98c8d6f054a995fbdc6be85f8f10cd36c529f48a791879d6cdef7285b2",
       "kind": "docs"
     },
     {
       "path": "SWTLUpdater.exe",
-      "size": 6845440,
-      "sha256": "f4a61e961bd3f6f64328e0a4712f60154df6053aaa29a3787c2b300d07781215",
+      "size": 6865408,
+      "sha256": "79de2bd0564a3887d5f8a7c50c15ac306ea2aab592c4cb6e4cc43a4c4b46aa90",
       "kind": "app"
     }
   ],
