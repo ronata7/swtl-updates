@@ -65,6 +65,8 @@ type resRow struct {
 	raw []byte
 	sum int64
 	key string
+	off []int   // start of each column in raw, plus the end (len = columns+1)
+	fs  []int64 // each column's share of the checksum
 }
 
 // csvToRes converts the text of one translation CSV into the binary table.
@@ -124,19 +126,19 @@ func encodeCSV(fields []resField, csv []byte) ([]resRow, error) {
 		}
 		var body bytes.Buffer
 		var sum int64
-		keyEnd := 0
+		off := []int{0}
+		var fs []int64
 		for j, f := range fields {
 			v, err := putField(&body, f.Type, cells[j])
 			if err != nil {
 				return nil, fmt.Errorf("line %d, column %d (%s): %v", i+1, j+1, f.Name, err)
 			}
 			sum += v
-			if j == 0 {
-				keyEnd = body.Len()
-			}
+			fs = append(fs, v)
+			off = append(off, body.Len())
 		}
 		raw := body.Bytes()
-		rows = append(rows, resRow{raw: raw, sum: sum, key: string(raw[:keyEnd])})
+		rows = append(rows, resRow{raw: raw, sum: sum, key: string(raw[:off[1]]), off: off, fs: fs})
 	}
 	if len(rows) == 0 {
 		return nil, fmt.Errorf("CSV has no data rows")
@@ -166,8 +168,10 @@ func readRes(fields []resField, b []byte) ([]resRow, error) {
 	for r := 0; r < n; r++ {
 		start := pos
 		var sum int64
-		keyEnd := 0
-		for j, f := range fields {
+		off := []int{0}
+		var fs []int64
+		for _, f := range fields {
+			before := sum
 			switch strings.ToLower(f.Type) {
 			case "string":
 				if err := need(2); err != nil {
@@ -223,12 +227,11 @@ func readRes(fields []resField, b []byte) ([]resRow, error) {
 			default:
 				return nil, fmt.Errorf("column type %q is not supported", f.Type)
 			}
-			if j == 0 {
-				keyEnd = pos - start
-			}
+			fs = append(fs, sum-before)
+			off = append(off, pos-start)
 		}
 		raw := b[start:pos]
-		rows = append(rows, resRow{raw: raw, sum: sum, key: string(raw[:keyEnd])})
+		rows = append(rows, resRow{raw: raw, sum: sum, key: string(raw[:off[1]]), off: off, fs: fs})
 	}
 	// footer: uint16 length + that many characters, and nothing after it
 	if pos+2 > len(b) {
@@ -241,32 +244,113 @@ func readRes(fields []resField, b []byte) ([]resRow, error) {
 	return rows, nil
 }
 
-// mergeWithGame builds the table to write: the game's rows in the game's order, where a row's text comes
-// from the translation when the translation has that row (same first column), and from the game itself
-// when it does not (a row added by a game update, left in the game's language). Rows only the translation
-// has (removed by the game) are left out, so the table always has exactly the game's rows.
-type mergeStats struct{ Game, Translated, FromGame, Dropped int }
+// mergeWithGame builds the table to write: the game's rows in the game's order. Text columns come from the
+// translation when it has that row (same first column), number columns always come from the game itself, and
+// a row the translation does not have (added by a game update) stays as the game has it. Rows only the
+// translation has (removed by the game) are left out, so the table has exactly the game's rows.
+//
+// It also looks for a column layout that moved: number columns of the translation must equal the game's
+// (the table is refused when most rows differ), and text columns that are codes or empty in the game should
+// not have turned into other text (reported as a warning).
+type mergeStats struct {
+	Game, Translated, FromGame, Dropped int
+	Warnings                            []string
+}
 
-func mergeWithGame(tr, game []resRow) ([]resRow, mergeStats, error) {
+func isCodeLike(field []byte) bool { // a text field (length + UTF-16LE) that is empty or ASCII without spaces
+	if len(field) < 2 {
+		return true
+	}
+	for i := 2; i+1 < len(field); i += 2 {
+		c := uint16(field[i]) | uint16(field[i+1])<<8
+		if c <= 0x20 || c >= 0x7F {
+			return false
+		}
+	}
+	return true
+}
+
+func strBytes(r resRow, j int) []byte { return r.raw[r.off[j]:r.off[j+1]] }
+
+func mergeWithGame(fields []resField, tr, game []resRow) ([]resRow, mergeStats, error) {
 	st := mergeStats{Game: len(game)}
 	byKey := map[string][]resRow{}
 	for _, r := range tr {
 		byKey[r.key] = append(byKey[r.key], r)
 	}
+	nf := len(fields)
+	isStr := make([]bool, nf)
+	for j, f := range fields {
+		isStr[j] = strings.EqualFold(f.Type, "string")
+	}
+	cmpN := make([]int, nf)  // rows compared per column
+	diff := make([]int, nf)  // rows that differ per column
+	codeN := make([]int, nf) // text columns: rows where the game has a code-like value
+	codeD := make([]int, nf) // ... and the translation has something else
 	used := map[string]bool{}
 	var out []resRow
 	for _, g := range game {
-		if rs, ok := byKey[g.key]; ok {
-			if used[g.key] {
-				continue
-			}
-			used[g.key] = true
-			out = append(out, rs...)
-			st.Translated += len(rs)
+		rs, ok := byKey[g.key]
+		if !ok {
+			out = append(out, g)
+			st.FromGame++
 			continue
 		}
-		out = append(out, g)
-		st.FromGame++
+		if used[g.key] {
+			continue
+		}
+		used[g.key] = true
+		// all game rows with this key, in order
+		var gs []resRow
+		for _, x := range game {
+			if x.key == g.key {
+				gs = append(gs, x)
+			}
+		}
+		for i, gr := range gs {
+			if i >= len(rs) {
+				out = append(out, gr)
+				st.FromGame++
+				continue
+			}
+			tr := rs[i]
+			var raw []byte
+			var sum int64
+			nr := resRow{off: []int{0}}
+			for j := 0; j < nf; j++ {
+				src := gr
+				if isStr[j] {
+					src = tr
+				}
+				part := src.raw[src.off[j]:src.off[j+1]]
+				raw = append(raw, part...)
+				sum += src.fs[j]
+				nr.off = append(nr.off, len(raw))
+				nr.fs = append(nr.fs, src.fs[j])
+				if j == 0 {
+					continue
+				}
+				if isStr[j] {
+					if gb := strBytes(gr, j); isCodeLike(gb) {
+						codeN[j]++
+						if !bytes.Equal(gb, strBytes(tr, j)) {
+							codeD[j]++
+						}
+					}
+				} else {
+					cmpN[j]++
+					if !bytes.Equal(strBytes(gr, j), strBytes(tr, j)) {
+						diff[j]++
+					}
+				}
+			}
+			nr.raw, nr.sum, nr.key = raw, sum, g.key
+			out = append(out, nr)
+			st.Translated++
+		}
+		if len(rs) > len(gs) {
+			st.Dropped += len(rs) - len(gs)
+		}
 	}
 	for k, rs := range byKey {
 		if !used[k] {
@@ -276,6 +360,14 @@ func mergeWithGame(tr, game []resRow) ([]resRow, mergeStats, error) {
 	// a translation that hardly matches the game is a different table (renumbered ids): do not mix them
 	if len(game) >= 20 && st.Translated*2 < len(game) {
 		return nil, st, fmt.Errorf("only %d of the game's %d rows are in the translation - the rows were probably renumbered", st.Translated, len(game))
+	}
+	for j := 1; j < nf; j++ {
+		if !isStr[j] && cmpN[j] >= 5 && diff[j]*2 > cmpN[j] {
+			return nil, st, fmt.Errorf("number column %d (%s) differs from the game in %d of %d rows - the columns were probably moved", j+1, fields[j].Name, diff[j], cmpN[j])
+		}
+		if isStr[j] && codeN[j] >= 5 && codeD[j]*2 > codeN[j] {
+			st.Warnings = append(st.Warnings, fmt.Sprintf("text column %d (%s) holds other text than the game in %d of %d rows where the game has a code or empty value - check that the columns were not swapped", j+1, fields[j].Name, codeD[j], codeN[j]))
+		}
 	}
 	return out, st, nil
 }
@@ -443,10 +535,13 @@ func convertCSVDirMerge(schemaPath, csvDir, outDir string, existing []string, me
 				problems = append(problems, fmt.Sprintf("%s: error - the game's table does not fit the table layout (%v) - table left as the game has it", cn, err))
 				continue
 			}
-			merged, st, err := mergeWithGame(trRows, gameRows)
+			merged, st, err := mergeWithGame(fields, trRows, gameRows)
 			if err != nil {
 				problems = append(problems, fmt.Sprintf("%s: error - %v - table left as the game has it", cn, err))
 				continue
+			}
+			for _, w := range st.Warnings {
+				notes = append(notes, strings.TrimSuffix(cn, filepath.Ext(cn))+": "+w)
 			}
 			if st.FromGame > 0 || st.Dropped > 0 {
 				msg := fmt.Sprintf("%s: the game has %d row(s) the translation does not have yet - kept in the game's own language", strings.TrimSuffix(cn, filepath.Ext(cn)), st.FromGame)
