@@ -1,4 +1,4 @@
-SW TL Updater 2.16.0  (by ronata)
+SW TL Updater 2.17.3  (by ronata)
 ==============================================================================
 Patches SoulWorker's data12.v with your translated .csv files.
 Uses the same tools as before (the Tools folder) - nothing there is replaced.
@@ -19,7 +19,7 @@ Folder layout (everything next to SWTLUpdater.exe)
 Created automatically:
   SWTLUpdater.ini   Your settings
   backup\           Previous patched files
-  logs\             One log per run
+  logs\             update_<date>.log = one per table patch; online_update.log = every update check (versions, files, patch vs whole file, sizes, errors)
   cache\            Saved table schema and update notes (speeds things up)
   data12.v          The newest patched file
 
@@ -95,6 +95,27 @@ What it checks for you
     extracted and compared before anything is saved.
   - The previous patcher file is backed up before it is replaced; results are saved safely
     (temp file + rename), and every run writes a log.
+
+After a game update
+------------------------------------------------------------------------------
+  When the game is updated, tables can change before the translation does. For every table the updater
+  compares the translation with the game's own table first:
+   - Rows the game added that the translation does not have yet are kept in the game's own language
+     (the log lists how many per table), so the game keeps working and everything already translated stays.
+   - Rows are matched by the ID in the first column, never by position. Before a table is written the
+     updater checks that every ID of the game's table is still there, in the game's order, and that
+     every number is the game's. If that check fails, the table is left as the game has it.
+   - Rows the game removed are left out of the table.
+   - Number columns always come from the game itself (only the text comes from the translation), so a game
+     update that changes values is never overwritten by older numbers.
+   - If the number columns of the translation do not match the game's (columns were moved), that table is
+     left as the game has it. If text columns that are codes or empty in the game now hold other text, the
+     table is still patched but a warning asks you to report it.
+   - If a table's layout changed (a column was added or removed) or its rows were renumbered, only THAT
+     table is left exactly as the game has it. All other tables are still translated.
+   - If more than half of the tables cannot be used, nothing is saved at all.
+  Nothing else is needed from you: run the updater again after a new translation is published.
+  If you have any suggestion or problem, ask ronata on Discord and send the newest file from the logs folder.
 
 Troubleshooting
 ------------------------------------------------------------------------------

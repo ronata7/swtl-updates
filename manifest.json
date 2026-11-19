@@ -1,18 +1,18 @@
 {
-  "version": "2.16.1",
-  "released": "2026-11-19T05:53:40Z",
-  "notes": "Fix some updater text info",
+  "version": "2.17.3",
+  "released": "2026-11-19T10:50:23Z",
+  "notes": "add restore, better checker",
   "files": [
     {
       "path": "README.txt",
-      "size": 8689,
-      "sha256": "fe081d98c8d6f054a995fbdc6be85f8f10cd36c529f48a791879d6cdef7285b2",
+      "size": 10422,
+      "sha256": "009e24ff10a84e448ab55948d5e3d2fcf80f4175b79f6f62d2a07aefd5c92106",
       "kind": "docs"
     },
     {
       "path": "SWTLUpdater.exe",
-      "size": 6866432,
-      "sha256": "0da716a4b3e8a54ae2deb48b4103953e9bd87e779cf9fe69ba65d4e832de8a55",
+      "size": 6899200,
+      "sha256": "304551e444b3b10b496dc97175937ce6038b13001c86b430282c42d96b84cc9f",
       "kind": "app"
     }
   ],
