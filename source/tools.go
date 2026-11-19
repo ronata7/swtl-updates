@@ -31,7 +31,9 @@ func (r *Run) tool(exe string, args []string, dir string, stdin io.Reader) (Tool
 	cmd.Stdout = &buf
 	cmd.Stderr = &buf
 	// the archive password is never written to the log (logs get sent to other people)
-	mask := func(s string) string { return strings.ReplaceAll(s, zipPass, "***") }
+	mask := func(s string) string {
+		return strings.ReplaceAll(strings.ReplaceAll(s, r.password(), "***"), zipPass, "***")
+	}
 	r.log.Raw("$ " + mask(exe+" "+strings.Join(args, " ")))
 	err := cmd.Run()
 	res := ToolResult{Out: buf.String()}

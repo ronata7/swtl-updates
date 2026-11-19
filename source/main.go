@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-var version = "2.19.1" // may be overridden at build time with -ldflags "-X main.version=..."
+var version = "2.20.0" // may be overridden at build time with -ldflags "-X main.version=..."
 
 func appTitle() string { return "SW TL Updater " + version + " - by ronata" }
 
@@ -39,6 +39,12 @@ func main() {
 		appdir   = flag.String("appdir", "", "folder holding Tools, TL csv, settings (default: next to the exe)")
 		cfgSetup = flag.Bool("settings", false, "show the settings menu then exit")
 		doUpdate = flag.Bool("update", false, "check the update server and install updates first")
+		expRef   = flag.Bool("export-ref", false, "export the string/script tables, schema and version of a game install (for the translation team)")
+		expGame  = flag.String("game", "", "with --export-ref: the game folder (with SoulWorker64.dll)")
+		expReg   = flag.String("region", "", "with --export-ref: jp, kr or gb")
+		expData  = flag.String("data", "", "with --export-ref: data file name (default data12, data11 for gb)")
+		expPw    = flag.String("pwfile", "", "with --export-ref: text file with the archive password (jp has a built-in one)")
+		expOut   = flag.String("out", "", "with --export-ref: output folder (default <app>\\reference)")
 	)
 	flag.Parse()
 
@@ -124,6 +130,8 @@ func main() {
 			return
 		case *restore:
 			os.Exit(app.Restore(false))
+		case *expRef:
+			os.Exit(app.ExportRef(ExportOpts{Game: *expGame, Region: *expReg, Data: *expData, PwFile: *expPw, Out: *expOut, Keep: *keep}))
 		default:
 			_ = run
 			if err := app.ensureConfig(false); err != nil {

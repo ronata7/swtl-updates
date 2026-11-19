@@ -34,6 +34,14 @@ type Run struct {
 	newV    string
 	exDir   string
 	srcSHA  string // hash of the game's data file as read
+	pass    string // archive password (empty = the built-in one)
+}
+
+func (r *Run) password() string {
+	if r.pass != "" {
+		return r.pass
+	}
+	return zipPass
 }
 
 const totalSteps = 7
@@ -302,7 +310,7 @@ func (r *Run) stepSource() error {
 func (r *Run) stepExtract() error {
 	r.log.Step(4, totalSteps, "Extracting string and script tables")
 	ex := filepath.Join(r.work, "ex")
-	res, err := r.sevenZ([]string{"x", r.zipPath, "-p" + zipPass, "-o" + ex, "-y", "-r"}, r.work, nil)
+	res, err := r.sevenZ([]string{"x", r.zipPath, "-p" + r.password(), "-o" + ex, "-y", "-r"}, r.work, nil)
 	if err != nil {
 		return err
 	}
@@ -456,7 +464,7 @@ func (r *Run) stepConvert() error {
 func (r *Run) entry(n string) string { return filepath.Join("bin", "Table", n) }
 
 func (r *Run) testZip() error {
-	res, err := r.sevenZ([]string{"t", r.zipPath, "-p" + zipPass}, r.work, nil)
+	res, err := r.sevenZ([]string{"t", r.zipPath, "-p" + r.password()}, r.work, nil)
 	if err != nil {
 		return err
 	}
@@ -471,7 +479,7 @@ func (r *Run) testZip() error {
 func (r *Run) verifyZip() error {
 	vd := filepath.Join(r.work, "verify")
 	_ = os.RemoveAll(vd)
-	res, err := r.sevenZ([]string{"x", r.zipPath, "-p" + zipPass, "-o" + vd, "-y", "-r"}, r.work, nil)
+	res, err := r.sevenZ([]string{"x", r.zipPath, "-p" + r.password(), "-o" + vd, "-y", "-r"}, r.work, nil)
 	if err != nil {
 		return err
 	}
@@ -511,7 +519,7 @@ type zentry struct {
 // listZip returns every file entry of the archive: the exact name stored in it
 // (raw, e.g. "..\\bin\\Table\\x.res") and a normalised lower-case form.
 func (r *Run) listZip(zip string) ([]zentry, error) {
-	res, err := r.sevenZ([]string{"l", zip, "-slt", "-p" + zipPass}, r.work, nil)
+	res, err := r.sevenZ([]string{"l", zip, "-slt", "-p" + r.password()}, r.work, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -657,7 +665,7 @@ func (r *Run) stepRepack() error {
 		if err != nil {
 			return err
 		}
-		res, err := r.sevenZ([]string{"u", r.zipPath, "-mm=Deflate", "-mem=ZipCrypto", "-mx=5", "-mtc=on", "-mta=on", "-si" + raw, "-p" + zipPass}, r.work, f)
+		res, err := r.sevenZ([]string{"u", r.zipPath, "-mm=Deflate", "-mem=ZipCrypto", "-mx=5", "-mtc=on", "-mta=on", "-si" + raw, "-p" + r.password()}, r.work, f)
 		f.Close()
 		if err != nil {
 			return err
