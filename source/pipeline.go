@@ -33,6 +33,7 @@ type Run struct {
 	failed  []string // tables whose CSV could not be converted (left as the game has them)
 	newV    string
 	exDir   string
+	srcSHA  string // hash of the game's data file as read
 }
 
 const totalSteps = 7
@@ -283,6 +284,7 @@ func (r *Run) stepSource() error {
 	if err := copyFile(src, cp); err != nil {
 		return err
 	}
+	r.srcSHA, _ = hashFile(cp)
 	if !isXoredZip(cp) {
 		return fmt.Errorf("%s.v does not look like the expected XOR-0x55 archive - game format may have changed", r.cfg.DataSource)
 	}
@@ -728,6 +730,9 @@ func (r *Run) stepPublish() error {
 		return err
 	}
 	r.log.OK("Saved %s", outFile)
+	if outSHA, err := hashFile(r.newV); err == nil && r.srcSHA != "" {
+		r.a.saveGameState(r.srcSHA, outSHA)
+	}
 	if havePatcher {
 		if err := atomicCopy(r.newV, patcherFile); err != nil {
 			return err
