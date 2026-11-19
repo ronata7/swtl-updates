@@ -370,6 +370,26 @@ func mergeWithGame(fields []resField, tr, game []resRow) ([]resRow, mergeStats, 
 	return out, st, nil
 }
 
+// verifyMerged is the last safety net before a table is written: every ID (first column) of the game's
+// table must be in the result exactly as often and in the same order, and every number column must be the
+// game's. Only text may differ from the game.
+func verifyMerged(fields []resField, game, merged []resRow) error {
+	if len(game) != len(merged) {
+		return fmt.Errorf("the game has %d rows but the result has %d", len(game), len(merged))
+	}
+	for i := range game {
+		if game[i].key != merged[i].key {
+			return fmt.Errorf("row %d: the ID is not the game's", i+1)
+		}
+		for j, f := range fields {
+			if !strings.EqualFold(f.Type, "string") && !bytes.Equal(strBytes(game[i], j), strBytes(merged[i], j)) {
+				return fmt.Errorf("row %d: number column %d is not the game's", i+1, j+1)
+			}
+		}
+	}
+	return nil
+}
+
 // putField writes one field and returns what it adds to the table's checksum number.
 func putField(w *bytes.Buffer, typ, s string) (int64, error) {
 	le := binary.LittleEndian
@@ -547,6 +567,10 @@ func convertCSVDirMerge(schemaPath, csvDir, outDir string, existing []string, me
 					msg += fmt.Sprintf("; %d translated row(s) are no longer in the game and were left out", st.Dropped)
 				}
 				notes = append(notes, msg)
+			}
+			if err := verifyMerged(fields, gameRows, merged); err != nil {
+				problems = append(problems, fmt.Sprintf("%s: error - self-check failed (%v) - table left as the game has it", cn, err))
+				continue
 			}
 			out = buildRes(merged)
 		} else {

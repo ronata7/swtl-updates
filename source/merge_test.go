@@ -174,3 +174,17 @@ func TestMergeIsFastOnBigTables(t *testing.T) {
 }
 
 func itoa6(i int) string { return fmt.Sprintf("%d", 100000+i) }
+
+func TestVerifyMergedCatchesMissingID(t *testing.T) {
+	game := mk(t, "1\tA\t\r\n2\tB\t\r\n3\tC\t\r\n")
+	out, _, err := mergeWithGame(shopFields, mk(t, "1\tX\t\r\n3\tZ\t\r\n"), game)
+	if err != nil || verifyMerged(shopFields, game, out) != nil {
+		t.Fatalf("a correct merge failed its self-check: %v", err)
+	}
+	if verifyMerged(shopFields, game, out[:2]) == nil {
+		t.Fatal("a missing ID was not noticed")
+	}
+	if verifyMerged(shopFields, game, []resRow{out[1], out[0], out[2]}) == nil {
+		t.Fatal("changed order was not noticed")
+	}
+}
