@@ -6,7 +6,7 @@ Run:  python3 genrsrc.py   then   ./build.sh
 import io, struct
 from PIL import Image
 
-VERSION = (2, 17, 1, 0)
+VERSION = (2, 17, 2, 0)
 INFO = {
     "CompanyName":      "ronata",
     "FileDescription":  "SoulWorker translation data patcher",

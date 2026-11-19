@@ -2,8 +2,10 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"strings"
 	"testing"
+	"time"
 )
 
 func mk(t *testing.T, csv string) []resRow {
@@ -151,3 +153,24 @@ func TestMergeWarnsAboutSwappedTextColumns(t *testing.T) {
 func itoa(i int) string {
 	return strings.TrimSpace(strings.Replace(string(rune('0'+i/100%10))+string(rune('0'+i/10%10))+string(rune('0'+i%10)), "000", "0", 1))
 }
+
+// the big tables have over a million rows: merging must stay fast
+func TestMergeIsFastOnBigTables(t *testing.T) {
+	var g, tr strings.Builder
+	for i := 1; i <= 300000; i++ {
+		g.WriteString(itoa6(i) + "\tgame text\t\r\n")
+		if i%3 != 0 {
+			tr.WriteString(itoa6(i) + "\ttranslated\t\r\n")
+		}
+	}
+	start := time.Now()
+	out, st, err := mergeWithGame(shopFields, mk(t, tr.String()), mk(t, g.String()))
+	if err != nil || len(out) != 300000 || st.FromGame != 100000 {
+		t.Fatalf("%v %d %+v", err, len(out), st)
+	}
+	if d := time.Since(start); d > 10*time.Second {
+		t.Fatalf("merge took %s", d)
+	}
+}
+
+func itoa6(i int) string { return fmt.Sprintf("%d", 100000+i) }

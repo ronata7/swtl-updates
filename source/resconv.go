@@ -287,6 +287,10 @@ func mergeWithGame(fields []resField, tr, game []resRow) ([]resRow, mergeStats, 
 	diff := make([]int, nf)  // rows that differ per column
 	codeN := make([]int, nf) // text columns: rows where the game has a code-like value
 	codeD := make([]int, nf) // ... and the translation has something else
+	gameByKey := make(map[string][]resRow, len(game))
+	for _, g := range game {
+		gameByKey[g.key] = append(gameByKey[g.key], g)
+	}
 	used := map[string]bool{}
 	var out []resRow
 	for _, g := range game {
@@ -300,13 +304,7 @@ func mergeWithGame(fields []resField, tr, game []resRow) ([]resRow, mergeStats, 
 			continue
 		}
 		used[g.key] = true
-		// all game rows with this key, in order
-		var gs []resRow
-		for _, x := range game {
-			if x.key == g.key {
-				gs = append(gs, x)
-			}
-		}
+		gs := gameByKey[g.key] // all game rows with this key, in order
 		for i, gr := range gs {
 			if i >= len(rs) {
 				out = append(out, gr)
