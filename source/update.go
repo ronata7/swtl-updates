@@ -485,7 +485,12 @@ func (a *App) updateOne(src updSource, interactive, startup bool, args []string,
 		}
 		return false, nil
 	}
-	fmt.Printf("\n %s update available (version %s): %s\n", src.label, m.Version, countKinds(plan.Download))
+	if !plan.SelfUpdate && src.label == "Program" && cmpVersion(m.Version, version) <= 0 {
+		// same (or older) version number, but some files differ: say so instead of calling it a new version
+		fmt.Printf("\n %s files changed (published as version %s, you already run program version %s): %s\n", src.label, m.Version, version, countKinds(plan.Download))
+	} else {
+		fmt.Printf("\n %s update available (version %s): %s\n", src.label, m.Version, countKinds(plan.Download))
+	}
 	if len(plan.Delete) > 0 {
 		fmt.Printf(" %d outdated file(s) will be removed.\n", len(plan.Delete))
 	}
