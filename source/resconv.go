@@ -553,6 +553,12 @@ func convertCSVDirMerge(schemaPath, csvDir, outDir string, existing []string, me
 				problems = append(problems, fmt.Sprintf("%s: error - the game's table does not fit the table layout (%v) - table left as the game has it", cn, err))
 				continue
 			}
+			// self-test: writing the game's own rows back must give exactly the game's own table (this also
+			// proves the checksum rules still hold for this build)
+			if !bytes.Equal(buildRes(gameRows), gb) {
+				problems = append(problems, fmt.Sprintf("%s: error - self-test failed: re-encoding the game's own table does not give the same bytes - table left as the game has it", cn))
+				continue
+			}
 			merged, st, err := mergeWithGame(fields, trRows, gameRows)
 			if err != nil {
 				problems = append(problems, fmt.Sprintf("%s: error - %v - table left as the game has it", cn, err))
