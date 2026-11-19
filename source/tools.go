@@ -30,22 +30,43 @@ func (r *Run) tool(exe string, args []string, dir string, stdin io.Reader) (Tool
 	var buf strings.Builder
 	cmd.Stdout = &buf
 	cmd.Stderr = &buf
-	r.log.Raw("$ " + exe + " " + strings.Join(args, " "))
+	// the archive password is never written to the log (logs get sent to other people)
+	mask := func(s string) string { return strings.ReplaceAll(s, zipPass, "***") }
+	r.log.Raw("$ " + mask(exe+" "+strings.Join(args, " ")))
 	err := cmd.Run()
 	res := ToolResult{Out: buf.String()}
+	code := 0
+	if err != nil {
+		var ee *exec.ExitError
+		if errors.As(err, &ee) {
+			code = ee.ExitCode()
+		}
+	}
 	if strings.TrimSpace(res.Out) != "" {
-		r.log.Raw(res.Out)
+		r.log.Raw(shortenToolOutput(mask(res.Out), code))
 	}
 	if err != nil {
 		var ee *exec.ExitError
 		if errors.As(err, &ee) {
-			res.Code = ee.ExitCode()
+			res.Code = code
 			r.log.Raw(fmt.Sprintf("(exit code %d)", res.Code))
 			return res, nil
 		}
 		return res, err
 	}
 	return res, nil
+}
+
+// shortenToolOutput keeps long successful tool output (for example the list of 360 files that 7z prints)
+// out of the log: only the first and last lines are kept. Failures are always logged in full.
+func shortenToolOutput(s string, code int) string {
+	lines := strings.Split(strings.TrimRight(s, "\r\n"), "\n")
+	if code != 0 || len(lines) <= 60 {
+		return s
+	}
+	head := strings.Join(lines[:25], "\n")
+	tail := strings.Join(lines[len(lines)-12:], "\n")
+	return fmt.Sprintf("%s\n   ... (%d more lines left out of the log) ...\n%s", head, len(lines)-37, tail)
 }
 
 // xor decodes/encodes data12 with the built-in XOR (see xor.go). The result is checked by size.

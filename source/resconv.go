@@ -255,6 +255,7 @@ func readRes(fields []resField, b []byte) ([]resRow, error) {
 type mergeStats struct {
 	Game, Translated, FromGame, Dropped int
 	Warnings                            []string
+	NewRows                             []resRow // the game's rows the translation does not have (kept as the game has them)
 }
 
 func isCodeLike(field []byte) bool { // a text field (length + UTF-16LE) that is empty or ASCII without spaces
@@ -298,6 +299,7 @@ func mergeWithGame(fields []resField, tr, game []resRow) ([]resRow, mergeStats, 
 		if !ok {
 			out = append(out, g)
 			st.FromGame++
+			st.NewRows = append(st.NewRows, g)
 			continue
 		}
 		if used[g.key] {
@@ -309,6 +311,7 @@ func mergeWithGame(fields []resField, tr, game []resRow) ([]resRow, mergeStats, 
 			if i >= len(rs) {
 				out = append(out, gr)
 				st.FromGame++
+				st.NewRows = append(st.NewRows, gr)
 				continue
 			}
 			tr := rs[i]
@@ -388,6 +391,39 @@ func verifyMerged(fields []resField, game, merged []resRow) error {
 		}
 	}
 	return nil
+}
+
+// rowCSVLine writes a table row the way the translation CSVs have it (tab separated, <br> for line breaks).
+func rowCSVLine(fields []resField, r resRow) string {
+	le := binary.LittleEndian
+	var parts []string
+	for j, f := range fields {
+		b := r.raw[r.off[j]:r.off[j+1]]
+		var v string
+		switch strings.ToLower(f.Type) {
+		case "string":
+			n := int(le.Uint16(b))
+			u := make([]uint16, n)
+			for k := range u {
+				u[k] = le.Uint16(b[2+2*k:])
+			}
+			v = strings.ReplaceAll(strings.ReplaceAll(string(utf16.Decode(u)), "\r\n", "<br>"), "\n", "<br>")
+		case "byte", "bool", "boolean":
+			v = strconv.Itoa(int(b[0]))
+		case "uint16":
+			v = strconv.Itoa(int(le.Uint16(b)))
+		case "int16":
+			v = strconv.Itoa(int(int16(le.Uint16(b))))
+		case "uint32":
+			v = strconv.FormatUint(uint64(le.Uint32(b)), 10)
+		case "int32":
+			v = strconv.Itoa(int(int32(le.Uint32(b))))
+		case "single", "float":
+			v = strconv.FormatFloat(float64(math.Float32frombits(le.Uint32(b))), 'g', -1, 32)
+		}
+		parts = append(parts, v)
+	}
+	return strings.Join(parts, "\t")
 }
 
 // putField writes one field and returns what it adds to the table's checksum number.
@@ -493,13 +529,13 @@ func numErr(s, typ string, err error) error {
 // are in the game) and writes the result to outDir under the game's own file name.
 // It returns the names written, plus one message per problem or skipped file.
 func convertCSVDir(schemaPath, csvDir, outDir string, existing []string) (done []string, problems []string, err error) {
-	done, problems, _, err = convertCSVDirMerge(schemaPath, csvDir, outDir, existing, false)
+	done, problems, _, err = convertCSVDirMerge(schemaPath, csvDir, outDir, existing, false, "")
 	return
 }
 
 // convertCSVDirMerge is convertCSVDir; with merge set, each table is compared with the game's own table
 // found in outDir (see mergeWithGame) and notes tells what was kept from the game.
-func convertCSVDirMerge(schemaPath, csvDir, outDir string, existing []string, merge bool) (done []string, problems []string, notes []string, err error) {
+func convertCSVDirMerge(schemaPath, csvDir, outDir string, existing []string, merge bool, newRowsDir string) (done []string, problems []string, notes []string, err error) {
 	sch, err := loadResSchema(schemaPath)
 	if err != nil {
 		return nil, nil, nil, err
@@ -567,8 +603,26 @@ func convertCSVDirMerge(schemaPath, csvDir, outDir string, existing []string, me
 			for _, w := range st.Warnings {
 				notes = append(notes, strings.TrimSuffix(cn, filepath.Ext(cn))+": "+w)
 			}
+			listed := ""
+			if newRowsDir != "" && len(st.NewRows) > 0 {
+				if os.MkdirAll(newRowsDir, 0o755) == nil {
+					hdr := strings.SplitN(strings.ReplaceAll(strings.TrimPrefix(string(b), "\xEF\xBB\xBF"), "\r\n", "\n"), "\n", 2)[0]
+					var sb strings.Builder
+					sb.WriteString(hdr + "\r\n")
+					tail := ""
+					if strings.HasSuffix(hdr, "\t") {
+						tail = "\t"
+					}
+					for _, nr := range st.NewRows {
+						sb.WriteString(rowCSVLine(fields, nr) + tail + "\r\n")
+					}
+					if os.WriteFile(filepath.Join(newRowsDir, strings.TrimSuffix(cn, filepath.Ext(cn))+".csv"), []byte(sb.String()), 0o644) == nil {
+						listed = " (listed in logs\\new_rows\\" + cn + ")"
+					}
+				}
+			}
 			if st.FromGame > 0 || st.Dropped > 0 {
-				msg := fmt.Sprintf("%s: the game has %d row(s) the translation does not have yet - kept in the game's own language", strings.TrimSuffix(cn, filepath.Ext(cn)), st.FromGame)
+				msg := fmt.Sprintf("%s: the game has %d row(s) the translation does not have yet - kept in the game's own language%s", strings.TrimSuffix(cn, filepath.Ext(cn)), st.FromGame, listed)
 				if st.Dropped > 0 {
 					msg += fmt.Sprintf("; %d translated row(s) are no longer in the game and were left out", st.Dropped)
 				}

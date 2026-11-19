@@ -188,3 +188,27 @@ func TestVerifyMergedCatchesMissingID(t *testing.T) {
 		t.Fatal("changed order was not noticed")
 	}
 }
+
+func TestRowCSVLineAndNewRowsExport(t *testing.T) {
+	f := []resField{{"id", "uint32"}, {"txt", "string"}, {"n", "int16"}, {"x", "single"}, {"b", "byte"}}
+	rows, err := encodeCSV(f, []byte("h\r\n7\tHello<br>World\t-3\t1.5\t1\t\r\n"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := rowCSVLine(f, rows[0]); got != "7\tHello<br>World\t-3\t1.5\t1" {
+		t.Fatalf("got %q", got)
+	}
+}
+
+func TestShortenToolOutput(t *testing.T) {
+	var sb strings.Builder
+	for i := 0; i < 500; i++ {
+		sb.WriteString("line\n")
+	}
+	if n := strings.Count(shortenToolOutput(sb.String(), 0), "\n"); n > 45 {
+		t.Fatalf("not shortened: %d lines", n)
+	}
+	if shortenToolOutput(sb.String(), 2) != sb.String() {
+		t.Fatal("a failed run must be logged in full")
+	}
+}

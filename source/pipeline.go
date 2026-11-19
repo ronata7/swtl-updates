@@ -379,7 +379,9 @@ func (r *Run) stepConvert() error {
 	sort.Strings(names)
 
 	if mode == "builtin" {
-		done, problems, notes, err := convertCSVDirMerge(r.schema, r.cfg.TLPath, r.resDir, names, true)
+		nrDir := filepath.Join(r.a.logsDir(), "new_rows")
+		_ = os.RemoveAll(nrDir) // only the list from this run is kept
+		done, problems, notes, err := convertCSVDirMerge(r.schema, r.cfg.TLPath, r.resDir, names, true, nrDir)
 		if err != nil {
 			return err
 		}
