@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-var version = "2.21.0" // may be overridden at build time with -ldflags "-X main.version=..."
+var version = "2.22.0" // may be overridden at build time with -ldflags "-X main.version=..."
 
 func appTitle() string { return "SW TL Updater " + version + " - by ronata" }
 
@@ -158,6 +158,7 @@ func main() {
 				os.Exit(0)
 			}
 		}
+		app.cleanOld()
 		app.StartupReview(!exists(cfgPath) || readKV(cfgPath)["gamefolder"] == "")
 		if msg := app.gameChangedNotice(); msg != "" {
 			fmt.Printf("\n ! %s\n", msg)

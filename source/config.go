@@ -17,6 +17,7 @@ type Config struct {
 	DataSource     string
 	DataOutput     string
 	BackupKeep     int
+	LogsKeep       int // newest logs / reports / schemas kept by the clean-up (0 = keep all)
 	ExcludeTables  []string
 	AskAtStartup   bool
 	UpdateURL      string
@@ -72,6 +73,7 @@ func defaultConfig(appDir string) *Config {
 		DataSource:    "data12",
 		DataOutput:    "data12",
 		BackupKeep:    5,
+		LogsKeep:      30,
 		ExcludeTables: []string{"tb_Loading_String", "tb_Option_String", "tb_Talk_String"},
 		AskAtStartup:  true,
 		UpdateAtStart: true,
@@ -125,6 +127,9 @@ func LoadConfig(appDir string) (*Config, string) {
 	if n, err := strconv.Atoi(pick(kv, "backupstokeep", "backupkeep")); err == nil && n >= 0 {
 		c.BackupKeep = n
 	}
+	if n, err := strconv.Atoi(strings.TrimSpace(kv["logstokeep"])); err == nil && n >= 0 {
+		c.LogsKeep = n
+	}
 	if v, ok := kv["skiptables"]; ok {
 		c.ExcludeTables = splitList(v)
 	} else if v, ok := kv["excludetables"]; ok {
@@ -172,6 +177,8 @@ func (c *Config) Save(path string) error {
 	fmt.Fprintf(&b, "OutputDataFile=%s\n\n", c.DataOutput)
 	b.WriteString("; How many older versions to keep in the backup folder (0 = keep all)\n")
 	fmt.Fprintf(&b, "BackupsToKeep=%d\n\n", c.BackupKeep)
+	b.WriteString("; How many of the newest log files to keep (reports and schemas keep fewer; 0 = keep all)\n")
+	fmt.Fprintf(&b, "LogsToKeep=%d\n\n", c.LogsKeep)
 	b.WriteString("; Tables that are never patched, separated by commas\n")
 	fmt.Fprintf(&b, "SkipTables=%s\n\n", strings.Join(c.ExcludeTables, ","))
 	b.WriteString("; Show the settings at startup and ask if you want to change them (yes / no)\n")
