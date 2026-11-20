@@ -88,7 +88,7 @@ func mkkey(args []string) {
 	if len(args) != 1 {
 		die("usage: swtlpublish mkkey <data file name, e.g. data12>   (then type the password)")
 	}
-	fmt.Fprint(os.Stderr, "Archive password for "+args[0]+": ")
+	fmt.Fprintln(os.Stderr, "Archive password for "+args[0]+" (type it, then press Enter):")
 	line, _ := bufio.NewReader(os.Stdin).ReadString('\n')
 	line = strings.TrimSpace(line)
 	out, err := archivekey.Encode(args[0], line)

@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-var version = "2.20.1" // may be overridden at build time with -ldflags "-X main.version=..."
+var version = "2.21.0" // may be overridden at build time with -ldflags "-X main.version=..."
 
 func appTitle() string { return "SW TL Updater " + version + " - by ronata" }
 
@@ -39,6 +39,7 @@ func main() {
 		appdir   = flag.String("appdir", "", "folder holding Tools, TL csv, settings (default: next to the exe)")
 		cfgSetup = flag.Bool("settings", false, "show the settings menu then exit")
 		doUpdate = flag.Bool("update", false, "check the update server and install updates first")
+		report   = flag.Bool("report", false, "make a report file (logs, settings, versions) to send to the author")
 		expRef   = flag.Bool("export-ref", false, "export the string/script tables, schema and version of a game install (for the translation team)")
 		expGame  = flag.String("game", "", "with --export-ref: the game folder (with SoulWorker64.dll)")
 		expReg   = flag.String("region", "", "with --export-ref: jp, kr or gb")
@@ -130,6 +131,8 @@ func main() {
 			return
 		case *restore:
 			os.Exit(app.Restore(false))
+		case *report:
+			os.Exit(app.MakeReport())
 		case *expRef:
 			os.Exit(app.ExportRef(ExportOpts{Game: *expGame, Region: *expReg, Data: *expData, PwFile: *expPw, Out: *expOut, Keep: *keep}))
 		default:
@@ -169,6 +172,7 @@ func main() {
 		fmt.Println("  5) Open logs folder")
 		fmt.Println("  6) About, credits & help")
 		fmt.Println("  7) Check for updates")
+		fmt.Println("  8) Make a report for ronata (logs, versions)")
 		fmt.Println("  0) Exit")
 		choice := prompt(" > ")
 		switch choice {
@@ -204,6 +208,9 @@ func main() {
 			if restarted {
 				os.Exit(0)
 			}
+		case "8":
+			app.cfg, _ = LoadConfig(dir)
+			app.MakeReport()
 		case "0", "q":
 			return
 		}
