@@ -62,17 +62,14 @@ func (a *App) ExportRef(o ExportOpts) int {
 		if err != nil {
 			return fail("cannot read the password file: %v", err)
 		}
-		for _, ln := range strings.Split(strings.TrimPrefix(string(b), "\xEF\xBB\xBF"), "\n") {
-			if ln = strings.TrimSpace(ln); ln != "" {
-				pass = ln
-				break
-			}
-		}
+		pass = parsePasswordFile(string(b), data)
 		if pass == "" {
-			return fail("the password file is empty")
+			return fail("no password for %s found in the password file (expected a line like \"%s = ...\")", data, data)
 		}
-	} else if region != "jp" {
-		return fail("%s needs -pwfile <text file with the archive password>", strings.ToUpper(region))
+	} else if pw, _ := a.archivePassword(data); pw != "" {
+		pass = pw
+	} else {
+		return fail("no archive password: give -pwfile <text file with the password> (or add a key line, see the README)")
 	}
 
 	ver := "0.0.0.0"
@@ -162,6 +159,36 @@ func (a *App) ExportRef(o ExportOpts) int {
 	_ = os.WriteFile(filepath.Join(dest, "files.sha256"), []byte(strings.Join(sums, "\n")+"\n"), 0o644)
 	log.OK("Done in %s: %d table(s), schema.json, Ver.ini, build.txt -> %s", time.Since(start).Round(time.Second), total, dest)
 	return 0
+}
+
+// parsePasswordFile finds the password of one data file in a password list like
+//
+//	.data12 = old password        <- a leading dot marks an old password: ignored
+//	data12 = current password
+//
+// If the file has no "name = value" lines for that data file, its first non-empty line is the password.
+func parsePasswordFile(text, data string) string {
+	var plain, found string
+	for _, ln := range strings.Split(strings.TrimPrefix(text, "\xEF\xBB\xBF"), "\n") {
+		ln = strings.TrimSpace(ln)
+		if ln == "" || strings.HasPrefix(ln, ".") {
+			continue
+		}
+		if i := strings.Index(ln, "="); i > 0 {
+			name := strings.TrimSpace(ln[:i])
+			if strings.EqualFold(name, data) {
+				found = strings.TrimSpace(ln[i+1:]) // the newest one (last line) wins
+			}
+			continue
+		}
+		if plain == "" && !strings.Contains(ln, " ") {
+			plain = ln
+		}
+	}
+	if found != "" {
+		return found
+	}
+	return plain
 }
 
 type exportGroup struct {

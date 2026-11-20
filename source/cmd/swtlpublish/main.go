@@ -11,6 +11,7 @@ package main
 
 import (
 	"archive/zip"
+	"bufio"
 	"crypto/ed25519"
 	"crypto/rand"
 	"crypto/sha256"
@@ -27,6 +28,7 @@ import (
 	"strings"
 	"time"
 
+	"swtlupdater/internal/archivekey"
 	"swtlupdater/internal/rowpatch"
 )
 
@@ -73,9 +75,32 @@ func main() {
 		pack(args)
 	case "verify":
 		verify(args)
+	case "mkkey":
+		mkkey(args)
 	default:
 		die("unknown command %q", cmd)
 	}
+}
+
+// mkkey turns a game archive password into an encrypted key line for README.txt (or the ArchiveKey= setting).
+// The password is typed (or piped) in, never given on the command line, so it stays out of the shell history.
+func mkkey(args []string) {
+	if len(args) != 1 {
+		die("usage: swtlpublish mkkey <data file name, e.g. data12>   (then type the password)")
+	}
+	fmt.Fprint(os.Stderr, "Archive password for "+args[0]+": ")
+	line, _ := bufio.NewReader(os.Stdin).ReadString('\n')
+	line = strings.TrimSpace(line)
+	out, err := archivekey.Encode(args[0], line)
+	if err != nil {
+		die("%v", err)
+	}
+	if back, pw, err := archivekey.Decode(out); err != nil || back != strings.ToLower(args[0]) || pw != line {
+		die("self-check failed")
+	}
+	fmt.Println(out)
+	fmt.Fprintln(os.Stderr, "\nAdd this line to the end of README.txt (a newer line for the same data file replaces an older one),")
+	fmt.Fprintln(os.Stderr, "or give it to a player to paste into SWTLUpdater.ini as  ArchiveKey=<the line>")
 }
 
 func keygen(args []string) {

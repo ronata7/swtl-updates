@@ -34,15 +34,10 @@ type Run struct {
 	newV    string
 	exDir   string
 	srcSHA  string // hash of the game's data file as read
-	pass    string // archive password (empty = the built-in one)
+	pass    string // archive password (from the key line, see archivekey)
 }
 
-func (r *Run) password() string {
-	if r.pass != "" {
-		return r.pass
-	}
-	return zipPass
-}
+func (r *Run) password() string { return r.pass }
 
 const totalSteps = 7
 
@@ -60,6 +55,7 @@ func (a *App) RunPatch(opt RunOpts) (code int) {
 	}()
 
 	r := &Run{a: a, cfg: a.cfg, opt: opt, log: log, work: filepath.Join(a.dir, "work")}
+	r.pass, _ = a.archivePassword(a.cfg.DataSource)
 	_ = os.RemoveAll(r.work)
 	if err := os.MkdirAll(r.work, 0o755); err != nil {
 		log.Fail("cannot create work folder: %v", err)
@@ -152,6 +148,9 @@ func (r *Run) preflight() error {
 		}
 	}
 
+	if r.pass == "" {
+		return errors.New(keyHelp(r.cfg.DataSource))
+	}
 	if !isDir(r.cfg.PatcherPath) {
 		r.log.Warn("Patcher folder not found (%s) - the result will only be saved next to the updater", r.cfg.PatcherPath)
 	}

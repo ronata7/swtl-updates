@@ -22,6 +22,7 @@ type Config struct {
 	UpdateURL      string
 	UpdateKey      string
 	TranslationURL string // optional second source that only provides "TL csv/"
+	ArchiveKey     string // key line(s) pasted by the player, see archivekey
 	TranslationKey string // empty = same key as UpdateKey
 	UpdateAtStart  bool
 	Converter      string // advanced: builtin (default) | swadmin | check (run both, compare, use swadmin's result)
@@ -134,6 +135,7 @@ func LoadConfig(appDir string) (*Config, string) {
 	c.UpdateKey = strings.TrimSpace(kv["updatekey"])
 	c.TranslationURL = strings.TrimSpace(kv["translationurl"])
 	c.TranslationKey = strings.TrimSpace(kv["translationkey"])
+	c.ArchiveKey = strings.TrimSpace(kv["archivekey"])
 	c.UpdateAtStart = parseYes(kv["updateatstartup"], true)
 	switch v := strings.ToLower(strings.TrimSpace(kv["converter"])); v {
 	case "builtin", "check", "swadmin":
@@ -186,6 +188,10 @@ func (c *Config) Save(path string) error {
 	b.WriteString("; Advanced: how the schema and the game tables are made - builtin (built in, default), swadmin (the SWAdmin tool),\n")
 	b.WriteString("; or check (do both, compare them and report differences; the SWAdmin result is used).\n")
 	fmt.Fprintf(&b, "Converter=%s\n", c.Converter)
+	if c.ArchiveKey != "" {
+		b.WriteString("; Archive key (encrypted text, do not change unless you were sent a new one)\n")
+		fmt.Fprintf(&b, "ArchiveKey=%s\n", c.ArchiveKey)
+	}
 	return os.WriteFile(path, []byte(b.String()), 0o644)
 }
 

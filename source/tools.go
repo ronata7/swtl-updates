@@ -10,8 +10,6 @@ import (
 	"strings"
 )
 
-const zipPass = "fvf?GgD832d?1DSFes"
-
 type ToolResult struct {
 	Out  string
 	Code int
@@ -32,7 +30,10 @@ func (r *Run) tool(exe string, args []string, dir string, stdin io.Reader) (Tool
 	cmd.Stderr = &buf
 	// the archive password is never written to the log (logs get sent to other people)
 	mask := func(s string) string {
-		return strings.ReplaceAll(strings.ReplaceAll(s, r.password(), "***"), zipPass, "***")
+		if pw := r.password(); pw != "" {
+			s = strings.ReplaceAll(s, pw, "***")
+		}
+		return s
 	}
 	r.log.Raw("$ " + mask(exe+" "+strings.Join(args, " ")))
 	err := cmd.Run()
