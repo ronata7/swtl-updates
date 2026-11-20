@@ -72,6 +72,9 @@ func (a *App) RunPatch(opt RunOpts) (code int) {
 			}
 			if errors.Is(err, errNothing) {
 				log.Warn("No tables changed - the CSVs already match the game data (or none map to a table). Nothing was written.")
+				if processRunning("SoulWorker100.exe") || processRunning("SoulWorker.exe") {
+					log.Warn("The game is running, so its data file is probably the already patched copy that SWPatcher put in. Close the game (SWPatcher then restores the original) and run again to patch from the original.")
+				}
 				_ = os.RemoveAll(r.work)
 				log.Info("Log: %s", logPath)
 				return 3
