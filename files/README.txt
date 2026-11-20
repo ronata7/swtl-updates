@@ -1,4 +1,4 @@
-SW TL Updater 2.20.1  (by ronata)
+SW TL Updater 2.21.0  (by ronata)
 ==============================================================================
 Patches SoulWorker's data12.v with your translated .csv files.
 Uses the same tools as before (the Tools folder) - nothing there is replaced.
@@ -138,6 +138,13 @@ For the translation team: export the reference tables
   archive key (see below), used when -pwfile is not given. -pwfile may be a plain one-line file or a list with
   lines like "data12 = ..." (a line starting with a dot is an old password and is ignored); the line for the data
   file of that region is used (data12, or data11 for gb). 5_export_reference.bat (publisher package) runs all regions.
+
+Report for the author (menu 8, or SWTLUpdater.exe -report)
+------------------------------------------------------------------------------
+  Something does not work? Choose 8) Make a report. It saves one file in the "reports" folder with your recent
+  logs, your settings, the versions and fingerprints of the game files and your translation files. The archive
+  key is NOT included and your Windows user name is hidden. Send that file to ronata on Discord. If it is big it
+  is cut into parts (.zip.001, .zip.002, ...): send all parts together.
 
 Archive key
 ------------------------------------------------------------------------------

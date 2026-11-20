@@ -1,18 +1,18 @@
 {
-  "version": "2.20.1",
-  "released": "2026-11-20T03:39:20Z",
-  "notes": "add more feature",
+  "version": "2.21.0",
+  "released": "2026-11-20T03:50:10Z",
+  "notes": "add more report feature",
   "files": [
     {
       "path": "README.txt",
-      "size": 12919,
-      "sha256": "c9d475ab3c294ae1397938ed4208b308a956f8b7c3aba894e9062d5f5b08827d",
+      "size": 13465,
+      "sha256": "a3019b225db42cbb26d78ca473b1e2f85f95d4cb8bd1145e7006ebd8e1a8d14e",
       "kind": "docs"
     },
     {
       "path": "SWTLUpdater.exe",
-      "size": 6951936,
-      "sha256": "865dde43802d84b697b3eac5452531629dfeee94d866e254a2dfd7c8ffb0805d",
+      "size": 7070720,
+      "sha256": "605f02f1eee7a93e45c09d32cd64ce1a1d1070273aa0d59d18952fd9eeb5ceb9",
       "kind": "app"
     }
   ],
