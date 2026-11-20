@@ -1,6 +1,6 @@
 {
-  "version": "2.19.1",
-  "released": "2026-11-19T22:34:33Z",
+  "version": "2.20.0",
+  "released": "2026-11-20T03:11:15Z",
   "notes": "add more feature",
   "files": [
     {
@@ -11,8 +11,8 @@
     },
     {
       "path": "SWTLUpdater.exe",
-      "size": 6919680,
-      "sha256": "3c86d83354fed0387ec7e4a599e5716a29eb2daf45a7ecd6b1a64cc3b6898107",
+      "size": 6944768,
+      "sha256": "0cdf3c1a0577778585aae0b4f1b327541397a1e4e457f73e8a0a3223620ff820",
       "kind": "app"
     }
   ],
