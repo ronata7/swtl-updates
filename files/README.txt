@@ -1,4 +1,4 @@
-SW TL Updater 2.19.1  (by ronata)
+SW TL Updater 2.20.1  (by ronata)
 ==============================================================================
 Patches SoulWorker's data12.v with your translated .csv files.
 Uses the same tools as before (the Tools folder) - nothing there is replaced.
@@ -128,6 +128,24 @@ Game updates and repairs
   updated (or the file was replaced) and that you should choose 1) Patch now again. 4) Restore a backup
   is there if something looks wrong afterwards. No message means nothing changed.
 
+For the translation team: export the reference tables
+------------------------------------------------------------------------------
+  SWTLUpdater.exe -export-ref -region jp|kr|gb -game "<game folder>" [-pwfile "<password.txt>"] [-out "<folder>"]
+  does what the old dumper + Get-res batch files did, in one step: game version (Ver.ini), table layout
+  (schema.json), decrypt and extract data12.v (data11.v for gb), and keep only the string/script tables the
+  translation uses. Result: <out>\<REGION>\<version>\res\*.res (Global: ENG-res, TWN-res, CHN-res) plus
+  schema.json, Ver.ini, build.txt and files.sha256. The game folder is never changed. JP has a built-in
+  archive key (see below), used when -pwfile is not given. -pwfile may be a plain one-line file or a list with
+  lines like "data12 = ..." (a line starting with a dot is an old password and is ignored); the line for the data
+  file of that region is used (data12, or data11 for gb). 5_export_reference.bat (publisher package) runs all regions.
+
+Archive key
+------------------------------------------------------------------------------
+  The program needs the game's data password. It is stored as encrypted text (a line starting with SWTLKEY1:
+  at the end of this file), so you never see or type it. Keep this file as it came. If the game changes its
+  password you get a new line with the next update, or you are sent one to paste into SWTLUpdater.ini as
+  ArchiveKey=<the line>. (Publisher: 6_make_archive_key.bat makes the line.)
+
 Troubleshooting
 ------------------------------------------------------------------------------
   - "Tools folder is incomplete": copy the Tools folder next to the exe.
@@ -163,3 +181,6 @@ Credits (the tools in the Tools folder are used unmodified; the xor step is now 
   Libraries bundled in them  Newtonsoft.Json (James Newton-King), Zydis (zyantific)
   Updater .................. ronata
 ==============================================================================
+
+Archive key (do not edit):
+SWTLKEY1:data12:pzFn9LGLwvdGiutqZPvrEvsNHUjzEjcE0AtHZY3JSgYAKWnZtLCUtrad8qDbtg==
