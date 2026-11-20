@@ -73,6 +73,7 @@ type UpdatePlan struct {
 	Download   []ManFile
 	Delete     []string
 	SelfUpdate bool
+	Behind     bool // the server's program version is older than the one running: program files are left alone
 }
 
 func checkURL(base string) (string, error) {
@@ -185,6 +186,7 @@ func (a *App) planUpdate(m *Manifest, self string, src updSource) (*UpdatePlan, 
 		return nil, fmt.Errorf("the server offers version %s, which is older than %s that was already seen - refusing to go back", m.Version, strings.TrimSpace(string(seen)))
 	}
 	plan := &UpdatePlan{M: m, Seen: seenPath}
+	plan.Behind = !src.tl && cmpVersion(m.Version, version) < 0
 	splitTL := !src.tl && strings.TrimSpace(a.cfg.TranslationURL) != "" // translation comes from its own source
 	for _, f := range m.Files {
 		rel, ok := safeRel(f.Path)
@@ -193,6 +195,9 @@ func (a *App) planUpdate(m *Manifest, self string, src updSource) (*UpdatePlan, 
 		}
 		if splitTL && isTLPath(f.Path) {
 			continue
+		}
+		if plan.Behind && !isTLPath(f.Path) {
+			continue // never replace our files with an older published version
 		}
 		if len(f.SHA256) != 64 || f.Size < 0 || f.Size > maxFileBytes {
 			return nil, fmt.Errorf("update list entry for %s is invalid", f.Path)
@@ -219,6 +224,9 @@ func (a *App) planUpdate(m *Manifest, self string, src updSource) (*UpdatePlan, 
 			return nil, fmt.Errorf("update list asks to delete a path that is not allowed: %q", d)
 		}
 		if splitTL && isTLPath(d) {
+			continue
+		}
+		if plan.Behind && !isTLPath(d) {
 			continue
 		}
 		if exists(filepath.Join(a.dir, rel)) {
@@ -537,6 +545,13 @@ func (a *App) updateOne(src updSource, interactive, startup bool, args []string,
 		log.Raw("   to remove: " + d)
 	}
 	if len(plan.Download) == 0 && len(plan.Delete) == 0 {
+		if plan.Behind {
+			log.Raw(fmt.Sprintf("%s source: published version %s is older than the running version %s - nothing changed", src.label, m.Version, version))
+			if !startup {
+				log.OK("%s: you run version %s, which is newer than the published %s. Nothing was changed.", src.label, version, m.Version)
+			}
+			return false, nil
+		}
 		log.Raw(fmt.Sprintf("%s source: everything is up to date (version %s)", src.label, m.Version))
 		_ = os.MkdirAll(filepath.Dir(plan.Seen), 0o755)
 		_ = os.WriteFile(plan.Seen, []byte(m.Version), 0o644)
