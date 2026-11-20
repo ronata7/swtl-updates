@@ -13,7 +13,7 @@ func TestExportSelect(t *testing.T) {
 		t.Fatalf("jp: %+v", jp)
 	}
 	kr := exportSelect("kr", names)
-	if len(kr[0].files) != 6 { // Option/Loading/Talk stay for kr, SystemMail does not
+	if len(kr[0].files) != 4 || kr[0].files[3] != "tb_Loading_String.res" { // kr drops Option and Talk (Loading stays), no SystemMail
 		t.Fatalf("kr: %+v", kr)
 	}
 	gl := exportSelect("gb", []string{"tb_Shop_ENG.res", "tb_Help_ENG.res", "tb_UI_Img_ENG.res", "tb_Make_CHN.res", "tb_Item_CHN.res", "tb_Item_TWN.res", "tb_Help_PopUp_TWN.res"})

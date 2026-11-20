@@ -230,6 +230,9 @@ func exportSelect(region string, names []string) []exportGroup {
 		if region == "jp" && (base == "tb_option_string" || base == "tb_loading_string" || base == "tb_talk_string") {
 			ok = false
 		}
+		if region == "kr" && (base == "tb_option_string" || base == "tb_talk_string") {
+			ok = false
+		}
 		if ok {
 			g.files = append(g.files, n)
 		}
