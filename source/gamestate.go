@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 )
 
@@ -65,4 +66,17 @@ func (a *App) gameChangedNotice() string {
 			"  (a game repair or verify, or another tool replaced it). Choose 1) Patch now to apply the translation again.\n"+
 			"  If something looks wrong in the game, choose 4) Restore a backup.", a.cfg.DataSource)
 	}
+}
+
+// isOurPatchedFile reports whether the hash is the patched file this updater last produced.
+func (a *App) isOurPatchedFile(sha string) bool {
+	if sha == "" {
+		return false
+	}
+	b, err := os.ReadFile(a.statePath())
+	if err != nil {
+		return false
+	}
+	var st gameState
+	return json.Unmarshal(b, &st) == nil && st.OutputSHA != "" && strings.EqualFold(st.OutputSHA, sha)
 }

@@ -99,6 +99,12 @@ func (a *App) ExportRef(o ExportOpts) int {
 		}
 	}
 
+	if a.isOurPatchedFile(r.srcSHA) {
+		return fail("%s.v in this game folder is the PATCHED file this updater made (the game was started through SWPatcher,\n"+
+			"  which swaps the translated file in). A reference dump must come from the ORIGINAL game file.\n"+
+			"  Close the game and SWPatcher, then use the game's own file: run the game updater/repair (verify files) so the\n"+
+			"  original data file is back, and export again. Nothing was written.", data)
+	}
 	log.Info("Extracting the tables")
 	ex := filepath.Join(r.work, "ex")
 	res, err := r.sevenZ([]string{"x", r.zipPath, "-p" + r.password(), "-o" + ex, "-y", "-r"}, r.work, nil)

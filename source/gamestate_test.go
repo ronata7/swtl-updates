@@ -41,3 +41,17 @@ func TestGameChangedNotice(t *testing.T) {
 		t.Fatalf("game update: %q", m)
 	}
 }
+
+func TestIsOurPatchedFile(t *testing.T) {
+	app := &App{dir: t.TempDir(), cfg: &Config{}}
+	if app.isOurPatchedFile("abc") {
+		t.Fatal("no record yet: must be false")
+	}
+	app.saveGameState("src111", "out222")
+	if !app.isOurPatchedFile("out222") || !app.isOurPatchedFile("OUT222") {
+		t.Fatal("the patched file must be recognised")
+	}
+	if app.isOurPatchedFile("src111") || app.isOurPatchedFile("") {
+		t.Fatal("the original file must not be flagged")
+	}
+}
