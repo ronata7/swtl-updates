@@ -149,6 +149,12 @@ func LoadConfig(appDir string) (*Config, string) {
 	if !filepath.IsAbs(c.TLPath) {
 		c.TLPath = filepath.Join(appDir, c.TLPath)
 	}
+	if cfgSnap != nil {
+		for _, d := range configDiff(cfgSnap, c) {
+			sessf("settings file was changed outside the program: %s", d)
+		}
+	}
+	cfgSnap = copyConfig(c)
 	return c, iniPath
 }
 
@@ -163,6 +169,12 @@ func splitList(v string) []string {
 }
 
 func (c *Config) Save(path string) error {
+	if cfgSnap != nil {
+		for _, d := range configDiff(cfgSnap, c) {
+			sessf("setting changed: %s", d)
+		}
+	}
+	cfgSnap = copyConfig(c)
 	var b strings.Builder
 	b.WriteString("; SW TL Updater settings.\n; Edit this file with Notepad, or use \"Settings\" in the program menu.\n; Lines starting with ; are comments.\n\n")
 	b.WriteString("; Folder where SoulWorker is installed (the one containing SoulWorker100.exe)\n")

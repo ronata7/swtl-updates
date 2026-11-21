@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-var version = "2.23.0" // may be overridden at build time with -ldflags "-X main.version=..."
+var version = "2.24.0" // may be overridden at build time with -ldflags "-X main.version=..."
 
 func appTitle() string { return "SW TL Updater " + version + " - by ronata" }
 
@@ -22,9 +22,16 @@ func prompt(msg string) string {
 	fmt.Print(msg)
 	s, err := stdin.ReadString('\n')
 	if err != nil && s == "" {
+		sessf("input closed - exiting")
 		os.Exit(0) // input closed (window closed / piped input ended)
 	}
-	return strings.TrimSpace(s)
+	ans := strings.TrimSpace(s)
+	if secretPrompt(msg) {
+		sessf("input: %q -> (hidden)", strings.TrimSpace(msg))
+	} else {
+		sessf("input: %q -> %q", strings.TrimSpace(msg), ans)
+	}
+	return ans
 }
 
 func main() {
@@ -91,6 +98,8 @@ func main() {
 	cfg, cfgPath := LoadConfig(dir)
 	self, _ := os.Executable()
 	app := &App{dir: dir, cfg: cfg, cfgPath: cfgPath, self: self}
+	openSession(app.logsDir())
+	sessStart(app)
 
 	if !isDir(filepath.Join(dir, "Tools")) {
 		// first start of a bare download: fetch the program files from the update server
@@ -176,6 +185,11 @@ func main() {
 		fmt.Println("  8) Make a report for ronata (logs, versions)")
 		fmt.Println("  0) Exit")
 		choice := prompt(" > ")
+		if n, ok := menuNames[choice]; ok {
+			sessf("menu: %s", n)
+		} else {
+			sessf("menu: unknown choice %q", choice)
+		}
 		switch choice {
 		case "1", "2":
 			// re-read settings in case ini was edited
@@ -186,7 +200,8 @@ func main() {
 			}
 			dryRun := choice == "2"
 			fmt.Println()
-			app.RunPatch(RunOpts{Dry: dryRun, Interactive: true, Strict: *strict, KeepWork: *keep})
+			code := app.RunPatch(RunOpts{Dry: dryRun, Interactive: true, Strict: *strict, KeepWork: *keep})
+			sessf("patch finished, result code %d", code)
 		case "3":
 			app.Settings()
 		case "4":
@@ -213,6 +228,7 @@ func main() {
 			app.cfg, _ = LoadConfig(dir)
 			app.MakeReport()
 		case "0", "q":
+			sessf("exit")
 			return
 		}
 	}

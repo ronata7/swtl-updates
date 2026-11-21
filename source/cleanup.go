@@ -45,6 +45,7 @@ func (a *App) cleanOld() {
 	logs := a.logsDir()
 	keepNewest(logs, "update_*.log", k)
 	keepNewest(logs, "export_*.log", k)
+	keepNewest(logs, "session_*.log", k)
 	for _, p := range []string{"1_*.log", "2_*.log", "3_*.log", "4_*.log", "5_*.log", "6_*.log"} {
 		keepNewest(logs, p, k)
 	}

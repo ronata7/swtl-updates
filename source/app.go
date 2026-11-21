@@ -219,7 +219,9 @@ func (a *App) Settings() {
 		fmt.Printf(" 11) Check for updates at startup: %s\n", yesNo(c.UpdateAtStart))
 		fmt.Println(" 12) Reset everything to the default values")
 		fmt.Println("  0) Back")
-		switch prompt(" > ") {
+		ch := prompt(" > ")
+		sessf("settings menu: option %q", ch)
+		switch ch {
 		case "1":
 			c.SWPath = askPath("Game folder - where SoulWorker is installed", c.SWPath, "Select Soulworker Game Folder!")
 		case "2":

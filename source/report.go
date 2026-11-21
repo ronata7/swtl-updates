@@ -132,7 +132,7 @@ func (a *App) MakeReport() int {
 	}
 
 	// ---- logs and small helpers
-	for _, pat := range []string{"update_*.log", "export_*.log"} {
+	for _, pat := range []string{"update_*.log", "export_*.log", "session_*.log"} {
 		for _, f := range newest(a.logsDir(), pat, 6) {
 			addFile("logs/"+filepath.Base(f), f, 12<<20)
 		}

@@ -45,10 +45,15 @@ func (l *Logger) emit(color, tag, msg string) {
 
 func (l *Logger) Info(f string, a ...any) { l.emit("", "    ", fmt.Sprintf(f, a...)) }
 func (l *Logger) OK(f string, a ...any)   { l.emit(cGreen, "  + ", fmt.Sprintf(f, a...)) }
-func (l *Logger) Fail(f string, a ...any) { l.emit(cRed, "  x ", fmt.Sprintf(f, a...)) }
+func (l *Logger) Fail(f string, a ...any) {
+	m := fmt.Sprintf(f, a...)
+	sessf("FAILED: %s", m)
+	l.emit(cRed, "  x ", m)
+}
 func (l *Logger) Warn(f string, a ...any) {
 	m := fmt.Sprintf(f, a...)
 	l.Warns = append(l.Warns, m)
+	sessf("warning: %s", m)
 	l.emit(cYellow, "  ! ", m)
 }
 func (l *Logger) Step(i, n int, f string, a ...any) {
