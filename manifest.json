@@ -1,18 +1,18 @@
 {
-  "version": "2.24.1",
-  "released": "2026-11-21T02:08:52Z",
-  "notes": "add more log and fix report function",
+  "version": "2.24.2",
+  "released": "2026-11-21T02:27:14Z",
+  "notes": "fix some setting option and text",
   "files": [
     {
       "path": "README.txt",
       "size": 14021,
-      "sha256": "7e89c611577bf021d999a2b3ffa51666b43ce300b9d41aa75941f367844cd210",
+      "sha256": "b7120714f579580810361424a2af4557bca82c69c92ca7d1f147eef678cf899f",
       "kind": "docs"
     },
     {
       "path": "SWTLUpdater.exe",
-      "size": 7089664,
-      "sha256": "32b56b9126aea03a695d36a8a54db4bea5dfdad623a87e64f7ea5c3f0d66a74f",
+      "size": 7095296,
+      "sha256": "52b7e176d0d69330ed1685ef08978c88d97e0db3313f25747de0a4528e08cbc6",
       "kind": "app"
     }
   ],

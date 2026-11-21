@@ -1,4 +1,4 @@
-SW TL Updater 2.24.1  (by ronata)
+SW TL Updater 2.24.2  (by ronata)
 ==============================================================================
 Patches SoulWorker's data12.v with your translated .csv files.
 Uses the same tools as before (the Tools folder) - nothing there is replaced.
