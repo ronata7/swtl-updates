@@ -155,26 +155,60 @@ func okMark(b bool) string {
 	return "NOT FOUND"
 }
 
-func (a *App) printSettings() {
+type settingRow struct{ n, label, value string }
+
+// settingRows is the one list of settings shown both at startup and in the Settings menu,
+// so the two screens always say the same thing in the same order.
+func (a *App) settingRows() []settingRow {
 	c := a.cfg
+	mark := func(v string, ok bool) string { return v + "   [" + okMark(ok) + "]" }
+	upd := c.UpdateURL
+	if strings.TrimSpace(upd) == "" {
+		upd = "(not set - online updates off)"
+	}
+	tl := c.TranslationURL
+	if strings.TrimSpace(tl) == "" {
+		tl = "(not set - uses the update address)"
+	}
+	keep := func(n int) string {
+		if n == 0 {
+			return "0  (keep all)"
+		}
+		return fmt.Sprintf("%d", n)
+	}
+	return []settingRow{
+		{"1", "Game folder", mark(c.SWPath, a.gameOK())},
+		{"2", "Translation folder", mark(c.TLPath, a.tlOK())},
+		{"3", "Patcher folder", mark(c.PatcherPath, isDir(c.PatcherPath))},
+		{"4", "Game data file to patch", c.DataSource + ".v"},
+		{"5", "Name of the patched file", c.DataOutput + ".v"},
+		{"6", "Backups to keep", keep(c.BackupKeep)},
+		{"7", "Tables to skip", strings.Join(c.ExcludeTables, ", ")},
+		{"8", "Ask about settings at startup", yesNo(c.AskAtStartup)},
+		{"9", "Update address", upd},
+		{"10", "Update key", shortKey(c.UpdateKey)},
+		{"11", "Check for updates at startup", yesNo(c.UpdateAtStart)},
+		{"12", "Translation update address", tl},
+		{"13", "Log files to keep", keep(c.LogsKeep)},
+	}
+}
+
+func (a *App) printSettingRows(numbered bool) {
+	for _, r := range a.settingRows() {
+		dots := strings.Repeat(".", 30-len(r.label))
+		if numbered {
+			fmt.Printf(" %2s) %s %s %s\n", r.n, r.label, dots, r.value)
+		} else {
+			fmt.Printf("  %s %s %s\n", r.label, dots, r.value)
+		}
+	}
+}
+
+func (a *App) printSettings() {
 	fmt.Println()
 	fmt.Println(" Current settings")
 	fmt.Println(" ----------------")
-	fmt.Printf("  Game folder          : %s   [%s]\n", c.SWPath, okMark(a.gameOK()))
-	fmt.Printf("  Translation folder   : %s   [%s]\n", c.TLPath, okMark(a.tlOK()))
-	fmt.Printf("  Patcher folder       : %s   [%s]\n", c.PatcherPath, okMark(isDir(c.PatcherPath)))
-	fmt.Printf("  Game data file       : %s.v  (patched copy is saved as %s.v)\n", c.DataSource, c.DataOutput)
-	fmt.Printf("  Backups to keep      : %d\n", c.BackupKeep)
-	fmt.Printf("  Tables to skip       : %s\n", strings.Join(c.ExcludeTables, ", "))
-	fmt.Printf("  Ask at startup       : %s\n", yesNo(c.AskAtStartup))
-	if strings.TrimSpace(c.UpdateURL) == "" {
-		fmt.Println("  Online updates       : off (no update address set)")
-	} else {
-		fmt.Printf("  Online updates       : %s   (check at startup: %s)\n", c.UpdateURL, yesNo(c.UpdateAtStart))
-		if strings.TrimSpace(c.TranslationURL) != "" {
-			fmt.Printf("  Translation updates  : %s\n", c.TranslationURL)
-		}
-	}
+	a.printSettingRows(false)
 }
 
 // StartupReview shows the settings and lets the user change them before the menu.
@@ -202,22 +236,8 @@ func (a *App) Settings() {
 	for {
 		c := a.cfg
 		fmt.Printf("\n Settings   (saved in %s)\n", filepath.Base(a.cfgPath))
-		fmt.Printf("  1) Game folder .............. %s\n", c.SWPath)
-		fmt.Printf("  2) Translation folder ....... %s\n", c.TLPath)
-		fmt.Printf("  3) Patcher folder ........... %s\n", c.PatcherPath)
-		fmt.Printf("  4) Game data file to patch .. %s.v\n", c.DataSource)
-		fmt.Printf("  5) Name of the patched file . %s.v\n", c.DataOutput)
-		fmt.Printf("  6) Backups to keep .......... %d  (0 = keep all)\n", c.BackupKeep)
-		fmt.Printf("  7) Tables to skip ........... %s\n", strings.Join(c.ExcludeTables, ", "))
-		fmt.Printf("  8) Ask about settings at startup: %s\n", yesNo(c.AskAtStartup))
-		if strings.TrimSpace(c.UpdateURL) == "" {
-			fmt.Println("  9) Update address ............ (not set - online updates off)")
-		} else {
-			fmt.Printf("  9) Update address ............ %s\n", c.UpdateURL)
-		}
-		fmt.Printf(" 10) Update key ................ %s\n", shortKey(c.UpdateKey))
-		fmt.Printf(" 11) Check for updates at startup: %s\n", yesNo(c.UpdateAtStart))
-		fmt.Println(" 12) Reset everything to the default values")
+		a.printSettingRows(true)
+		fmt.Println(" 14) Reset everything to the default values")
 		fmt.Println("  0) Back")
 		ch := prompt(" > ")
 		sessf("settings menu: option %q", ch)
@@ -268,6 +288,17 @@ func (a *App) Settings() {
 		case "11":
 			c.UpdateAtStart = !c.UpdateAtStart
 		case "12":
+			if v := prompt("  Translation update address, https://... (Enter = keep, - = use the update address): "); v == "-" {
+				c.TranslationURL = ""
+			} else if v != "" {
+				c.TranslationURL = v
+			}
+		case "13":
+			var n int
+			if _, err := fmt.Sscanf(prompt("  How many log files of each kind to keep (0 = all): "), "%d", &n); err == nil && n >= 0 {
+				c.LogsKeep = n
+			}
+		case "14":
 			if confirm("  Reset all settings to the default values? (the update address and key are kept)") {
 				ask, u, k, tu, tk := c.AskAtStartup, c.UpdateURL, c.UpdateKey, c.TranslationURL, c.TranslationKey
 				*c = *defaultConfig(a.dir)
