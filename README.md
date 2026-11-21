@@ -5,8 +5,8 @@ Update files for **SW TL Updater**, an unofficial tool that applies a community 
 > Unofficial fan project, not affiliated with the game's developers or publishers. See [DISCLAIMER.md](DISCLAIMER.md).
 
 ## For players
-1. Download the program zip (see **Releases**) and unzip it anywhere.
-2. Make sure there is a `Tools` folder next to the program. It comes in the player zip; if you don't have one, the program tells you exactly which files it needs and where to get them (they belong to their authors and are not hosted here).
+1. Get the program zip from ronata on Discord (`ronata`) and unzip it anywhere. It is shared there, not on GitHub, because it includes the helper tools in a `Tools` folder.
+2. Keep the `Tools` folder next to the program. The tools belong to their authors (credits in the program, menu 6, and in the README) and are not hosted in this repository. If you only have `SWTLUpdater.exe`, the program tells you exactly which files it needs and where to get them.
 3. Start `SWTLUpdater.exe`, pick your game folder and press **1) Patch now**.
 
 The program checks this repository for new versions of itself, and the translation files (here, or in a separate translation repository) when it starts. Every download is verified against a digital signature, so only the publisher can issue updates. You can turn it off in *Settings > Update address*.
