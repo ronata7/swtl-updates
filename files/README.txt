@@ -1,4 +1,4 @@
-SW TL Updater 2.21.0  (by ronata)
+SW TL Updater 2.23.0  (by ronata)
 ==============================================================================
 Patches SoulWorker's data12.v with your translated .csv files.
 Uses the same tools as before (the Tools folder) - nothing there is replaced.
@@ -56,6 +56,7 @@ Change them in the menu (3) Settings or by editing SWTLUpdater.ini with Notepad.
   Game data file to patch     SourceDataFile       data12            (read from <game>\datas\data12.v)
   Name of the patched file    OutputDataFile       data12
   Backups to keep             BackupsToKeep        5                 (0 = keep all)
+  Logs to keep                LogsToKeep           30                (newest log files kept; fewer reports and schemas; 0 = keep all)
   Tables to skip              SkipTables           tb_Loading_String,tb_Option_String,tb_Talk_String
   Ask settings at start       AskAtStartup         yes               (yes / no)
   Update address              UpdateURL            (empty = online updates off; comes with your download)
@@ -138,6 +139,9 @@ For the translation team: export the reference tables
   archive key (see below), used when -pwfile is not given. -pwfile may be a plain one-line file or a list with
   lines like "data12 = ..." (a line starting with a dot is an old password and is ignored); the line for the data
   file of that region is used (data12, or data11 for gb). 5_export_reference.bat (publisher package) runs all regions.
+
+Old files are tidied up when the program starts: only the newest logs (LogsToKeep), a few reports and a few
+  saved schemas are kept. Your settings, backups and translation files are never touched.
 
 Report for the author (menu 8, or SWTLUpdater.exe -report)
 ------------------------------------------------------------------------------

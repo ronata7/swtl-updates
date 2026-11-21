@@ -1,18 +1,18 @@
 {
-  "version": "2.21.0",
-  "released": "2026-11-20T03:50:10Z",
-  "notes": "add more report feature",
+  "version": "2.23.0",
+  "released": "2026-11-20T23:19:28Z",
+  "notes": "fix some info after updating",
   "files": [
     {
       "path": "README.txt",
-      "size": 13465,
-      "sha256": "a3019b225db42cbb26d78ca473b1e2f85f95d4cb8bd1145e7006ebd8e1a8d14e",
+      "size": 13798,
+      "sha256": "3fa682f01386dbfdb225775d67589c6147a7312464ab05a821191ce8a34f0ccd",
       "kind": "docs"
     },
     {
       "path": "SWTLUpdater.exe",
-      "size": 7070720,
-      "sha256": "605f02f1eee7a93e45c09d32cd64ce1a1d1070273aa0d59d18952fd9eeb5ceb9",
+      "size": 7076352,
+      "sha256": "7207f4925738050afcac3da56f0d3d43d1d60a620ce3d753f695082a3c82ff39",
       "kind": "app"
     }
   ],
