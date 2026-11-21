@@ -3,6 +3,7 @@
 package main
 
 import (
+	"os/exec"
 	"syscall"
 	"unsafe"
 )
@@ -52,4 +53,13 @@ func acquireSingleInstance() bool {
 		return false
 	}
 	return true
+}
+
+// revealFile opens Explorer with the file selected. The argument is passed exactly as
+// explorer /select,"path" - Go would otherwise wrap the whole /select,... text in quotes when the
+// path has spaces, and Explorer then opens the Documents folder instead.
+func revealFile(path string) {
+	c := exec.Command("explorer.exe")
+	c.SysProcAttr = &syscall.SysProcAttr{CmdLine: `explorer.exe /select,"` + path + `"`}
+	_ = c.Start()
 }

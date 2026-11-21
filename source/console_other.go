@@ -27,3 +27,5 @@ func acquireSingleInstance() bool {
 	lockFile = f
 	return true
 }
+
+func revealFile(path string) {}

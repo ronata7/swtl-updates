@@ -184,9 +184,7 @@ func (a *App) MakeReport() int {
 		fmt.Println(" It is cut into parts. Send all of them together; open the .001 part with 7-Zip to read it.")
 	}
 	fmt.Println(" The archive key is NOT included, and your Windows user name is hidden. Send the file to ronata on Discord.")
-	if runtime.GOOS == "windows" {
-		_ = exec.Command("explorer", "/select,"+files[0]).Start()
-	}
+	revealFile(files[0])
 	return 0
 }
 
