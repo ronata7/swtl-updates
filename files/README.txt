@@ -1,4 +1,4 @@
-SW TL Updater 2.23.0  (by ronata)
+SW TL Updater 2.24.1  (by ronata)
 ==============================================================================
 Patches SoulWorker's data12.v with your translated .csv files.
 Uses the same tools as before (the Tools folder) - nothing there is replaced.
@@ -20,6 +20,8 @@ Created automatically:
   SWTLUpdater.ini   Your settings
   backup\           Previous patched files
   logs\             update_<date>.log = one per table patch; online_update.log = every update check (versions, files, patch vs whole file, sizes, errors)
+                    session_<date>.log = one per run of the program: menu choices, what you typed at prompts, settings that changed,
+                    warnings and errors (keys and passwords are never written to any log)
   cache\            Saved table schema and update notes (speeds things up)
   data12.v          The newest patched file
 
