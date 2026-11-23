@@ -111,7 +111,7 @@
    },
    {
     "name": "Unkown4",
-    "type": "uint16"
+    "type": "int16"
    },
    {
     "name": "Unkown5",
@@ -119,15 +119,15 @@
    },
    {
     "name": "Unkown6",
-    "type": "byte"
+    "type": "int16"
    },
    {
     "name": "Unkown7",
-    "type": "uint16"
+    "type": "byte"
    },
    {
     "name": "Unkown8",
-    "type": "uint16"
+    "type": "byte"
    },
    {
     "name": "Unkown9",
@@ -135,15 +135,15 @@
    },
    {
     "name": "Unkown10",
-    "type": "uint16"
+    "type": "byte"
    },
    {
     "name": "Unkown11",
-    "type": "uint32"
+    "type": "byte"
    },
    {
     "name": "Unkown12",
-    "type": "uint16"
+    "type": "byte"
    },
    {
     "name": "Unkown13",
@@ -151,23 +151,23 @@
    },
    {
     "name": "Unkown14",
-    "type": "single"
+    "type": "int16"
    },
    {
     "name": "Unkown15",
-    "type": "uint32"
+    "type": "int16"
    },
    {
     "name": "Unkown16",
-    "type": "uint32"
+    "type": "int16"
    },
    {
     "name": "Unkown17",
-    "type": "byte"
+    "type": "single"
    },
    {
     "name": "Unkown18",
-    "type": "uint16"
+    "type": "single"
    },
    {
     "name": "Unkown19",
@@ -179,23 +179,39 @@
    },
    {
     "name": "Unkown21",
-    "type": "uint32"
+    "type": "byte"
    },
    {
     "name": "Unkown22",
-    "type": "uint32"
+    "type": "byte"
    },
    {
     "name": "Unkown23",
-    "type": "uint32"
+    "type": "single"
    },
    {
     "name": "Unkown24",
-    "type": "uint32"
+    "type": "single"
    },
    {
     "name": "Unkown25",
-    "type": "uint16"
+    "type": "single"
+   },
+   {
+    "name": "Unkown26",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown27",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown28",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown29",
+    "type": "int16"
    }
   ]
  },
