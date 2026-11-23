@@ -67,3 +67,20 @@ func TestEscapeDumpRoundTrip(t *testing.T) {
 		t.Fatal("a line feed must become <br>")
 	}
 }
+
+func TestEmptyTableRoundTrip(t *testing.T) {
+	fields := []resField{{"id", "uint16"}, {"name", "string"}}
+	orig := buildRes(nil) // a table with no rows
+	rows, err := readRes(fields, orig)
+	if err != nil || len(rows) != 0 {
+		t.Fatalf("an empty table must be readable: %v", err)
+	}
+	csv := resToCSV(fields, rows)
+	if why := roundTrip(fields, csv, orig); why != "" {
+		t.Fatal(why)
+	}
+	// the normal translation conversion still refuses a csv without rows
+	if _, err := csvToRes(fields, csv); err == nil {
+		t.Fatal("csvToRes must still refuse an empty csv")
+	}
+}

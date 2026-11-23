@@ -149,7 +149,7 @@ func encodeCSVMode(fields []resField, csv []byte, lossless bool) ([]resRow, erro
 		raw := body.Bytes()
 		rows = append(rows, resRow{raw: raw, sum: sum, key: string(raw[:off[1]]), off: off, fs: fs})
 	}
-	if len(rows) == 0 {
+	if len(rows) == 0 && !lossless {
 		return nil, fmt.Errorf("CSV has no data rows")
 	}
 	return rows, nil
@@ -248,7 +248,11 @@ func readRes(fields []resField, b []byte) ([]resRow, error) {
 	}
 	fl := int(le.Uint16(b[pos:]))
 	if pos+2+fl != len(b) {
-		return nil, fmt.Errorf("table has %d unexpected byte(s) - the columns do not fit this table", len(b)-pos-2-fl)
+		if left := len(b) - pos - 2 - fl; left < 0 {
+			return nil, fmt.Errorf("the schema needs %d more byte(s) than the table has - the columns do not fit this table", -left)
+		} else {
+			return nil, fmt.Errorf("table has %d unexpected byte(s) - the columns do not fit this table", left)
+		}
 	}
 	return rows, nil
 }

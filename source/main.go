@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-var version = "2.25.0" // may be overridden at build time with -ldflags "-X main.version=..."
+var version = "2.25.1" // may be overridden at build time with -ldflags "-X main.version=..."
 
 func appTitle() string { return "SW TL Updater " + version + " - by ronata" }
 
