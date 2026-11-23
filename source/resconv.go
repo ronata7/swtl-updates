@@ -536,10 +536,10 @@ func putFieldMode(w *bytes.Buffer, typ, s string, lossless bool) (int64, error) 
 	}
 }
 
-// floorSingle adds a float to the checksum as the game's footer does: the exact floor of the
-// 32-bit value (verified against tb_Common: 2.2052612e+07 counts as 22052612, not 22052610).
+// floorSingle adds a float to the checksum as the game's footer does: the 32-bit value cut toward zero
+// (verified against real tables: tb_Common has 2.2052612e+07 = 22052612, tb_Title_Info has -1.5 = -1, not -2).
 func floorSingle(f float32) int64 {
-	return int64(math.Floor(float64(f)))
+	return int64(math.Trunc(float64(f)))
 }
 
 func numErr(s, typ string, err error) error {
