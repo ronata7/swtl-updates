@@ -145,9 +145,11 @@ func (a *App) ExportRef(o ExportOpts) int {
 	}
 	var sums []string
 	usedInferred := map[string][]resField{}
+	var allFiles []string
 	total := 0
 	for _, g := range groups {
 		gdir := filepath.Join(dest, g.dir)
+		allFiles = append(allFiles, g.files...)
 		_ = os.RemoveAll(gdir)
 		if err := os.MkdirAll(gdir, 0o755); err != nil {
 			return fail("%v", err)
@@ -193,6 +195,12 @@ func (a *App) ExportRef(o ExportOpts) int {
 	if len(usedInferred) > 0 {
 		if err := addInferredToSchema(filepath.Join(dest, "schema.json"), usedInferred); err != nil {
 			return fail("cannot add the inferred layouts to schema.json: %v", err)
+		}
+	}
+	if o.Full {
+		// like the older SWAdmin CLI schema files: the language tables (_ENG/_TWN/_CHN) get their own entries
+		if err := splitLocaleSchema(filepath.Join(dest, "schema.json"), allFiles); err != nil {
+			return fail("cannot add the language tables to schema.json: %v", err)
 		}
 	}
 	if exists(filepath.Join(game, "Ver.ini")) {
