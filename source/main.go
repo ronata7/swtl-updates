@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-var version = "2.24.3" // may be overridden at build time with -ldflags "-X main.version=..."
+var version = "2.25.0" // may be overridden at build time with -ldflags "-X main.version=..."
 
 func appTitle() string { return "SW TL Updater " + version + " - by ronata" }
 
@@ -53,6 +53,11 @@ func main() {
 		expData  = flag.String("data", "", "with --export-ref: data file name (default data12, data11 for gb)")
 		expPw    = flag.String("pwfile", "", "with --export-ref: text file with the archive password (jp has a built-in one)")
 		expOut   = flag.String("out", "", "with --export-ref: output folder (default <app>\\reference)")
+		csv2res  = flag.Bool("csv-to-res", false, "convert the csv files of a full dump back to .res (needs -schema, -csv, -out; optional -compare)")
+		c2rSch   = flag.String("schema", "", "with --csv-to-res: the dump's schema.json")
+		c2rCSV   = flag.String("csv", "", "with --csv-to-res: folder with the dump csv files")
+		c2rCmp   = flag.String("compare", "", "with --csv-to-res: folder with the original .res files to compare against")
+		expFull  = flag.Bool("full", false, "with --export-ref: export EVERY table as .res and .csv (csv checked to convert back exactly)")
 	)
 	flag.Parse()
 
@@ -142,8 +147,10 @@ func main() {
 			os.Exit(app.Restore(false))
 		case *report:
 			os.Exit(app.MakeReport())
+		case *csv2res:
+			os.Exit(app.DumpCSVToRes(*c2rSch, *c2rCSV, *expOut, *c2rCmp))
 		case *expRef:
-			os.Exit(app.ExportRef(ExportOpts{Game: *expGame, Region: *expReg, Data: *expData, PwFile: *expPw, Out: *expOut, Keep: *keep}))
+			os.Exit(app.ExportRef(ExportOpts{Game: *expGame, Region: *expReg, Data: *expData, PwFile: *expPw, Out: *expOut, Keep: *keep, Full: *expFull}))
 		default:
 			_ = run
 			if err := app.ensureConfig(false); err != nil {

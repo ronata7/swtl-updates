@@ -18,6 +18,7 @@ type ExportOpts struct {
 	PwFile string // text file holding the archive password (jp has a built-in one)
 	Out    string // output root, default <app>\reference
 	Keep   bool
+	Full   bool // every table (res + csv with a round-trip check) instead of only the translation tables
 }
 
 // ExportRef collects what the translation work needs from one game install: the table layout (schema),
@@ -130,6 +131,18 @@ func (a *App) ExportRef(o ExportOpts) int {
 	}
 	sort.Strings(names)
 	groups := exportSelect(region, names)
+	if o.Full {
+		groups = fullSelect(region, names)
+	}
+	var report []string
+	var schemaMap map[string][]resField
+	if o.Full {
+		sm, err := loadResSchema(r.schema)
+		if err != nil {
+			return fail("cannot read the schema: %v", err)
+		}
+		schemaMap = sm
+	}
 	var sums []string
 	total := 0
 	for _, g := range groups {
@@ -147,7 +160,25 @@ func (a *App) ExportRef(o ExportOpts) int {
 			sums = append(sums, fmt.Sprintf("%s  %s/%s", h, g.dir, n))
 			total++
 		}
-		log.OK("%s: %d table(s)", g.dir, len(g.files))
+		if o.Full {
+			cdir := filepath.Join(dest, strings.TrimSuffix(g.dir, "res")+"csv")
+			_ = os.RemoveAll(cdir)
+			rs, err := writeCSVs(schemaMap, gdir, cdir, g.files)
+			if err != nil {
+				return fail("%v", err)
+			}
+			bad := 0
+			for _, x := range rs {
+				if x.status != "ROUND-TRIP OK" {
+					bad++
+					log.Warn("%s/%s: %s", g.dir, x.file, x.status)
+				}
+				report = append(report, fmt.Sprintf("%-45s %8d rows %3d cols  %s", g.dir+"/"+x.file, x.rows, x.cols, x.status))
+			}
+			log.OK("%s: %d table(s), %d csv checked (%d need attention)", g.dir, len(g.files), len(rs), bad)
+		} else {
+			log.OK("%s: %d table(s)", g.dir, len(g.files))
+		}
 	}
 	if total == 0 {
 		return fail("no matching tables found in the archive")
@@ -160,9 +191,12 @@ func (a *App) ExportRef(o ExportOpts) int {
 	}
 	dll, _ := hashFile(filepath.Join(game, "SoulWorker64.dll"))
 	build := fmt.Sprintf("region: %s\nversion: %s\ndate: %s\nexporter: SW TL Updater %s\ndata file: %s.v\ndata file sha256: %s\nSoulWorker64.dll sha256: %s\ntables: %d\n",
-		strings.ToUpper(region), ver, time.Now().Format("2006-01-02 15:04"), version, data, r.srcSHA, dll, total)
+		strings.ToUpper(region), ver, time.Now().Format("2006-01-02 15:04"), version, data, r.srcSHA, dll, total) + map[bool]string{true: "mode: FULL (all tables, res + csv)\n", false: ""}[o.Full]
 	_ = os.WriteFile(filepath.Join(dest, "build.txt"), []byte(build), 0o644)
 	_ = os.WriteFile(filepath.Join(dest, "files.sha256"), []byte(strings.Join(sums, "\n")+"\n"), 0o644)
+	if o.Full {
+		_ = os.WriteFile(filepath.Join(dest, "roundtrip.txt"), []byte("Every table's csv was converted back to a table and compared with the original bytes.\nROUND-TRIP OK = the csv can safely be converted back. Anything else: keep the .res as the master.\n\n"+strings.Join(report, "\n")+"\n"), 0o644)
+	}
 	log.OK("Done in %s: %d table(s), schema.json, Ver.ini, build.txt -> %s", time.Since(start).Round(time.Second), total, dest)
 	return 0
 }

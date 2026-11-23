@@ -71,7 +71,12 @@ type resRow struct {
 
 // csvToRes converts the text of one translation CSV into the binary table.
 func csvToRes(fields []resField, csv []byte) ([]byte, error) {
-	rows, err := encodeCSV(fields, csv)
+	return csvToResMode(fields, csv, false)
+}
+
+// csvToResMode is csvToRes; lossless=true reads the escapes of the full dump csv (see escapeDump).
+func csvToResMode(fields []resField, csv []byte, lossless bool) ([]byte, error) {
+	rows, err := encodeCSVMode(fields, csv, lossless)
 	if err != nil {
 		return nil, err
 	}
@@ -94,6 +99,10 @@ func buildRes(rows []resRow) []byte {
 }
 
 func encodeCSV(fields []resField, csv []byte) ([]resRow, error) {
+	return encodeCSVMode(fields, csv, false)
+}
+
+func encodeCSVMode(fields []resField, csv []byte, lossless bool) ([]resRow, error) {
 	csv = bytes.TrimPrefix(csv, []byte{0xEF, 0xBB, 0xBF})
 	if len(bytes.TrimSpace(csv)) == 0 {
 		return nil, fmt.Errorf("CSV file is empty")
@@ -129,7 +138,7 @@ func encodeCSV(fields []resField, csv []byte) ([]resRow, error) {
 		off := []int{0}
 		var fs []int64
 		for j, f := range fields {
-			v, err := putField(&body, f.Type, cells[j])
+			v, err := putFieldMode(&body, f.Type, cells[j], lossless)
 			if err != nil {
 				return nil, fmt.Errorf("line %d, column %d (%s): %v", i+1, j+1, f.Name, err)
 			}
@@ -394,7 +403,9 @@ func verifyMerged(fields []resField, game, merged []resRow) error {
 }
 
 // rowCSVLine writes a table row the way the translation CSVs have it (tab separated, <br> for line breaks).
-func rowCSVLine(fields []resField, r resRow) string {
+func rowCSVLine(fields []resField, r resRow) string { return rowCSVLineMode(fields, r, false) }
+
+func rowCSVLineMode(fields []resField, r resRow, lossless bool) string {
 	le := binary.LittleEndian
 	var parts []string
 	for j, f := range fields {
@@ -407,7 +418,11 @@ func rowCSVLine(fields []resField, r resRow) string {
 			for k := range u {
 				u[k] = le.Uint16(b[2+2*k:])
 			}
-			v = strings.ReplaceAll(strings.ReplaceAll(string(utf16.Decode(u)), "\r\n", "<br>"), "\n", "<br>")
+			if lossless {
+				v = escapeDump(string(utf16.Decode(u)))
+			} else {
+				v = strings.ReplaceAll(strings.ReplaceAll(string(utf16.Decode(u)), "\r\n", "<br>"), "\n", "<br>")
+			}
 		case "byte", "bool", "boolean":
 			v = strconv.Itoa(int(b[0]))
 		case "uint16":
@@ -428,10 +443,18 @@ func rowCSVLine(fields []resField, r resRow) string {
 
 // putField writes one field and returns what it adds to the table's checksum number.
 func putField(w *bytes.Buffer, typ, s string) (int64, error) {
+	return putFieldMode(w, typ, s, false)
+}
+
+func putFieldMode(w *bytes.Buffer, typ, s string, lossless bool) (int64, error) {
 	le := binary.LittleEndian
 	switch strings.ToLower(typ) {
 	case "string":
-		s = strings.ReplaceAll(s, "<br>", "\n")
+		if lossless {
+			s = unescapeDump(s)
+		} else {
+			s = strings.ReplaceAll(s, "<br>", "\n")
+		}
 		u := utf16.Encode([]rune(s))
 		if len(u) > 0xFFFF {
 			return 0, fmt.Errorf("text is too long (%d characters)", len(u))
