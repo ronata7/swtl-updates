@@ -36,6 +36,8 @@ type resField struct {
 type resSchemaEntry struct {
 	File   string     `json:"file"`
 	Fields []resField `json:"fields"`
+	// Inferred marks a layout worked out from the table bytes instead of read from the game program.
+	Inferred bool `json:"inferred,omitempty"`
 }
 
 // loadResSchema reads schema.json (as made by SWAdmin -dumper_to_schema) keyed by lower-case table file name.

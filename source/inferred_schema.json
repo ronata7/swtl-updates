@@ -1,0 +1,1021 @@
+[
+ {
+  "file": "tb_ChattingCommand.res",
+  "fields": [
+   {
+    "name": "Unkown1",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown2",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown3",
+    "type": "string"
+   },
+   {
+    "name": "Unkown4",
+    "type": "string"
+   },
+   {
+    "name": "Unkown5",
+    "type": "string"
+   },
+   {
+    "name": "Unkown6",
+    "type": "string"
+   },
+   {
+    "name": "Unkown7",
+    "type": "string"
+   },
+   {
+    "name": "Unkown8",
+    "type": "uint32"
+   }
+  ]
+ },
+ {
+  "file": "tb_Notice.res",
+  "fields": [
+   {
+    "name": "Unkown1",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown2",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown3",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown4",
+    "type": "string"
+   }
+  ]
+ },
+ {
+  "file": "tb_MessageNotifyer.res",
+  "fields": [
+   {
+    "name": "Unkown1",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown2",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown3",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown4",
+    "type": "uint16"
+   },
+   {
+    "name": "Unkown5",
+    "type": "uint16"
+   },
+   {
+    "name": "Unkown6",
+    "type": "uint16"
+   },
+   {
+    "name": "Unkown7",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown8",
+    "type": "uint32"
+   }
+  ]
+ },
+ {
+  "file": "tb_Mastery.res",
+  "fields": [
+   {
+    "name": "Unkown1",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown2",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown3",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown4",
+    "type": "uint16"
+   },
+   {
+    "name": "Unkown5",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown6",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown7",
+    "type": "uint16"
+   },
+   {
+    "name": "Unkown8",
+    "type": "uint16"
+   },
+   {
+    "name": "Unkown9",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown10",
+    "type": "uint16"
+   },
+   {
+    "name": "Unkown11",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown12",
+    "type": "uint16"
+   },
+   {
+    "name": "Unkown13",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown14",
+    "type": "single"
+   },
+   {
+    "name": "Unkown15",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown16",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown17",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown18",
+    "type": "uint16"
+   },
+   {
+    "name": "Unkown19",
+    "type": "single"
+   },
+   {
+    "name": "Unkown20",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown21",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown22",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown23",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown24",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown25",
+    "type": "uint16"
+   }
+  ]
+ },
+ {
+  "file": "tb_DivisionRankReward.res",
+  "fields": [
+   {
+    "name": "Unkown1",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown2",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown3",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown4",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown5",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown6",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown7",
+    "type": "uint32"
+   }
+  ]
+ },
+ {
+  "file": "tb_Drop_Limit_Maze.res",
+  "fields": [
+   {
+    "name": "Unkown1",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown2",
+    "type": "string"
+   },
+   {
+    "name": "Unkown3",
+    "type": "string"
+   },
+   {
+    "name": "Unkown4",
+    "type": "uint16"
+   },
+   {
+    "name": "Unkown5",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown6",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown7",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown8",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown9",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown10",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown11",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown12",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown13",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown14",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown15",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown16",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown17",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown18",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown19",
+    "type": "string"
+   }
+  ]
+ },
+ {
+  "file": "tb_Maze_Enter_Count_Group.res",
+  "fields": [
+   {
+    "name": "Unkown1",
+    "type": "uint16"
+   },
+   {
+    "name": "Unkown2",
+    "type": "uint16"
+   },
+   {
+    "name": "Unkown3",
+    "type": "uint16"
+   },
+   {
+    "name": "Unkown4",
+    "type": "uint16"
+   },
+   {
+    "name": "Unkown5",
+    "type": "uint16"
+   },
+   {
+    "name": "Unkown6",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown7",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown8",
+    "type": "uint32"
+   }
+  ]
+ },
+ {
+  "file": "tb_Myroom_Default.res",
+  "fields": [
+   {
+    "name": "Unkown1",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown2",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown3",
+    "type": "uint32"
+   }
+  ]
+ },
+ {
+  "file": "tb_Class_Speech.res",
+  "fields": [
+   {
+    "name": "Unkown1",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown2",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown3",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown4",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown5",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown6",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown7",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown8",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown9",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown10",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown11",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown12",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown13",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown14",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown15",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown16",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown17",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown18",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown19",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown20",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown21",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown22",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown23",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown24",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown25",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown26",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown27",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown28",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown29",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown30",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown31",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown32",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown33",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown34",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown35",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown36",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown37",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown38",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown39",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown40",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown41",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown42",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown43",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown44",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown45",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown46",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown47",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown48",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown49",
+    "type": "uint32"
+   }
+  ]
+ },
+ {
+  "file": "tb_Class_Speech.res",
+  "fields": [
+   {
+    "name": "Unkown1",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown2",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown3",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown4",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown5",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown6",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown7",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown8",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown9",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown10",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown11",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown12",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown13",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown14",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown15",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown16",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown17",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown18",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown19",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown20",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown21",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown22",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown23",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown24",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown25",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown26",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown27",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown28",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown29",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown30",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown31",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown32",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown33",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown34",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown35",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown36",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown37",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown38",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown39",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown40",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown41",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown42",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown43",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown44",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown45",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown46",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown47",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown48",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown49",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown50",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown51",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown52",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown53",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown54",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown55",
+    "type": "uint32"
+   }
+  ]
+ },
+ {
+  "file": "tb_Class_Speech_2.res",
+  "fields": [
+   {
+    "name": "Unkown1",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown2",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown3",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown4",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown5",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown6",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown7",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown8",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown9",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown10",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown11",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown12",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown13",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown14",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown15",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown16",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown17",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown18",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown19",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown20",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown21",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown22",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown23",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown24",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown25",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown26",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown27",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown28",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown29",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown30",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown31",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown32",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown33",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown34",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown35",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown36",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown37",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown38",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown39",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown40",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown41",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown42",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown43",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown44",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown45",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown46",
+    "type": "byte"
+   },
+   {
+    "name": "Unkown47",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown48",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown49",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown50",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown51",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown52",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown53",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown54",
+    "type": "uint32"
+   },
+   {
+    "name": "Unkown55",
+    "type": "uint32"
+   }
+  ]
+ }
+]

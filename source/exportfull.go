@@ -2,6 +2,8 @@ package main
 
 import (
 	"bytes"
+	_ "embed"
+	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -100,6 +102,27 @@ func roundTrip(fields []resField, csv, orig []byte) string {
 type csvResult struct {
 	file, status string
 	rows, cols   int
+	inferred     bool
+	fields       []resField
+}
+
+//go:embed inferred_schema.json
+var inferredJSON []byte
+
+// inferredSchema holds layouts worked out from the table bytes (the closing checksum proves them) for tables
+// the game's own struct list lacks or describes differently. Keyed like the dump schema (lower case file name).
+// A table may have several layouts (the game versions of the servers differ); the one that round-trips is used.
+func inferredSchema() map[string][][]resField {
+	var es []resSchemaEntry
+	if json.Unmarshal(inferredJSON, &es) != nil {
+		return nil
+	}
+	m := map[string][][]resField{}
+	for _, e := range es {
+		k := strings.ToLower(e.File)
+		m[k] = append(m[k], e.Fields)
+	}
+	return m
 }
 
 // writeCSVs makes csv/<name>.csv beside the res folder and returns one result line per table.
@@ -114,13 +137,28 @@ func writeCSVs(schema map[string][]resField, resDir, csvDir string, files []stri
 			return nil, err
 		}
 		fields, ok := schema[schemaKey(n)]
+		inferred := false
+		var rows []resRow
+		var rerr error
+		if ok {
+			rows, rerr = readRes(fields, orig)
+		}
+		if !ok || rerr != nil {
+			// the game's own layout is missing or does not fit: try the layout that was worked out from the
+			// table's bytes (inferred_schema.json); it is used only if the table converts back byte for byte
+			for _, fb := range inferredSchema()[schemaKey(n)] {
+				if r2, e2 := readRes(fb, orig); e2 == nil && roundTrip(fb, resToCSV(fb, r2), orig) == "" {
+					fields, rows, rerr, ok, inferred = fb, r2, nil, true, true
+					break
+				}
+			}
+		}
 		if !ok {
 			out = append(out, csvResult{file: n, status: "NO SCHEMA - res only"})
 			continue
 		}
-		rows, err := readRes(fields, orig)
-		if err != nil {
-			out = append(out, csvResult{file: n, cols: len(fields), status: "does not fit the schema - res only (" + err.Error() + ")"})
+		if rerr != nil {
+			out = append(out, csvResult{file: n, cols: len(fields), status: "does not fit the schema - res only (" + rerr.Error() + ")"})
 			continue
 		}
 		csv := resToCSV(fields, rows)
@@ -131,8 +169,10 @@ func writeCSVs(schema map[string][]resField, resDir, csvDir string, files []stri
 		st := "ROUND-TRIP OK"
 		if why := roundTrip(fields, csv, orig); why != "" {
 			st = "NOT LOSSLESS - " + why + " (keep the .res as the master)"
+		} else if inferred {
+			st = "ROUND-TRIP OK (layout inferred from the table bytes)"
 		}
-		out = append(out, csvResult{file: n, rows: len(rows), cols: len(fields), status: st})
+		out = append(out, csvResult{file: n, rows: len(rows), cols: len(fields), status: st, inferred: inferred, fields: fields})
 	}
 	return out, nil
 }
@@ -285,4 +325,39 @@ func (a *App) DumpCSVToRes(schemaPath, csvDir, outDir, compareDir string) int {
 	}
 	log.OK("All %d table(s) converted into %s", len(files), outDir)
 	return 0
+}
+
+// addInferredToSchema puts the inferred layouts of the tables that used them into the dump's schema.json (marked
+// "inferred"), so the dump csv can be converted back later with only that file.
+func addInferredToSchema(path string, used map[string][]resField) error {
+	b, err := os.ReadFile(path)
+	if err != nil {
+		return err
+	}
+	var es []resSchemaEntry
+	if err := json.Unmarshal(bytes.TrimPrefix(b, []byte{0xEF, 0xBB, 0xBF}), &es); err != nil {
+		return err
+	}
+	names := make([]string, 0, len(used))
+	for k := range used {
+		names = append(names, k)
+	}
+	sort.Strings(names)
+	for _, k := range names {
+		in := resSchemaEntry{File: k, Fields: used[k], Inferred: true}
+		replaced := false
+		for i := range es {
+			if strings.ToLower(es[i].File) == k {
+				es[i], replaced = in, true
+			}
+		}
+		if !replaced {
+			es = append(es, in)
+		}
+	}
+	out, err := json.MarshalIndent(es, "", "  ")
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(path, out, 0o644)
 }

@@ -144,6 +144,7 @@ func (a *App) ExportRef(o ExportOpts) int {
 		schemaMap = sm
 	}
 	var sums []string
+	usedInferred := map[string][]resField{}
 	total := 0
 	for _, g := range groups {
 		gdir := filepath.Join(dest, g.dir)
@@ -169,7 +170,10 @@ func (a *App) ExportRef(o ExportOpts) int {
 			}
 			bad := 0
 			for _, x := range rs {
-				if x.status != "ROUND-TRIP OK" {
+				if x.inferred {
+					usedInferred[schemaKey(x.file)] = x.fields
+				}
+				if !strings.HasPrefix(x.status, "ROUND-TRIP OK") {
 					bad++
 					log.Warn("%s/%s: %s", g.dir, x.file, x.status)
 				}
@@ -185,6 +189,11 @@ func (a *App) ExportRef(o ExportOpts) int {
 	}
 	if err := copyFile(r.schema, filepath.Join(dest, "schema.json")); err != nil {
 		return fail("%v", err)
+	}
+	if len(usedInferred) > 0 {
+		if err := addInferredToSchema(filepath.Join(dest, "schema.json"), usedInferred); err != nil {
+			return fail("cannot add the inferred layouts to schema.json: %v", err)
+		}
 	}
 	if exists(filepath.Join(game, "Ver.ini")) {
 		_ = copyFile(filepath.Join(game, "Ver.ini"), filepath.Join(dest, "Ver.ini"))
