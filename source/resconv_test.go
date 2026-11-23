@@ -168,8 +168,8 @@ func TestSingleAndLoneCR(t *testing.T) {
 	if !bytes.HasPrefix(out, want) {
 		t.Fatalf("bytes % x", out[:20])
 	}
-	// checksum number = 1+floor(1.5) + 2+floor(-1.5) = 1+1+2-2 = 2
-	h := md5.Sum([]byte("2"))
+	// checksum number = 1+trunc(1.5) + 2+trunc(-1.5) = 1+1+2-1 = 3 (cut toward zero, proven on tb_Title_Info)
+	h := md5.Sum([]byte("3"))
 	if string(out[len(out)-32:]) != hex.EncodeToString(h[:]) {
 		t.Fatalf("checksum wrong: %s", out[len(out)-32:])
 	}
