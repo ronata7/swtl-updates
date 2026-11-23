@@ -180,3 +180,12 @@ func TestSingleAndLoneCR(t *testing.T) {
 		t.Fatalf("lone CR not handled: %v %v", e1, e2)
 	}
 }
+
+func TestFloorSingleExact(t *testing.T) {
+	if got := floorSingle(2.2052612e+07); got != 22052612 {
+		t.Fatalf("got %d", got)
+	}
+	if got := floorSingle(0.45); got != 0 {
+		t.Fatalf("got %d", got)
+	}
+}

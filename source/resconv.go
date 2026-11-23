@@ -8,7 +8,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"math"
-	"math/big"
 	"os"
 	"path/filepath"
 	"sort"
@@ -535,14 +534,10 @@ func putFieldMode(w *bytes.Buffer, typ, s string, lossless bool) (int64, error) 
 	}
 }
 
-// floorSingle adds a float to the checksum the way SWAdmin does: Math.Floor(Convert.ToDecimal(float)).
-// Converting a float to decimal rounds it to 7 significant digits first.
+// floorSingle adds a float to the checksum as the game's footer does: the exact floor of the
+// 32-bit value (verified against tb_Common: 2.2052612e+07 counts as 22052612, not 22052610).
 func floorSingle(f float32) int64 {
-	r, ok := new(big.Rat).SetString(strconv.FormatFloat(float64(f), 'g', 7, 32))
-	if !ok {
-		return 0
-	}
-	return new(big.Int).Div(r.Num(), r.Denom()).Int64()
+	return int64(math.Floor(float64(f)))
 }
 
 func numErr(s, typ string, err error) error {
