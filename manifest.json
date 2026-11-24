@@ -1,18 +1,18 @@
 {
-  "version": "2.24.3",
-  "released": "2026-11-21T02:39:34Z",
-  "notes": "fixed some internal patching",
+  "version": "2.26.3",
+  "released": "2026-11-24T04:20:09Z",
+  "notes": "fix more stuffs",
   "files": [
     {
       "path": "README.txt",
       "size": 14021,
-      "sha256": "bea822e379580d274377efbe2920e8e36704d09be49af46d1a7a9bf91ea75574",
+      "sha256": "ebfb78dc9018f20196e45adb5854f8614d40be5186ca899245ba6bd6addc4d9d",
       "kind": "docs"
     },
     {
       "path": "SWTLUpdater.exe",
-      "size": 7096832,
-      "sha256": "a0efddda1c776fce6e61d375cb4d4a33f8f8b6afd6295b5a8ab599a9cfdfaf3b",
+      "size": 7144448,
+      "sha256": "b65bb3ca87448912a7ff90ee30d4aeaec362b2f0fd298394a6add24c1ef7a223",
       "kind": "app"
     }
   ],
